@@ -9,6 +9,7 @@
         android:layout_height="wrap_content"
         android:paddingLeft="15dp"
         android:paddingRight="15dp"
+        android:background="@drawable/plan_bg_selector"
         >
     <TextView
         android:id="@+id/tv_text1"

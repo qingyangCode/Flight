@@ -30,6 +30,14 @@
             android:name=".activity.MainActivity"
             android:screenOrientation="portrait"
             />
+        <activity
+            android:name=".activity.BasicInfoActivity"
+            android:screenOrientation="portrait"
+            />
+        <activity
+            android:name=".activity.EngineRoomActivity"
+            android:screenOrientation="portrait"
+            />
     </application>
 
 </manifest>

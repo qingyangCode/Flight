@@ -2,7 +2,10 @@ package com.uandme.flight.fragment;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import butterknife.ButterKnife;
 import com.uandme.flight.FlightApplication;
 import com.uandme.flight.network.MoccApi;
 import com.uandme.flight.util.LogUtil;
@@ -10,8 +13,17 @@ import com.uandme.flight.util.LogUtil;
 /**
  * Created by QingYang on 15/7/19.
  */
-public class BaseFragment extends Fragment {
+public abstract class BaseFragment extends Fragment {
     protected String TAG = BaseFragment.class.getSimpleName();
+
+    @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
+            Bundle savedInstanceState) {
+        View contentView = getContentView(inflater);
+        ButterKnife.inject(this, contentView);
+        return contentView;
+    }
+
+    public abstract View getContentView(LayoutInflater inflater);
 
     @Override public void onCreate(Bundle savedInstanceState) {
         LogUtil.LOGD(TAG, "onCreate()");
@@ -56,6 +68,7 @@ public class BaseFragment extends Fragment {
     @Override public void onDestroy() {
         LogUtil.LOGD(TAG, "onDestroy()");
         super.onDestroy();
+        ButterKnife.reset(this);
     }
 
     public MoccApi getMoccApi() {

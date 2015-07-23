@@ -74,16 +74,17 @@
 
                 <TextView
                     android:id="@+id/tv_email_title"
-                    style="@style/my_account_item_key"
+                    style="@style/item_key"
                     android:text="UserName"
                     />
 
                 <EditText
                     android:id="@+id/et_username"
-                    style="@style/my_account_item_value"
+                    style="@style/item_value"
                     android:gravity="center_vertical|left"
                     android:hint="your name"
                     android:imeOptions="actionNext"
+                    android:inputType="text"
                     android:textColor="@color/gray_333"
                     />
             </LinearLayout>
@@ -108,13 +109,13 @@
 
                 <TextView
                     android:id="@+id/tv_password"
-                    style="@style/my_account_item_key"
+                    style="@style/item_key"
                     android:text="Password"
                     />
 
                 <EditText
                     android:id="@+id/et_pwssword"
-                    style="@style/my_account_item_value"
+                    style="@style/item_value"
                     android:gravity="center_vertical|left"
                     android:inputType="textPassword"
                     android:text=""

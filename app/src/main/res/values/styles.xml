@@ -5,7 +5,7 @@
         <!-- Customize your theme here. -->
     </style>
 
-    <style name="my_account_item_key">
+    <style name="item_key">
         <item name="android:textColor">@color/gray_333</item>
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_weight">0.4</item>
@@ -14,7 +14,7 @@
         <item name="android:layout_height">match_parent</item>
     </style>
 
-    <style name="my_account_item_value">
+    <style name="item_value">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_weight">0.6</item>
         <item name="android:textSize">18dp</item>
@@ -42,4 +42,34 @@
         <item name="android:indeterminateDrawable">@drawable/progressbar_layer_list</item>
     </style>
 
+    <style name="common_title_style_30_mt">
+        <item name="android:textColor">@color/gray_333</item>
+        <item name="android:paddingLeft">15dp</item>
+        <item name="android:layout_marginTop">31dp</item>
+        <item name="android:textSize">16dp</item>
+    </style>
+    <style name="common_line_1_style">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">0.5dp</item>
+        <item name="android:background">@color/black</item>
+    </style>
+    <style name="horization_layout">
+        <item name="android:background">@color/white</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">58dp</item>
+        <item name="android:paddingLeft">15dp</item>
+        <item name="android:paddingRight">17dp</item>
+        <item name="android:orientation">horizontal</item>
+    </style>
+
+    <style name="seating_item_value">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">0.4</item>
+        <item name="android:textSize">18dp</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:background">@null</item>
+        <item name="android:textColor">@color/gray_333</item>
+        <item name="android:textColorHint">@color/gray_999</item>
+    </style>
 </resources>

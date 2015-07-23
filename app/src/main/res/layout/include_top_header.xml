@@ -61,6 +61,7 @@
             android:textColor="@color/green_blue"
             android:layout_marginRight="18dp"
             android:layout_alignParentRight="true"
+            android:background="@drawable/common_press_bg_selector"
             />
 
     <View

@@ -1,6 +1,7 @@
 package com.uandme.flight.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
@@ -63,14 +64,13 @@ public class MainActivity extends BaseActivity {
     }
 
     public class PlanAdapterFlight extends FlightBaseAdapter<AllAirCraft.TIAppObject> {
-
         public PlanAdapterFlight(Context context, List<AllAirCraft.TIAppObject> iniData,
                 int pageSize, int res, int loadingRes) {
             super(context, iniData, pageSize, res, loadingRes);
         }
 
         @Override public View getView(final int position, View convertView, ViewGroup parent,
-                AllAirCraft.TIAppObject value) {
+               final AllAirCraft.TIAppObject value) {
             ViewHolder holder = (ViewHolder) convertView.getTag();
             if(holder == null) {
                 holder = new ViewHolder();
@@ -88,7 +88,10 @@ public class MainActivity extends BaseActivity {
             holder.mTvtext5.setText("OpDate :" + value.OpDate);
             convertView.setOnClickListener(new View.OnClickListener() {
                 @Override public void onClick(View v) {
-                    ToastUtil.showToast(MainActivity.this,R.drawable.toast_confirm,"position == "+ position);
+                    //ToastUtil.showToast(MainActivity.this,R.drawable.toast_confirm,"position == "+ position);
+                    Intent intent = new Intent(MainActivity.this, BasicInfoActivity.class);
+                    intent.putExtra("AircraftReg", value.AircraftReg);
+                    startActivity(intent);
                 }
             });
             return convertView;
@@ -119,4 +122,7 @@ public class MainActivity extends BaseActivity {
         return super.onKeyDown(keyCode, event);
     }
 
+    @Override public boolean isShowTopBarLeft() {
+        return false;
+    }
 }

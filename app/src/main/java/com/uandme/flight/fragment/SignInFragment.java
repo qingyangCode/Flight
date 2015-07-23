@@ -36,11 +36,8 @@ public class SignInFragment extends BaseFragment {
     @InjectView(R.id.iv_checkbox) CheckBox mCheckbox;
     @InjectView(R.id.layout_top) RelativeLayout mLayoutTop;
 
-    @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_signin, null);
-        ButterKnife.inject(this, view);
-        return view;
+    @Override public View getContentView(LayoutInflater inflater) {
+        return inflater.inflate(R.layout.fragment_signin, null);
     }
 
     @Override public void onActivityCreated(Bundle savedInstanceState) {

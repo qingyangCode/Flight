@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+
+    <include layout="@layout/include_top_header"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
+
+            <TextView
+                android:id="@+id/tv_playinfo_title"
+                style="@style/common_title_style_30_mt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="基本重量"
+                android:paddingBottom="10dp"
+                />
+
+            <View style="@style/common_line_1_style"/>
+
+            <LinearLayout style="@style/horization_layout">
+
+                <TextView
+                    android:id="@+id/tv_firstName_title"
+                    style="@style/item_key"
+                    android:text="差分站"
+                    />
+
+                <Spinner
+                    android:id="@+id/spinner"
+                    style="@style/item_value"
+                    android:gravity="right"
+                    android:text=""
+                    />
+            </LinearLayout>
+
+            <View style="@style/common_line_1_style"/>
+
+            <LinearLayout style="@style/horization_layout">
+
+                <TextView
+                    android:id="@+id/tv_lastName_title"
+                    style="@style/item_key"
+                    android:text="基本重量"
+                    />
+
+                <EditText
+                    android:id="@+id/tv_weight"
+                    style="@style/item_value"
+                    android:hint="请输入基本重量"
+                    android:text=""
+                    />
+            </LinearLayout>
+
+            <View style="@style/common_line_1_style"/>
+
+            <LinearLayout style="@style/horization_layout">
+
+                <TextView
+                    android:id="@+id/tv_age_title"
+                    style="@style/item_key"
+                    android:text="重心"
+                    />
+
+                <EditText
+                    android:id="@+id/tv_focus"
+                    style="@style/item_value"
+                    android:hint="请输入重心"
+                    android:text=""
+                    />
+            </LinearLayout>
+
+            <View style="@style/common_line_1_style"/>
+
+            <TextView
+                style="@style/common_title_style_30_mt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="50dp"
+                android:text="基本信息"
+                android:paddingBottom="10dp"
+                />
+            <View style="@style/common_line_1_style"
+                />
+            <LinearLayout style="@style/horization_layout"
+                >
+
+                <TextView
+                    android:id="@+id/tv_height_title"
+                    style="@style/item_key"
+                    android:text="航班号"
+                    />
+
+                <EditText
+                    android:id="@+id/tv_playNO"
+                    style="@style/item_value"
+                    android:hint="请输入航班号"
+                    android:text=""
+                    />
+            </LinearLayout>
+
+            <View style="@style/common_line_1_style"/>
+
+            <LinearLayout style="@style/horization_layout">
+
+                <TextView
+                    android:id="@+id/tv_weight_title"
+                    style="@style/item_key"
+                    android:text="起飞机场"
+                    />
+
+                <EditText
+                    android:id="@+id/tv_originating"
+                    style="@style/item_value"
+                    android:hint="请输入起飞机场"
+                    android:text=""
+                    />
+            </LinearLayout>
+
+            <View style="@style/common_line_1_style"/>
+
+            <LinearLayout style="@style/horization_layout">
+
+                <TextView
+                    style="@style/item_key"
+                    android:text="目的地机场"
+                    />
+
+                <EditText
+                    android:id="@+id/tv_destination"
+                    style="@style/item_value"
+                    android:hint="请输入目的地机场"
+                    android:text=""
+                    />
+            </LinearLayout>
+            <View style="@style/common_line_1_style"/>
+
+            <LinearLayout style="@style/horization_layout"
+                >
+
+                <TextView
+                    style="@style/item_key"
+                    android:text="机上人员"
+                    />
+
+                <EditText
+                    android:id="@+id/tv_pilot"
+                    style="@style/item_value"
+                    android:hint="请填写机上人员姓名"
+                    android:text=""
+                    />
+            </LinearLayout>
+            <View style="@style/common_line_1_style"
+                android:layout_marginBottom="40dp"/>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
