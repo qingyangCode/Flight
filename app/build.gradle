@@ -1,0 +1,80 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        jcenter()
+        maven { url 'https://maven.fabric.io/public' }
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:1.1.0'
+        classpath 'io.fabric.tools:gradle:1.+'
+    }
+}
+
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 22
+    buildToolsVersion "22.0.1"
+
+    defaultConfig {
+        applicationId "com.uandme.flight"
+        minSdkVersion 15
+        targetSdkVersion 22
+        versionCode 1
+        versionName "1.0"
+    }
+    signingConfigs {
+        debug {
+            storeFile file('deploy/debug.keystore')
+        }
+        release {
+            keyAlias ''
+            keyPassword ''
+            storeFile file('deploy/')
+            storePassword ''
+        }
+    }
+
+    buildTypes {
+        debug {
+            debuggable true
+            buildConfigField "boolean", "ENABLE_CRASH_REPORT", "true"
+            buildConfigField "boolean", "ENABLE_DEVMODE", "true"
+            buildConfigField "boolean", "ENABLE_LOG", "true"
+//            signingConfig signingConfigs.debug
+        }
+
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            buildConfigField "boolean", "ENABLE_CRASH_REPORT", "false"
+            buildConfigField "boolean", "ENABLE_DEVMODE", "false"
+            buildConfigField "boolean", "ENABLE_LOG", "false"
+//                signingConfig signingConfigs.release
+        }
+    }
+
+    productFlavors {
+        flight {
+            applicationId 'com.uandme.flight'
+            buildConfigField "int", "DB_VERSION", "1"
+            buildConfigField "String", "APP_SPORT_TYPE", "\"flight\""
+            buildConfigField "int", "LOG_LEVEL", "android.util.Log.VERBOSE"
+            buildConfigField "String", "SERVER_URL", "\"http://124.127.106.196:80\""
+        }
+
+    }
+}
+
+
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.jakewharton:butterknife:6.0.0'
+    compile 'de.greenrobot:eventbus:2.4.0'
+    compile('de.keyboardsurfer.android.widget:crouton:1.8.5@aar') {
+        exclude group: 'com.google.android', module: 'support-v4'
+    }
+    compile files('src/main/jniLibs/android-xml-json.jar')
+    compile files('src/main/jniLibs/gson-2.2.2.jar')
+}
