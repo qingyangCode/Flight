@@ -1,6 +1,7 @@
 package com.uandme.flight.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -207,5 +208,14 @@ public class EngineRoomActivity extends BaseActivity implements View.OnClickList
         EditText et_passenger;
         TextView tv_arm;
         EditText et_weight;
+    }
+
+    @Override public View.OnClickListener getRightOnClickListener() {
+        return new View.OnClickListener() {
+
+            @Override public void onClick(View v) {
+                startActivity(new Intent(EngineRoomActivity.this, RestrictionMapActivity.class));
+            }
+        };
     }
 }

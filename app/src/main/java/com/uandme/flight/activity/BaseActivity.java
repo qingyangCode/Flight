@@ -57,7 +57,8 @@ public abstract class BaseActivity extends Activity{
 
     @OnClick(R.id.iv_top_bar_left)
     public void onLeftClick() {
-        finish();
+        if(isShowTopBarLeft())
+            finish();
     }
 
     public void getTopBarTitle(String title) {

@@ -38,6 +38,10 @@
             android:name=".activity.EngineRoomActivity"
             android:screenOrientation="portrait"
             />
+        <activity
+            android:name=".activity.RestrictionMapActivity"
+            android:screenOrientation="portrait"
+            />
     </application>
 
 </manifest>
