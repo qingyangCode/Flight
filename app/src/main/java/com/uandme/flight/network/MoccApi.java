@@ -1,6 +1,6 @@
 package com.uandme.flight.network;
 
-import android.content.Context;
+import com.uandme.flight.entity.SeatByAcReg;
 
 /**
  * Created by QingYang on 15/7/20.
@@ -8,6 +8,7 @@ import android.content.Context;
 public interface MoccApi {
 
     public final String BASE_URL =  "http://124.127.106.196:80/Login1.ashx";
+
     public final String RESULT_ERROR = "0";
 
     /**
@@ -138,5 +139,16 @@ public interface MoccApi {
      * @param responseListner
      */
     public  void addFlightInfo(String userName, String checkCode, ResponseListner responseListner);
+
+    /**
+     * 获取飞机座位信息
+     * @param aircraftReg
+     * @param bw
+     * @param lj
+     * @param opDate
+     * @param SysVersion
+     * @param responseListner
+     */
+    public void getSeatByAcReg(String aircraftReg, String bw, String lj, String opDate, String SysVersion, ResponseListner<SeatByAcReg> responseListner);
 
 }

@@ -2,6 +2,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     style="@style/horization_layout"
+    android:padding="5dp"
     >
 
     <TextView
@@ -14,6 +15,7 @@
     <EditText
         android:id="@+id/tv_passengerName"
         style="@style/seating_item_value"
+        android:background="@drawable/engineeroom_name_bg"
         android:text=""
         />
     <TextView
@@ -28,6 +30,7 @@
         style="@style/item_key"
         android:background="@null"
         android:layout_weight="0.2"
+        android:inputType="number"
         android:text=""
         />
 

@@ -2,18 +2,24 @@ package com.uandme.flight.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
-import butterknife.OnClick;
 import com.uandme.flight.R;
 import com.uandme.flight.adapter.FlightBaseAdapter;
 import com.uandme.flight.entity.EngineRoom;
+import com.uandme.flight.entity.SeatByAcReg;
+import com.uandme.flight.network.ResponseListner;
+import com.uandme.flight.util.CommonProgressDialog;
+import com.uandme.flight.util.Constants;
+import com.uandme.flight.util.ToastUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -22,6 +28,7 @@ import java.util.Random;
  * Created by QingYang on 15/7/23.
  */
 public class EngineRoomActivity extends BaseActivity implements View.OnClickListener{
+    private String TAG = EngineRoom.class.getSimpleName();
     //@InjectView(R.id.btn1)
     Button mBtn1;
     //@InjectView(R.id.btn2)
@@ -57,13 +64,32 @@ public class EngineRoomActivity extends BaseActivity implements View.OnClickList
     private View inflate;
 
 
-
+    private String aircraftReg;
+    private String lj;
+    private String opDate;
+    private String sysVersion;
+    private String bw;
 
     @Override public int getContentView() {
         return R.layout.activity_engineroom;
     }
 
     @Override protected void onloadData() {
+        Intent data = getIntent();
+        if (data != null) {
+            aircraftReg = data.getStringExtra("AircraftReg");
+            lj = data.getStringExtra("Lj");
+            opDate = data.getStringExtra("OpDate");
+            sysVersion = data.getStringExtra("SysVersion");
+            bw = data.getStringExtra("Bw");
+        }
+
+        final CommonProgressDialog dialog = new CommonProgressDialog(this);
+        dialog.setTip("Loading ..");
+        dialog.setCancelable(true);
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
+
         mTopBarTitle.setText("Engine room");
         mTopBarRight.setText("Next");
 
@@ -97,6 +123,8 @@ public class EngineRoomActivity extends BaseActivity implements View.OnClickList
 
         mSeat.setText("Seat");
         mPassengerName.setEnabled(false);
+        mPassengerName.setBackgroundResource(0);
+        mPassengerName.setGravity(Gravity.CENTER);
         mPassengerName.setText("PassengerName");
         mArm.setEnabled(false);
         mArm.setText("Arm (in.)");
@@ -104,6 +132,29 @@ public class EngineRoomActivity extends BaseActivity implements View.OnClickList
         mWeight.setText("Weight (lb.)");
         //ButterKnife.inject(inflate);
         mListView.addHeaderView(inflate);
+
+
+
+        getMoccApi().getSeatByAcReg(aircraftReg, bw, lj, opDate, sysVersion, new ResponseListner<SeatByAcReg>(){
+
+            @Override public void onResponse(SeatByAcReg response) {
+                if (dialog != null && dialog.isShowing())
+                    dialog.dismiss();
+                if (response != null && response.ResponseObject.ResponseCode == Constants.RESULT_OK) {
+                    mListView.setAdapter(new EngineAdapter(EngineRoomActivity.this, response.ResponseObject.ResponseData.IAppObject, 50, R.layout.item_seatlayout, R.layout.item_failed));
+                }else {
+                    mListView.setAdapter(new EngineAdapter(EngineRoomActivity.this, new ArrayList<SeatByAcReg.SeatInfos>(), 50, R.layout.item_seatlayout, R.layout.item_failed));
+                }
+            }
+
+            @Override public void onEmptyOrError(String message) {
+                if (dialog != null && dialog.isShowing())
+                    dialog.dismiss();
+                ToastUtil.showToast(EngineRoomActivity.this, R.drawable.toast_warning,!TextUtils.isEmpty(message) ? message : getString(R.string.get_data_error));
+            }
+        });
+
+
         List<EngineRoom> engineRooms = new ArrayList<EngineRoom>();
 
         for (int i = 1; i < 11; i++) {
@@ -123,7 +174,7 @@ public class EngineRoomActivity extends BaseActivity implements View.OnClickList
             engineRooms.add(room);
         }
 
-        mListView.setAdapter(new EngineAdapter(this, engineRooms, 50, R.layout.item_seatlayout, R.layout.item_failed));
+        //mListView.setAdapter(new EngineAdapter(this, engineRooms, 50, R.layout.item_seatlayout, R.layout.item_failed));
 
     }
 
@@ -175,15 +226,15 @@ public class EngineRoomActivity extends BaseActivity implements View.OnClickList
         }
     }
 
-    public class EngineAdapter extends FlightBaseAdapter<EngineRoom>{
+    public class EngineAdapter extends FlightBaseAdapter<SeatByAcReg.SeatInfos>{
 
-        public EngineAdapter(Context context, List<EngineRoom> iniData, int pageSize, int res,
+        public EngineAdapter(Context context, List<SeatByAcReg.SeatInfos> iniData, int pageSize, int res,
                 int loadingRes) {
             super(context, iniData, pageSize, res, loadingRes);
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent, EngineRoom value) {
+        public View getView(int position, View convertView, ViewGroup parent, SeatByAcReg.SeatInfos value) {
             ViewHolder holder = (ViewHolder) convertView.getTag();
             if(holder == null) {
                 holder = new ViewHolder();
@@ -194,13 +245,16 @@ public class EngineRoomActivity extends BaseActivity implements View.OnClickList
             }
             convertView.setTag(holder);
 
-            holder.tv_seat.setText(value.seat);
-            holder.et_passenger.setText(value.passengerName);
-            holder.tv_arm.setText(value.arm);
-            holder.et_weight.setText(value.weight);
+            holder.tv_seat.setText(value.SeatCode);
+            holder.et_passenger.setText("");
+            holder.tv_arm.setText(value.AcTypeLb + "");
+            holder.et_weight.setText(value.AcTypeSeatLimit + "");
+
+            handleWeight(holder);
 
             return convertView;
         }
+
     }
 
     class ViewHolder {
@@ -208,6 +262,38 @@ public class EngineRoomActivity extends BaseActivity implements View.OnClickList
         EditText et_passenger;
         TextView tv_arm;
         EditText et_weight;
+    }
+
+    private void handleWeight(final ViewHolder holder) {
+        holder.et_weight.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    holder.et_weight.addTextChangedListener(new TextWatcher() {
+                        @Override
+                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                        }
+
+                        @Override
+                        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                        }
+
+                        @Override public void afterTextChanged(Editable s) {
+                            if (!TextUtils.isEmpty(s)) {
+                                float weight = Float.parseFloat(s.toString());
+                                if (weight > 400) {
+                                    holder.et_weight.setBackgroundColor(getResources().getColor(R.color.red));
+                                } else {
+                                    holder.et_weight.setBackgroundColor(getResources().getColor(R.color.transparent));
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+        });
+
     }
 
     @Override public View.OnClickListener getRightOnClickListener() {

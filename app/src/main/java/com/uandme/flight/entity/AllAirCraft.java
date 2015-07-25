@@ -1,6 +1,7 @@
 package com.uandme.flight.entity;
 
 import com.google.gson.Gson;
+import com.google.gson.annotations.Expose;
 import java.util.ArrayList;
 
 
@@ -26,11 +27,17 @@ public class AllAirCraft {
 		public String OpDate;
 		public String SysVersion;
 		public String AcRemark;
+
 	}
 	
 	public static AllAirCraft parse(String jsonStr){
 		Gson gson = new Gson();
-		AllAirCraft fromJson = gson.fromJson(jsonStr, AllAirCraft.class);
+		AllAirCraft fromJson = null;
+		try {
+			fromJson = gson.fromJson(jsonStr, AllAirCraft.class);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
 		return fromJson;
 	}
 

@@ -90,7 +90,11 @@ public class MainActivity extends BaseActivity {
                 @Override public void onClick(View v) {
                     //ToastUtil.showToast(MainActivity.this,R.drawable.toast_confirm,"position == "+ position);
                     Intent intent = new Intent(MainActivity.this, BasicInfoActivity.class);
+                    intent.putExtra("Lj", value.Lj);
+                    intent.putExtra("OpDate", value.OpDate);
+                    intent.putExtra("SysVersion", value.SysVersion);
                     intent.putExtra("AircraftReg", value.AircraftReg);
+                    intent.putExtra("Bw", value.Bw);
                     startActivity(intent);
                 }
             });

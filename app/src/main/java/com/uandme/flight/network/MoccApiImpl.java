@@ -11,10 +11,12 @@ import com.uandme.flight.entity.LoginUserInfo;
 import com.uandme.flight.entity.OneAirCraft;
 import com.uandme.flight.entity.OneAirTypeCraft;
 import com.uandme.flight.entity.OneUsers;
+import com.uandme.flight.entity.SeatByAcReg;
 import com.uandme.flight.entity.TUserInfo;
 import com.uandme.flight.entity.UserGrantsInfo;
 import com.uandme.flight.util.CommonUtils;
 import com.uandme.flight.util.DigestUtils;
+import com.uandme.flight.util.UserManager;
 
 /**
  * Created by QingYang on 15/7/21.
@@ -49,7 +51,7 @@ public class MoccApiImpl implements MoccApi{
      */
     @Override
     public void validateUser(String userName, String pwd, ResponseListner responseListner){
-        String url = "http://124.127.106.196:80/Login1.ashx";
+        //String url = "http://124.127.106.196:80/Login1.ashx";
         StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>")
                 .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
                 .append("<CMD>ValidateUser</CMD>")
@@ -57,7 +59,7 @@ public class MoccApiImpl implements MoccApi{
                 .append("<CheckCode>" + pwd + "</CheckCode>")
                 .append("RequestData/>").append("</MessageObject>");
         String xmlParam = sb.toString();
-        NetBase net = new NetBase(url, xmlParam, responseListner);
+        NetBase net = new NetBase(BASE_URL, xmlParam, responseListner);
         net.execute();
 
     }
@@ -72,7 +74,9 @@ public class MoccApiImpl implements MoccApi{
             @Override public void onResponse(String response) {
                 String xml2json = CommonUtils.xml2JSON(response);
                 TUserInfo userInfo = TUserInfo.parse(xml2json);
-                if (userInfo == null || RESULT_ERROR.equals(userInfo.ResponseObject.ResponseCode) || "-100".equals(userInfo.ResponseObject.ResponseCode)) {
+                if (userInfo == null
+                        || RESULT_ERROR.equals(userInfo.ResponseObject.ResponseCode)
+                        || "-100".equals(userInfo.ResponseObject.ResponseCode)) {
                     ll.onEmptyOrError(userInfo.ResponseObject.ResponseErr);
                     return;
                 }
@@ -101,7 +105,7 @@ public class MoccApiImpl implements MoccApi{
     //	一、获取所有飞机信息
     public void getAllAircraft(String userName, String checkCode,
             final ResponseListner responseListner) {
-        String url = "http://124.127.106.196:80/Login1.ashx";
+        //String url = "http://124.127.106.196:80/Login1.ashx";
         StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>")
                 .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
                 .append("<CMD>GetAllAircraft</CMD>")
@@ -109,7 +113,7 @@ public class MoccApiImpl implements MoccApi{
                 .append("<CheckCode>"+checkCode+"</CheckCode>")
                 .append("RequestData/>").append("</MessageObject>");
         String xmlParam = sb.toString();
-        NetBase net = new NetBase(url, xmlParam, new ResponseListner<String>() {
+        NetBase net = new NetBase(BASE_URL, xmlParam, new ResponseListner<String>() {
             @Override
             public void onResponse(String response) {
                 String xml2json = CommonUtils.xml2JSON(response);
@@ -133,7 +137,7 @@ public class MoccApiImpl implements MoccApi{
     ///B8099  二、根据机号获取信息
     public void getAircraftByAcReg(String userName, String checkCode, String airReg,
             final ResponseListner responseListner) {
-        String url = "http://124.127.106.196:80/Login1.ashx";
+        //String url = "http://124.127.106.196:80/Login1.ashx";
         StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>")
                 .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
                 .append("<CMD>GetAircraftByAcReg</CMD>")
@@ -156,7 +160,7 @@ public class MoccApiImpl implements MoccApi{
                 .append("</RequestData>")
                 .append("</MessageObject>");
         String xmlParam = sb.toString();
-        NetBase net = new NetBase(url, xmlParam, new ResponseListner<String>() {
+        NetBase net = new NetBase(BASE_URL, xmlParam, new ResponseListner<String>() {
             @Override
             public void onResponse(String response) {
                 String xml2json = CommonUtils.xml2JSON(response);
@@ -181,7 +185,7 @@ public class MoccApiImpl implements MoccApi{
     //ce680
     public void getAircraftByAcType(String userName, String checkCode, String AircraftType,
             final ResponseListner responseListner) {
-        String url = "http://124.127.106.196:80/Login1.ashx";
+        //String url = "http://124.127.106.196:80/Login1.ashx";
         StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>")
                 .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
                 .append("<CMD>getAircraftByAcType</CMD>")
@@ -203,7 +207,7 @@ public class MoccApiImpl implements MoccApi{
                 .append("</RequestData>")
                 .append("</MessageObject>");
         String xmlParam = sb.toString();
-        NetBase net = new NetBase(url, xmlParam, new ResponseListner<String>() {
+        NetBase net = new NetBase(BASE_URL, xmlParam, new ResponseListner<String>() {
             @Override
             public void onResponse(String response) {
                 String xml2json = CommonUtils.xml2JSON(response);
@@ -226,7 +230,7 @@ public class MoccApiImpl implements MoccApi{
 
     public void addNewAircraft(String userName, String checkCode,
             final ResponseListner responseListner) {
-        String url = "http://124.127.106.196:80/Login1.ashx";
+        //String url = "http://124.127.106.196:80/Login1.ashx";
         StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>")
                 .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
                 .append("<CMD>AddNewAircraft</CMD>")
@@ -254,7 +258,7 @@ public class MoccApiImpl implements MoccApi{
                 .append("</RequestData>")
                 .append("</MessageObject>");
         String xmlParam = sb.toString();
-        NetBase net = new NetBase(url, xmlParam, new ResponseListner<String>() {
+        NetBase net = new NetBase(BASE_URL, xmlParam, new ResponseListner<String>() {
             @Override
             public void onResponse(String response) {
                 String xml2json = CommonUtils.xml2JSON(response);
@@ -277,16 +281,16 @@ public class MoccApiImpl implements MoccApi{
 
     public void getAllAcType(String userName, String checkCode,
             final ResponseListner responseListner) {
-        String url = "http://124.127.106.196:80/Login1.ashx";
+        //String url = "http://124.127.106.196:80/Login1.ashx";
         StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>")
                 .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
                 .append("<CMD>GetAllAcType</CMD>").
-                        append("<UserCode>"+userName+"</UserCode>")
+                        append("<UserCode>" + userName + "</UserCode>")
                 .append("<CheckCode>"+checkCode+"</CheckCode>")
                 .append("<RequestData />")
                 .append("</MessageObject>");
         String xmlParam = sb.toString();
-        NetBase net = new NetBase(url, xmlParam, new ResponseListner<String>() {
+        NetBase net = new NetBase(BASE_URL, xmlParam, new ResponseListner<String>() {
             @Override
             public void onResponse(String response) {
                 String xml2json = CommonUtils.xml2JSON(response);
@@ -308,7 +312,7 @@ public class MoccApiImpl implements MoccApi{
 
     public void getActypeByType(String userName, String checkCode,
             final ResponseListner responseListner) {
-        String url = "http://124.127.106.196:80/Login1.ashx";
+        //String url = "http://124.127.106.196:80/Login1.ashx";
         StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>")
                 .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
                 .append("<CMD>GetActypeByType</CMD>")
@@ -327,7 +331,7 @@ public class MoccApiImpl implements MoccApi{
                 .append("</RequestData>")
                 .append("</MessageObject>");
         String xmlParam = sb.toString();
-        NetBase net = new NetBase(url, xmlParam, new ResponseListner<String>() {
+        NetBase net = new NetBase(BASE_URL, xmlParam, new ResponseListner<String>() {
 
             @Override
             public void onResponse(String response) {
@@ -352,7 +356,7 @@ public class MoccApiImpl implements MoccApi{
 
 
     public void getAllUser(String userName, String checkCode, final ResponseListner responseListner) {
-        String url = "http://124.127.106.196:80/Login1.ashx";
+        //String url = "http://124.127.106.196:80/Login1.ashx";
         StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>")
                 .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
                 .append("<CMD>GetAllUser</CMD>")
@@ -366,7 +370,7 @@ public class MoccApiImpl implements MoccApi{
                 .append("</RequestData>")
                 .append("</MessageObject>");
         String xmlParam = sb.toString();
-        NetBase net = new NetBase(url, xmlParam, new ResponseListner<String>() {
+        NetBase net = new NetBase(BASE_URL, xmlParam, new ResponseListner<String>() {
             @Override
             public void onResponse(String response) {
                 if(responseListner != null){
@@ -393,7 +397,7 @@ public class MoccApiImpl implements MoccApi{
     //一、按用户获取此用户的授权信息
     public void getGrantsByUserCode(String userName, String checkCode,
             final ResponseListner responseListner) {
-        String url = "http://124.127.106.196:80/Login1.ashx";
+        //String url = "http://124.127.106.196:80/Login1.ashx";
         StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>")
                 .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
                 .append("<CMD>GetGrantsByUserCode</CMD>")
@@ -407,7 +411,7 @@ public class MoccApiImpl implements MoccApi{
                 .append("</RequestData>")
                 .append("</MessageObject>");
         String xmlParam = sb.toString();
-        NetBase net = new NetBase(url, xmlParam, new ResponseListner<String>() {
+        NetBase net = new NetBase(BASE_URL, xmlParam, new ResponseListner<String>() {
             @Override
             public void onResponse(String response) {
                 if(responseListner != null){
@@ -436,7 +440,7 @@ public class MoccApiImpl implements MoccApi{
     //一、按用户代码获取
     public void getUserByCode(String userName, String checkCode,
             final ResponseListner responseListner) {
-        String url = "http://124.127.106.196:80/Login1.ashx";
+        //String url = "http://124.127.106.196:80/Login1.ashx";
         StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>")
                 .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
                 .append("<CMD>GetUserByCode</CMD>")
@@ -450,7 +454,7 @@ public class MoccApiImpl implements MoccApi{
                 .append("</RequestData>")
                 .append("</MessageObject>");
         String xmlParam = sb.toString();
-        NetBase net = new NetBase(url, xmlParam, new ResponseListner<String>() {
+        NetBase net = new NetBase(BASE_URL, xmlParam, new ResponseListner<String>() {
 
             @Override
             public void onResponse(String response) {
@@ -477,7 +481,7 @@ public class MoccApiImpl implements MoccApi{
 
     public void getAllUserNew(String userName, String checkCode,
             final ResponseListner responseListner) {
-        String url = "http://124.127.106.196:80/Login1.ashx";
+        //String url = "http://124.127.106.196:80/Login1.ashx";
         StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>")
                 .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
                 .append("<CMD>GetAllUserNew</CMD>")
@@ -491,7 +495,7 @@ public class MoccApiImpl implements MoccApi{
                 .append("</RequestData>")
                 .append("</MessageObject>");
         String xmlParam = sb.toString();
-        NetBase net = new NetBase(url, xmlParam, new ResponseListner<String>() {
+        NetBase net = new NetBase(BASE_URL, xmlParam, new ResponseListner<String>() {
 
             @Override
             public void onResponse(String response) {
@@ -518,7 +522,7 @@ public class MoccApiImpl implements MoccApi{
 
     public void addFlightCd(String userName, String checkCode,
             final ResponseListner responseListner) {
-        String url = "http://124.127.106.196:80/Login1.ashx";
+        //String url = "http://124.127.106.196:80/Login1.ashx";
         StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>")
                 .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
                 .append("<CMD>AddFlightCd</CMD>")
@@ -544,7 +548,7 @@ public class MoccApiImpl implements MoccApi{
                 .append("</RequestData>")
                 .append("</MessageObject>");
         String xmlParam = sb.toString();
-        NetBase net = new NetBase(url, xmlParam, new ResponseListner<String>() {
+        NetBase net = new NetBase(BASE_URL, xmlParam, new ResponseListner<String>() {
 
             @Override
             public void onResponse(String response) {
@@ -569,7 +573,7 @@ public class MoccApiImpl implements MoccApi{
     }
 
     public  void addFlightInfo(String userName, String checkCode, ResponseListner responseListner) {
-        String url = "http://124.127.106.196:80/Login1.ashx";
+        //String url = "http://124.127.106.196:80/Login1.ashx";
         StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>")
                 .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
                 .append("<CMD>AddFlightInfo</CMD>")
@@ -602,8 +606,38 @@ public class MoccApiImpl implements MoccApi{
                 .append("</RequestData>")
                 .append("</MessageObject>");
         String xmlParam = sb.toString();
-        NetBase net = new NetBase(url, xmlParam, responseListner);
+        NetBase net = new NetBase(BASE_URL, xmlParam, responseListner);
         net.execute();
     }
+
+    public void getSeatByAcReg(String aircraftReg, String bw, String lj, String opDate, String SysVersion, final ResponseListner<SeatByAcReg> responseListner){
+        StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>")
+                .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
+                .append("<CMD>GetSeatByAcReg</CMD>")
+                .append("<UserCode>"+ UserManager.getInstance().getUser().getUserCode()+"</UserCode>")
+                .append("<CheckCode>"+"09C5BCBC5A38CF01FC7CDC71F59D4925"+"</CheckCode>")
+                .append("<RequestData>")
+                .append("<IAppObject xsi:type=\"AppAircraft\">")
+                .append("<AircraftReg>" + aircraftReg + "</AircraftReg>")
+                .append("<Bw>" + bw + "</Bw>")
+                .append("<Lj>" + lj + "</Lj>")
+                .append("<OpDate>" + opDate + "</OpDate>")
+                .append("<SysVersion> " + SysVersion + " </SysVersion>")
+                .append("</IAppObject>\n" + "  </RequestData>\n" + "</MessageObject>")
+                ;
+        final String xmlParam = sb.toString();
+        ResponseListner<String> responseListner1 = new ResponseListner<String>() {
+            @Override public void onResponse(String response) {
+                String xmlStr = CommonUtils.xml2JSON(response);
+                SeatByAcReg engineeRoom = SeatByAcReg.parse(xmlStr);
+                responseListner.onResponse(engineeRoom);
+            }
+
+            @Override public void onEmptyOrError(String message) {
+                responseListner.onEmptyOrError(message);
+            }
+        }; NetBase net = new NetBase(BASE_URL, xmlParam, responseListner1);
+        net.execute();
+    };
 
 }

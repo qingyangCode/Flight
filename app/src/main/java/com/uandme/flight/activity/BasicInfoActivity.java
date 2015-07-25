@@ -16,39 +16,41 @@ import com.uandme.flight.R;
 /**
  * Created by QingYang on 15/7/23.
  */
-public class BasicInfoActivity extends BaseActivity{
+public class BasicInfoActivity extends BaseActivity {
 
-    @InjectView(R.id.spinner)
-    Spinner mSpinner;
-    @InjectView(R.id.tv_weight)
-    EditText mWeight;
-    @InjectView(R.id.tv_focus)
-    EditText mFocus;
-    @InjectView(R.id.tv_playNO)
-    EditText mPlayNO;
-    @InjectView(R.id.tv_originating)
-    EditText mOrigination;
-    @InjectView(R.id.tv_destination)
-    EditText mDestination;
-    @InjectView(R.id.tv_pilot)
-    EditText mPilot;
+    @InjectView(R.id.spinner) Spinner mSpinner;
+    @InjectView(R.id.tv_weight) EditText mWeight;
+    @InjectView(R.id.tv_focus) EditText mFocus;
+    @InjectView(R.id.tv_playNO) EditText mPlayNO;
+    @InjectView(R.id.tv_originating) EditText mOrigination;
+    @InjectView(R.id.tv_destination) EditText mDestination;
+    @InjectView(R.id.tv_pilot) EditText mPilot;
 
-
-
-    private String[] titles = new String[]{"不含差分站", "含差分站"};
+    private String[] titles = new String[] { "不含差分站", "含差分站" };
     private ArrayAdapter<String> adapter;
     private String aircraftReg;
+    private String lj;
+    private String opDate;
+    private String sysVersion;
+    private String bw;
 
     @Override public int getContentView() {
         return R.layout.activity_basicinfo;
     }
 
     @Override protected void onloadData() {
+        Intent data = getIntent();
+        if (data != null) {
+            aircraftReg = data.getStringExtra("AircraftReg");
+            lj = data.getStringExtra("Lj");
+            opDate = data.getStringExtra("OpDate");
+            sysVersion = data.getStringExtra("SysVersion");
+            bw = data.getStringExtra("Bw");
+        }
+
         mTopBarTitle.setText("Aircraft basic information");
         mTopBarLeft.setImageResource(R.drawable.common_topnav_back);
         mTopBarRight.setText("Next");
-
-        aircraftReg = getIntent().getStringExtra("AircraftReg");
 
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, titles);
         //设置下拉列表的风格
@@ -57,18 +59,15 @@ public class BasicInfoActivity extends BaseActivity{
         mSpinner.setAdapter(adapter);
         //添加事件Spinner事件监听
         mSpinner.setOnItemSelectedListener(new SpinnerSelectedListener());
-
         //设置默认值
         mSpinner.setVisibility(View.VISIBLE);
-
         mPlayNO.setText(aircraftReg);
     }
 
     //使用数组形式操作
     class SpinnerSelectedListener implements AdapterView.OnItemSelectedListener {
 
-        public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2,
-                long arg3) {
+        public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
             //view.setText("你的血型是："+m[arg2]);
         }
 
@@ -80,7 +79,13 @@ public class BasicInfoActivity extends BaseActivity{
     @Override public View.OnClickListener getRightOnClickListener() {
         return new View.OnClickListener() {
             @Override public void onClick(View v) {
-                startActivity(new Intent(BasicInfoActivity.this, EngineRoomActivity.class));
+                Intent intent = new Intent(BasicInfoActivity.this, EngineRoomActivity.class);
+                intent.putExtra("Lj", lj);
+                intent.putExtra("OpDate", opDate);
+                intent.putExtra("SysVersion", sysVersion);
+                intent.putExtra("AircraftReg", aircraftReg);
+                intent.putExtra("Bw", bw);
+                startActivity(intent);
             }
         };
     }
