@@ -43,7 +43,7 @@
             android:screenOrientation="portrait"
             />
         <activity
-            android:name=".activity.AircraftPersonnel"
+            android:name=".activity.AircraftPersonnelActivity"
             android:screenOrientation="portrait"
             />
     </application>

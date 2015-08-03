@@ -6,7 +6,7 @@
     >
 
     <View style="@style/common_line_1_style"
-        android:layout_marginTop="5dp"/>
+        />
     <LinearLayout style="@style/horization_layout"
         >
 
@@ -22,11 +22,6 @@
             android:text=""
             />
     </LinearLayout>
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0.5dp"
-        android:background="@color/gray_a8"
-        />
     <LinearLayout style="@style/horization_layout">
 
         <TextView
@@ -41,5 +36,6 @@
             android:text=""
             />
     </LinearLayout>
+    <View  style="@style/common_line_1_style"/>
 
 </LinearLayout>

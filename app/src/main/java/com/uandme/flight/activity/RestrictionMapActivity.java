@@ -1,5 +1,7 @@
 package com.uandme.flight.activity;
 
+import android.content.Intent;
+import android.view.View;
 import com.uandme.flight.R;
 
 /**
@@ -13,7 +15,14 @@ public class RestrictionMapActivity extends BaseActivity{
 
     @Override protected void onloadData() {
         mTopBarTitle.setText("限制图");
+        getTopBarRight("Next");
     }
 
-
+    @Override public View.OnClickListener getRightOnClickListener() {
+        return new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                startActivity(new Intent(RestrictionMapActivity.this, AircraftPersonnelActivity.class));
+            }
+        };
+    }
 }
