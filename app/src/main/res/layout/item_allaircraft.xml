@@ -2,93 +2,44 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    >
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingLeft="15dp"
-        android:paddingRight="15dp"
-        android:background="@drawable/plan_bg_selector"
+    <View style="@style/common_line_1_style"
+        android:layout_marginTop="5dp"/>
+    <LinearLayout style="@style/horization_layout"
         >
-    <TextView
-        android:id="@+id/tv_text1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
-        android:textColor="@color/gray_333"
-        android:textSize="18dp"
-        android:layout_marginTop="5dp"
-        android:gravity="center_vertical"
-        android:text="asdfasdfasdf"
-        />
+
         <TextView
-            android:id="@+id/tv_text2"
-            android:layout_below="@id/tv_text1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
-            android:layout_marginTop="5dp"
-            android:textColor="@color/gray_333"
-            android:textSize="18dp"
-            android:gravity="center_vertical"
-            android:text="asdfasdfasdf"
-            />
-        <TextView
-            android:id="@+id/tv_text3"
-            android:layout_below="@id/tv_text2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
-            android:textColor="@color/gray_333"
-            android:textSize="18dp"
-            android:layout_marginTop="5dp"
-            android:gravity="center_vertical"
-            android:text="asdfasdfasdf"
-            />
-        <TextView
-            android:id="@+id/tv_text4"
-            android:layout_below="@id/tv_text3"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
-            android:textColor="@color/gray_333"
-            android:textSize="18dp"
-            android:layout_marginTop="5dp"
-            android:gravity="center_vertical"
-            android:text="asdfasdfasdf"
-            />
-        <TextView
-            android:id="@+id/tv_text5"
-            android:layout_below="@id/tv_text4"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
-            android:textColor="@color/gray_333"
-            android:textSize="18dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
-            android:gravity="center_vertical"
-            android:text="asdfasdfasdf"
-            />
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/common_arrow_right"
-            android:layout_centerVertical="true"
-            android:layout_alignParentRight="true"
+            style="@style/item_key"
+            android:text="飞机编号"
             />
 
-    </RelativeLayout>
-
+        <TextView
+            android:id="@+id/tv_number"
+            style="@style/item_value"
+            android:hint="请输入基本重量"
+            android:text=""
+            />
+    </LinearLayout>
     <View
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
-        android:background="@color/black"/>
+        android:background="@color/gray_a8"
+        />
+    <LinearLayout style="@style/horization_layout">
+
+        <TextView
+            style="@style/item_key"
+            android:text="飞机型号"
+            />
+
+        <TextView
+            android:id="@+id/tv_type"
+            style="@style/item_value"
+            android:hint="请输入基本重量"
+            android:text=""
+            />
+    </LinearLayout>
 
 </LinearLayout>

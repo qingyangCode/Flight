@@ -12,7 +12,7 @@ public class RestrictionMapActivity extends BaseActivity{
     }
 
     @Override protected void onloadData() {
-        mTopBarTitle.setText("estrictionMap");
+        mTopBarTitle.setText("限制图");
     }
 
 

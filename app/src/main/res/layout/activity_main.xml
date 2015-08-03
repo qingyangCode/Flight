@@ -10,7 +10,8 @@
         android:id="@+id/mListView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:divider="@color/transparent"
+        android:divider="@color/gray_333"
+        android:dividerHeight="0.5dp"
         android:scrollbars="none">
 
     </ListView>

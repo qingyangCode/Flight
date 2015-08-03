@@ -146,23 +146,6 @@
                     android:text=""
                     />
             </LinearLayout>
-            <View style="@style/common_line_1_style"/>
-
-            <LinearLayout style="@style/horization_layout"
-                >
-
-                <TextView
-                    style="@style/item_key"
-                    android:text="机上人员"
-                    />
-
-                <EditText
-                    android:id="@+id/tv_pilot"
-                    style="@style/item_value"
-                    android:hint="请填写机上人员姓名"
-                    android:text=""
-                    />
-            </LinearLayout>
             <View style="@style/common_line_1_style"
                 android:layout_marginBottom="40dp"/>
         </LinearLayout>

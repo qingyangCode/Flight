@@ -40,12 +40,12 @@ public class MainActivity extends BaseActivity {
 
     @Override protected void initView() {
         super.initView();
-        mTvTitle.setText("AllAircraft");
+        mTvTitle.setText("全部飞机");
     }
 
     @Override protected void onloadData() {
         final CommonProgressDialog dialog = new CommonProgressDialog(this);
-        dialog.setTip("Loading ..");
+        dialog.setTip("加载中 ..");
         dialog.setCancelable(true);
         dialog.setCanceledOnTouchOutside(false);
         dialog.show();
@@ -74,21 +74,14 @@ public class MainActivity extends BaseActivity {
             ViewHolder holder = (ViewHolder) convertView.getTag();
             if(holder == null) {
                 holder = new ViewHolder();
-                holder.mTvname = (TextView) convertView.findViewById(R.id.tv_text1);
-                holder.mTvtext2 = (TextView) convertView.findViewById(R.id.tv_text2);
-                holder.mTvtext3 = (TextView) convertView.findViewById(R.id.tv_text3);
-                holder.mTvtext4 = (TextView) convertView.findViewById(R.id.tv_text4);
-                holder.mTvtext5 = (TextView) convertView.findViewById(R.id.tv_text5);
+                holder.number = (TextView) convertView.findViewById(R.id.tv_number);
+                holder.type = (TextView) convertView.findViewById(R.id.tv_type);
             }
             convertView.setTag(holder);
-            holder.mTvname.setText("BW : " + value.Bw);
-            holder.mTvtext2.setText("AcRemark : " + value.AcRemark);
-            holder.mTvtext3.setText("AircraftReg : " + value.AircraftReg);
-            holder.mTvtext4.setText("AircraftType : "+value.AircraftType);
-            holder.mTvtext5.setText("OpDate :" + value.OpDate);
+            holder.number.setText(value.AircraftReg);
+            holder.type.setText(value.AircraftType);
             convertView.setOnClickListener(new View.OnClickListener() {
                 @Override public void onClick(View v) {
-                    //ToastUtil.showToast(MainActivity.this,R.drawable.toast_confirm,"position == "+ position);
                     Intent intent = new Intent(MainActivity.this, BasicInfoActivity.class);
                     intent.putExtra("Lj", value.Lj);
                     intent.putExtra("OpDate", value.OpDate);
@@ -103,11 +96,8 @@ public class MainActivity extends BaseActivity {
     }
 
     public class ViewHolder {
-        TextView mTvname;
-        TextView mTvtext2;
-        TextView mTvtext3;
-        TextView mTvtext4;
-        TextView mTvtext5;
+        TextView number;
+        TextView type;
     }
 
     @Override
@@ -119,7 +109,7 @@ public class MainActivity extends BaseActivity {
                 return true;
             } else {
                 finish();
-                System.exit(0);
+                //System.exit(0);
                 return true;
             }
         }

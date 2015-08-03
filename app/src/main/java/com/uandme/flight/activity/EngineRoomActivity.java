@@ -50,7 +50,7 @@ public class EngineRoomActivity extends BaseActivity implements View.OnClickList
     //@InjectView(R.id.btn11)
     Button mBtn11;
     //@InjectView(R.id.tv_seat)
-    TextView mSeat;
+    EditText mSeat;
     //@InjectView(R.id.tv_passengerName)
     EditText mPassengerName;
     //@InjectView(R.id.tv_Arm)
@@ -90,7 +90,7 @@ public class EngineRoomActivity extends BaseActivity implements View.OnClickList
         dialog.setCanceledOnTouchOutside(false);
         dialog.show();
 
-        mTopBarTitle.setText("Engine room");
+        mTopBarTitle.setText("机舱信息");
         mTopBarRight.setText("Next");
 
         mListView = (ListView) findViewById(R.id.mListView);
@@ -105,7 +105,7 @@ public class EngineRoomActivity extends BaseActivity implements View.OnClickList
         mBtn9 = (Button) inflate.findViewById(R.id.btn9);
         mBtn10 = (Button) inflate.findViewById(R.id.btn10);
         mBtn11 = (Button) inflate.findViewById(R.id.btn11);
-        mSeat = (TextView) inflate.findViewById(R.id.tv_seat);
+        mSeat = (EditText) inflate.findViewById(R.id.tv_seat);
         mPassengerName = (EditText) inflate.findViewById(R.id.tv_passengerName);
         mArm = (TextView) inflate.findViewById(R.id.tv_Arm);
         mWeight = (EditText) inflate.findViewById(R.id.tv_weight);
@@ -121,15 +121,17 @@ public class EngineRoomActivity extends BaseActivity implements View.OnClickList
         mBtn11.setOnClickListener(this);
 
 
-        mSeat.setText("Seat");
+        mSeat.setEnabled(false);
+        mSeat.setText("座位");
         mPassengerName.setEnabled(false);
         mPassengerName.setBackgroundResource(0);
         mPassengerName.setGravity(Gravity.CENTER);
-        mPassengerName.setText("PassengerName");
+        mPassengerName.setText("乘客姓名");
         mArm.setEnabled(false);
-        mArm.setText("Arm (in.)");
+        mArm.setText("力矩 (in.)");
         mWeight.setEnabled(false);
-        mWeight.setText("Weight (lb.)");
+        mWeight.setBackgroundResource(0);
+        mWeight.setText("重量 (lb.)");
         //ButterKnife.inject(inflate);
         mListView.addHeaderView(inflate);
 
@@ -234,7 +236,7 @@ public class EngineRoomActivity extends BaseActivity implements View.OnClickList
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent, SeatByAcReg.SeatInfos value) {
+        public View getView(int position, View convertView, ViewGroup parent, final SeatByAcReg.SeatInfos value) {
             ViewHolder holder = (ViewHolder) convertView.getTag();
             if(holder == null) {
                 holder = new ViewHolder();
@@ -244,13 +246,12 @@ public class EngineRoomActivity extends BaseActivity implements View.OnClickList
                 holder.et_weight = (EditText) convertView.findViewById(R.id.tv_weight);
             }
             convertView.setTag(holder);
-
+            holder.tv_seat.setEnabled(false);
             holder.tv_seat.setText(value.SeatCode);
             holder.et_passenger.setText("");
             holder.tv_arm.setText(value.AcTypeLb + "");
-            holder.et_weight.setText(value.AcTypeSeatLimit + "");
-
-            handleWeight(holder);
+            holder.et_weight.setText("180");
+            handleWeight(holder, value);
 
             return convertView;
         }
@@ -264,7 +265,7 @@ public class EngineRoomActivity extends BaseActivity implements View.OnClickList
         EditText et_weight;
     }
 
-    private void handleWeight(final ViewHolder holder) {
+    private void handleWeight(final ViewHolder holder, final SeatByAcReg.SeatInfos value) {
         holder.et_weight.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
@@ -282,10 +283,10 @@ public class EngineRoomActivity extends BaseActivity implements View.OnClickList
                         @Override public void afterTextChanged(Editable s) {
                             if (!TextUtils.isEmpty(s)) {
                                 float weight = Float.parseFloat(s.toString());
-                                if (weight > 400) {
+                                if (weight > value.AcTypeSeatLimit) {
                                     holder.et_weight.setBackgroundColor(getResources().getColor(R.color.red));
                                 } else {
-                                    holder.et_weight.setBackgroundColor(getResources().getColor(R.color.transparent));
+                                    holder.et_weight.setBackgroundResource(R.drawable.engineeroom_name_bg);
                                 }
                             }
                         }

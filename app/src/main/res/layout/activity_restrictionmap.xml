@@ -2,8 +2,262 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    >
 
     <include layout="@layout/include_top_header"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:scrollbars="none"
+        >
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                >
+
+                <TextView
+                    android:id="@+id/tv_playinfo_title"
+                    style="@style/common_title_style_30_mt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="油量信息"
+                    android:paddingBottom="10dp"
+                    />
+                <TextView
+                    style="@style/common_title_style_30_mt"
+                    android:layout_alignParentRight="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="重心"
+                    android:layout_marginRight="50dp"
+                    android:paddingBottom="10dp"
+                    />
+            </RelativeLayout>
+
+            <View style="@style/common_line_1_style"/>
+
+            <LinearLayout style="@style/horization_layout"
+                >
+
+                <TextView
+                    android:id="@+id/tv_firstName_title"
+                    style="@style/item_key"
+                    android:text="最大允许加油量"
+                    android:layout_weight="0.3"
+                    />
+
+                <EditText
+                    android:id="@+id/tv_maxoil"
+                    style="@style/item_value"
+                    android:layout_weight="0.5"
+                    android:gravity="center"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:background="@drawable/engineeroom_name_bg"
+                    android:text=""
+                    />
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="0.3"
+                    android:text="无"
+                    android:gravity="center"
+                    android:textSize="18dp"
+                    android:layout_height="match_parent"
+                    />
+            </LinearLayout>
+
+            <View style="@style/common_line_1_style"/>
+
+            <LinearLayout style="@style/horization_layout">
+
+                <TextView
+                    android:id="@+id/tv_lastName_title"
+                    style="@style/item_key"
+                    android:layout_weight="0.3"
+                    android:text="实际加油量"
+
+                    />
+
+                <EditText
+                    android:id="@+id/tv_realityoil"
+                    style="@style/item_value"
+                    android:layout_weight="0.5"
+                    android:gravity="center"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:background="@drawable/engineeroom_name_bg"
+                    android:text=""
+                    />
+                <TextView
+                    android:id="@+id/tv_empty_focus"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.3"
+                    android:textSize="18dp"
+                    android:gravity="center"
+                    />
+            </LinearLayout>
+
+            <View style="@style/common_line_1_style"/>
+
+            <LinearLayout style="@style/horization_layout">
+
+                <TextView
+                    style="@style/item_key"
+                    android:text="滑行油量"
+                    android:layout_weight="0.3"
+                    />
+
+                <EditText
+                    android:id="@+id/tv_slideoil"
+                    style="@style/item_value"
+                    android:layout_weight="0.5"
+                    android:gravity="center"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:background="@drawable/engineeroom_name_bg"
+                    android:text=""
+                    />
+                <TextView
+                    android:id="@+id/tv_run_focus"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.3"
+                    android:textSize="18dp"
+                    android:gravity="center"
+                    />
+            </LinearLayout>
+            <View style="@style/common_line_1_style"/>
+            <LinearLayout style="@style/horization_layout">
+
+                <TextView
+                    style="@style/item_key"
+                    android:text="航路油量"
+                    android:layout_weight="0.3"
+                    />
+
+                <EditText
+                    android:id="@+id/tv_flyoil"
+                    style="@style/item_value"
+                    android:layout_weight="0.5"
+                    android:gravity="center"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:background="@drawable/engineeroom_name_bg"
+                    android:text=""
+                    />
+                <TextView
+                    android:id="@+id/tv_up"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.3"
+                    android:textSize="18dp"
+                    android:gravity="center"
+                    />
+            </LinearLayout>
+            <View style="@style/common_line_1_style"/>
+            <LinearLayout style="@style/horization_layout">
+
+                <TextView
+                    style="@style/item_key"
+                    android:text="起飞重量"
+                    android:layout_weight="0.3"
+                    />
+
+                <EditText
+                    android:id="@+id/tv_beforeweight"
+                    style="@style/item_value"
+                    android:layout_weight="0.5"
+                    android:gravity="center"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:background="@drawable/engineeroom_name_bg"
+                    android:text=""
+                    />
+                <TextView
+                    android:id="@+id/tv_fly_focus"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.3"
+                    android:textSize="18dp"
+                    android:gravity="center"
+                    />
+            </LinearLayout>
+            <View style="@style/common_line_1_style"/>
+            <LinearLayout style="@style/horization_layout">
+
+                <TextView
+                    style="@style/item_key"
+                    android:text="落地重量"
+                    android:layout_weight="0.3"
+                    />
+
+                <EditText
+                    android:id="@+id/tv_down"
+                    style="@style/item_value"
+                    android:gravity="center"
+                    android:layout_weight="0.5"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:background="@drawable/engineeroom_name_bg"
+                    android:text=""
+                    />
+                <TextView
+                    android:id="@+id/tv_down_focus"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.3"
+                    android:textSize="18dp"
+                    android:gravity="center"
+                    />
+            </LinearLayout>
+            <View style="@style/common_line_1_style"/>
+            <LinearLayout style="@style/horization_layout">
+
+                <TextView
+                    style="@style/item_key"
+                    android:text="MAC 值"
+                    android:layout_weight="0.3"
+                    />
+
+                <EditText
+                    android:id="@+id/tv_mac"
+                    style="@style/item_value"
+                    android:layout_weight="0.5"
+                    android:gravity="center"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:background="@drawable/engineeroom_name_bg"
+                    android:text=""
+                    />
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="0.3"
+                    android:text="无"
+                    android:gravity="center"
+                    android:textSize="18dp"
+                    android:layout_height="match_parent"
+                    />
+            </LinearLayout>
+            <View style="@style/common_line_1_style"/>
+        <com.uandme.flight.widget.LineCharView
+            android:id="@+id/line_charview"
+            android:layout_marginTop="50dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+        </LinearLayout>
+    </ScrollView>
 
 </LinearLayout>

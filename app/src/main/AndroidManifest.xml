@@ -42,6 +42,10 @@
             android:name=".activity.RestrictionMapActivity"
             android:screenOrientation="portrait"
             />
+        <activity
+            android:name=".activity.AircraftPersonnel"
+            android:screenOrientation="portrait"
+            />
     </application>
 
 </manifest>

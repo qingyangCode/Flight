@@ -24,7 +24,6 @@ public class BasicInfoActivity extends BaseActivity {
     @InjectView(R.id.tv_playNO) EditText mPlayNO;
     @InjectView(R.id.tv_originating) EditText mOrigination;
     @InjectView(R.id.tv_destination) EditText mDestination;
-    @InjectView(R.id.tv_pilot) EditText mPilot;
 
     private String[] titles = new String[] { "不含差分站", "含差分站" };
     private ArrayAdapter<String> adapter;
@@ -46,9 +45,13 @@ public class BasicInfoActivity extends BaseActivity {
             opDate = data.getStringExtra("OpDate");
             sysVersion = data.getStringExtra("SysVersion");
             bw = data.getStringExtra("Bw");
+            mWeight.setEnabled(false);
+            mWeight.setText(bw);
+            mFocus.setEnabled(false);
+            mFocus.setText((int)(Double.parseDouble(lj) / Double.parseDouble(bw)) + "");
         }
 
-        mTopBarTitle.setText("Aircraft basic information");
+        mTopBarTitle.setText("飞机基本信息");
         mTopBarLeft.setImageResource(R.drawable.common_topnav_back);
         mTopBarRight.setText("Next");
 
@@ -61,7 +64,7 @@ public class BasicInfoActivity extends BaseActivity {
         mSpinner.setOnItemSelectedListener(new SpinnerSelectedListener());
         //设置默认值
         mSpinner.setVisibility(View.VISIBLE);
-        mPlayNO.setText(aircraftReg);
+        //mPlayNO.setText(aircraftReg);
     }
 
     //使用数组形式操作
