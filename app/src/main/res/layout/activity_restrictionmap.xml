@@ -251,11 +251,11 @@
                     />
             </LinearLayout>
             <View style="@style/common_line_1_style"/>
-        <com.uandme.flight.widget.LineCharView
+        <com.uandme.flight.widget.MyLineDegreeView
             android:id="@+id/line_charview"
             android:layout_marginTop="50dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="250dp"
             />
         </LinearLayout>
     </ScrollView>

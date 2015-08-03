@@ -1,7 +1,24 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent" >
+    <include
+        android:id="@+id/layout_topbar"
+        layout="@layout/include_top_header"/>
 
-</LinearLayout>
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh"
+        android:layout_below="@id/layout_topbar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <com.uandme.flight.widget.AutoLoadListView
+            android:id="@+id/mListview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+
+
+
+</RelativeLayout>
