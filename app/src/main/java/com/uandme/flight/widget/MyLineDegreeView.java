@@ -19,6 +19,7 @@ public class MyLineDegreeView extends View {
 	public MyLineDegreeView(Context context) {
 		super(context);
 		init();
+		//add
 	}
 
 	public MyLineDegreeView(Context context, AttributeSet attrs,
