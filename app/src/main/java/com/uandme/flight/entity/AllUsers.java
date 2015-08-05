@@ -6,29 +6,33 @@ import com.google.gson.Gson;
 
 
 public class AllUsers {
+
 	
 	public TResponseObject ResponseObject;
-	class TResponseObject{
+	public class TResponseObject{
 		public TResponseData ResponseData;
+		public int ResponseCode;
 	}
 	
-	class TResponseData{
+	public class TResponseData{
 		public ArrayList<TIAppObject> IAppObject;
 	}
 
-	class TIAppObject{
-		String UserPassWord;
-		String ActiveStart;
-		String UserCode;
-		String Grant_S_M;
-		String DepCode;
-		String UserName;
-		String CodeCheck;
-		String SysVersion;
+	public class TIAppObject{
+		public String UserPassWord;
+		public String ActiveStart;
+		public String UserCode;
+		public String Grant_S_M;
+		public String DepCode;
+		public String UserName;
+		public String CodeCheck;
+		public String SysVersion;
 	}
 	
 	public static AllUsers parse(String jsonStr){
 		Gson gson = new Gson();
+		if(jsonStr.contains("\"ResponseData\":\"\""))
+			jsonStr = jsonStr.replace("\"ResponseData\":\"\"","\"ResponseData\":{}");
 		AllUsers fromJson = gson.fromJson(jsonStr, AllUsers.class);
 		return fromJson;
 	}

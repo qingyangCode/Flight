@@ -8,12 +8,17 @@ import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import com.uandme.flight.FlightApplication;
 import com.uandme.flight.R;
 import com.uandme.flight.adapter.FlightBaseAdapter;
+import com.uandme.flight.data.dao.User;
+import com.uandme.flight.data.dao.UserDao;
 import com.uandme.flight.entity.EngineRoom;
 import com.uandme.flight.entity.SeatByAcReg;
 import com.uandme.flight.network.ResponseListner;
@@ -69,6 +74,7 @@ public class EngineRoomActivity extends BaseActivity implements View.OnClickList
     private String opDate;
     private String sysVersion;
     private String bw;
+    private ArrayList<SeatByAcReg.SeatInfos> IAppObject;
 
     @Override public int getContentView() {
         return R.layout.activity_engineroom;
@@ -76,6 +82,7 @@ public class EngineRoomActivity extends BaseActivity implements View.OnClickList
 
     @Override protected void onloadData() {
         Intent data = getIntent();
+        IAppObject = new ArrayList<>();
         if (data != null) {
             aircraftReg = data.getStringExtra("AircraftReg");
             lj = data.getStringExtra("Lj");
@@ -85,13 +92,13 @@ public class EngineRoomActivity extends BaseActivity implements View.OnClickList
         }
 
         final CommonProgressDialog dialog = new CommonProgressDialog(this);
-        dialog.setTip("Loading ..");
+        dialog.setTip("加载中 ..");
         dialog.setCancelable(true);
         dialog.setCanceledOnTouchOutside(false);
         dialog.show();
 
         mTopBarTitle.setText("机舱信息");
-        mTopBarRight.setText("Next");
+        mTopBarRight.setText("下一步");
 
         mListView = (ListView) findViewById(R.id.mListView);
         inflate = View.inflate(this, R.layout.header_engineroom, null);
@@ -143,7 +150,8 @@ public class EngineRoomActivity extends BaseActivity implements View.OnClickList
                 if (dialog != null && dialog.isShowing())
                     dialog.dismiss();
                 if (response != null && response.ResponseObject.ResponseCode == Constants.RESULT_OK) {
-                    mListView.setAdapter(new EngineAdapter(EngineRoomActivity.this, response.ResponseObject.ResponseData.IAppObject, 50, R.layout.item_seatlayout, R.layout.item_failed));
+                    IAppObject = response.ResponseObject.ResponseData.IAppObject;
+                    mListView.setAdapter(new EngineAdapter(EngineRoomActivity.this, IAppObject, 50, R.layout.item_seatlayout, R.layout.item_failed));
                 }else {
                     mListView.setAdapter(new EngineAdapter(EngineRoomActivity.this, new ArrayList<SeatByAcReg.SeatInfos>(), 50, R.layout.item_seatlayout, R.layout.item_failed));
                 }
@@ -236,19 +244,41 @@ public class EngineRoomActivity extends BaseActivity implements View.OnClickList
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent, final SeatByAcReg.SeatInfos value) {
+        public View getView(final int position, View convertView, ViewGroup parent, final SeatByAcReg.SeatInfos value) {
             ViewHolder holder = (ViewHolder) convertView.getTag();
             if(holder == null) {
                 holder = new ViewHolder();
                 holder.tv_seat = (TextView) convertView.findViewById(R.id.tv_seat);
-                holder.et_passenger = (EditText) convertView.findViewById(R.id.tv_passengerName);
+                holder.et_passenger = (AutoCompleteTextView) convertView.findViewById(R.id.tv_passengerName);
+                final UserDao userDao = FlightApplication.getDaoSession().getUserDao();
+                final List<User> list = userDao.queryBuilder().list();
+                String [] names = new String[list.size()];
+                for(int i = 0; i < list.size(); i++) {
+                    names[i] = list.get(i).getUserName();
+                }
+                holder.et_passenger.setAdapter(new ArrayAdapter<String>(EngineRoomActivity.this, R.layout.list_item, names));
                 holder.tv_arm = (TextView) convertView.findViewById(R.id.tv_Arm);
                 holder.et_weight = (EditText) convertView.findViewById(R.id.tv_weight);
             }
             convertView.setTag(holder);
             holder.tv_seat.setEnabled(false);
             holder.tv_seat.setText(value.SeatCode);
-            holder.et_passenger.setText("");
+            holder.et_passenger.setText(value.userName);
+            holder.et_passenger.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                }
+
+                @Override public void afterTextChanged(Editable s) {
+                    IAppObject.get(position).userName = s.toString().trim();
+                }
+            });
             holder.tv_arm.setText(value.AcTypeLb + "");
             holder.et_weight.setText("180");
             handleWeight(holder, value);
@@ -260,7 +290,7 @@ public class EngineRoomActivity extends BaseActivity implements View.OnClickList
 
     class ViewHolder {
         TextView tv_seat;
-        EditText et_passenger;
+        AutoCompleteTextView et_passenger;
         TextView tv_arm;
         EditText et_weight;
     }

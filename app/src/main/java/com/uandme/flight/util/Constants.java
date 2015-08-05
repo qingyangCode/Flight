@@ -5,4 +5,6 @@ package com.uandme.flight.util;
  */
 public interface Constants {
     final int RESULT_OK = 100;
+
+    String DB_ALLUSER = "alluser";
 }

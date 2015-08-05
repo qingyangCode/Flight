@@ -48,5 +48,6 @@ public class SeatByAcReg {
         public double XPos;//横坐标占比
         public double YPos;//坚坐标占比
         public String Direction;//座椅朝向 LEFT朝左 UP朝上 RIGHT朝右 DWON朝下
+        public String userName;
     }
 }

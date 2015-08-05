@@ -1,6 +1,7 @@
 package com.uandme.flight.activity;
 
 import android.content.Intent;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import com.uandme.flight.R;
+import com.uandme.flight.util.ToastUtil;
 
 /**
  * Created by QingYang on 15/7/23.
@@ -53,7 +55,7 @@ public class BasicInfoActivity extends BaseActivity {
 
         mTopBarTitle.setText("飞机基本信息");
         mTopBarLeft.setImageResource(R.drawable.common_topnav_back);
-        mTopBarRight.setText("Next");
+        mTopBarRight.setText("下一步");
 
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, titles);
         //设置下拉列表的风格
@@ -82,6 +84,19 @@ public class BasicInfoActivity extends BaseActivity {
     @Override public View.OnClickListener getRightOnClickListener() {
         return new View.OnClickListener() {
             @Override public void onClick(View v) {
+
+                if(TextUtils.isEmpty(mPlayNO.getText().toString().trim())) {
+                    ToastUtil.showToast(BasicInfoActivity.this, R.drawable.toast_warning, "航班号不能为空");
+                    return;
+                } else if (TextUtils.isEmpty(mOrigination.getText().toString().trim())) {
+                    ToastUtil.showToast(BasicInfoActivity.this, R.drawable.toast_warning, "起飞机场不能为空");
+                    return;
+                }else if(TextUtils.isEmpty(mDestination.getText().toString().trim())) {
+                    ToastUtil.showToast(BasicInfoActivity.this, R.drawable.toast_warning, "目的机场不能为空");
+                    return;
+                }
+
+
                 Intent intent = new Intent(BasicInfoActivity.this, EngineRoomActivity.class);
                 intent.putExtra("Lj", lj);
                 intent.putExtra("OpDate", opDate);
@@ -92,4 +107,5 @@ public class BasicInfoActivity extends BaseActivity {
             }
         };
     }
+
 }

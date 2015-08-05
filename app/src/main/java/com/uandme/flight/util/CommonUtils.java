@@ -1,6 +1,9 @@
 package com.uandme.flight.util;
 
+import android.app.Activity;
 import android.content.Context;
+import android.util.DisplayMetrics;
+import android.view.Display;
 import com.uandme.flight.entity.LoginUserInfo;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -17,5 +20,6 @@ public class CommonUtils {
 			return "";
 		}
 	}
+
 
 }

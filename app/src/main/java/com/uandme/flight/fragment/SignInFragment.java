@@ -16,6 +16,7 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 import com.uandme.flight.R;
 import com.uandme.flight.activity.MainActivity;
+import com.uandme.flight.data.dao.User;
 import com.uandme.flight.entity.LoginUserInfo;
 import com.uandme.flight.network.IRequest;
 import com.uandme.flight.network.ResponseListner;
@@ -56,16 +57,16 @@ public class SignInFragment extends BaseFragment {
         final String password = mEtPassword.getText().toString().trim();
         if (TextUtils.isEmpty(userName)) {
             ToastUtil.showToast(getActivity(), R.drawable.toast_warning,
-                    "userName can not be empty .");
+                    "用户名不能为空");
             return;
         } else if (TextUtils.isEmpty(password)) {
             ToastUtil.showToast(getActivity(), R.drawable.toast_warning,
-                    "password can not be empty .");
+                    "密码不能为空");
             return;
         }
         mLayoutTop.setVisibility(View.VISIBLE);
         final CommonProgressDialog progressDialog = new CommonProgressDialog(getActivity());
-        progressDialog.setTip("sign in ..");
+        progressDialog.setTip("正在登录 ..");
         progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.setCancelable(true);
         progressDialog.show();
@@ -74,7 +75,13 @@ public class SignInFragment extends BaseFragment {
                 progressDialog.dismiss();
                 mLayoutTop.setVisibility(View.GONE);
                 if(userInfo != null) {
-                    UserManager.getInstance().setUserInfo(userInfo);
+                    UserManager.getInstance().onLogin();
+                    User user = UserManager.getInstance().getUser();
+                    user.setUserName(userName);
+                    user.setCheckCode(userInfo.getUserCodeCheck());
+                    user.setUserCode(userInfo.getUserCode());
+                    user.setUserPassWord(password);
+                    UserManager.getInstance().setUserInfo(user);
                     startActivity(new Intent(getActivity(), MainActivity.class));
                     getActivity().finish();
                 }

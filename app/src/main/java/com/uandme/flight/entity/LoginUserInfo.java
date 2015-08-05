@@ -8,6 +8,8 @@ import com.google.gson.Gson;
  */
 public class LoginUserInfo {
 	public TResponseObject ResponseObject;
+	private String checkCode;
+	private String userName;
 	
 	public static class TResponseObject{
 		public String ResponseCode;
@@ -41,5 +43,28 @@ public class LoginUserInfo {
 		LoginUserInfo fromJson = gson.fromJson(jsonStr, LoginUserInfo.class);
 		return fromJson;
 	}
-	
+
+	public TResponseObject getResponseObject() {
+		return ResponseObject;
+	}
+
+	public void setResponseObject(TResponseObject responseObject) {
+		ResponseObject = responseObject;
+	}
+
+	public String getCheckCode() {
+		return checkCode;
+	}
+
+	public void setCheckCode(String checkCode) {
+		this.checkCode = checkCode;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
 }

@@ -32,6 +32,7 @@ public class ListViewAdapter extends BaseSwipeAdapter {
 
 	private Activity context;
 	private List<Pair<String, Boolean>> userInfos;
+	private OnBottonClick mOnBottonClick;
 
 	public ListViewAdapter(Activity context) {
 		this.context = context;
@@ -59,8 +60,13 @@ public class ListViewAdapter extends BaseSwipeAdapter {
 
 	@Override
 	public View generateView(int position, ViewGroup parent) {
-		return context.getLayoutInflater().inflate(R.layout.item_listview,
+		View view = context.getLayoutInflater().inflate(R.layout.item_listview,
 				parent, false);
+		return view;
+	}
+
+	@Override protected View bottomAddView(ViewGroup parent) {
+		return context.getLayoutInflater().inflate(R.layout.item_bottom_add, parent, false);
 	}
 
 	public void setData(List<Pair<String,Boolean>> pairs) {
@@ -78,13 +84,7 @@ public class ListViewAdapter extends BaseSwipeAdapter {
 		LinearLayout ll = (LinearLayout) convertView.findViewById(R.id.ll);
 
 		TextView tv_userName = (TextView) convertView.findViewById(R.id.tv_userName);
-		CheckBox checkBox = (CheckBox) convertView.findViewById(R.id.cb_checkbox);
 		tv_userName.setText(userInfos.get(position).first);
-		if(userInfos.get(position).second) {
-			checkBox.setChecked(true);
-		} else {
-			checkBox.setChecked(false);
-		}
 
 
 		swipeItem.setShowMode(ShowMode.PullOut);
@@ -133,5 +133,13 @@ public class ListViewAdapter extends BaseSwipeAdapter {
 				swipeItem.close();
 			}
 		});
+	}
+
+	public interface OnBottonClick {
+		void onClick();
+	}
+
+	public void setOnBottomClick(OnBottonClick onBottonClick) {
+		this.mOnBottonClick = onBottonClick;
 	}
 }

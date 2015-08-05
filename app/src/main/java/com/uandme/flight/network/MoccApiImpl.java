@@ -16,6 +16,7 @@ import com.uandme.flight.entity.TUserInfo;
 import com.uandme.flight.entity.UserGrantsInfo;
 import com.uandme.flight.util.CommonUtils;
 import com.uandme.flight.util.DigestUtils;
+import com.uandme.flight.util.LogUtil;
 import com.uandme.flight.util.UserManager;
 
 /**
@@ -80,13 +81,15 @@ public class MoccApiImpl implements MoccApi{
                     ll.onEmptyOrError(userInfo.ResponseObject.ResponseErr);
                     return;
                 }
-                String newStr = userInfo.ResponseObject.ResponseData.IAppObject.GUIDCode + pwd;
+                final String guidCode = userInfo.ResponseObject.ResponseData.IAppObject.GUIDCode;
+                String newStr = guidCode + pwd;
                 newStr = DigestUtils.md5(newStr);
                 newStr = newStr.toUpperCase();//注意必须是大写的 md5
                 validateUser(userName, newStr, new ResponseListner<String>() {
                     @Override public void onResponse(String response) {
                         String xml2json2 = CommonUtils.xml2JSON(response);
                         LoginUserInfo info = LoginUserInfo.parse(xml2json2);
+                        info.setCheckCode(guidCode);
                         ll.onResponse(info);
                     }
 
@@ -103,14 +106,13 @@ public class MoccApiImpl implements MoccApi{
     }
 
     //	一、获取所有飞机信息
-    public void getAllAircraft(String userName, String checkCode,
-            final ResponseListner responseListner) {
+    public void getAllAircraft(String userName, final ResponseListner responseListner) {
         //String url = "http://124.127.106.196:80/Login1.ashx";
         StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>")
                 .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
                 .append("<CMD>GetAllAircraft</CMD>")
                 .append("<UserCode>"+"Test"+"</UserCode>")
-                .append("<CheckCode>"+checkCode+"</CheckCode>")
+                .append("<CheckCode>"+ UserManager.getInstance().getUser().getCheckCode() +"</CheckCode>")
                 .append("RequestData/>").append("</MessageObject>");
         String xmlParam = sb.toString();
         NetBase net = new NetBase(BASE_URL, xmlParam, new ResponseListner<String>() {
@@ -135,14 +137,14 @@ public class MoccApiImpl implements MoccApi{
 
 
     ///B8099  二、根据机号获取信息
-    public void getAircraftByAcReg(String userName, String checkCode, String airReg,
+    public void getAircraftByAcReg(String userName,  String airReg,
             final ResponseListner responseListner) {
         //String url = "http://124.127.106.196:80/Login1.ashx";
         StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>")
                 .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
                 .append("<CMD>GetAircraftByAcReg</CMD>")
                 .append("<UserCode>"+userName+"</UserCode>")
-                .append("<CheckCode>"+checkCode+"</CheckCode>")
+                .append("<CheckCode>"+ UserManager.getInstance().getUser().getCheckCode() +"</CheckCode>")
                 .append("<RequestData>")
                 .append("<IAppObject xsi:type=\"AppAircraft\">")
                 .append("<AircraftReg>"+airReg+"</AircraftReg>")
@@ -183,14 +185,14 @@ public class MoccApiImpl implements MoccApi{
 
 
     //ce680
-    public void getAircraftByAcType(String userName, String checkCode, String AircraftType,
+    public void getAircraftByAcType(String userName,  String AircraftType,
             final ResponseListner responseListner) {
         //String url = "http://124.127.106.196:80/Login1.ashx";
         StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>")
                 .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
                 .append("<CMD>getAircraftByAcType</CMD>")
                 .append("<UserCode>"+userName+"</UserCode>")
-                .append("<CheckCode>"+checkCode+"</CheckCode>")
+                .append("<CheckCode>"+UserManager.getInstance().getUser().getCheckCode()+"</CheckCode>")
                 .append("<RequestData>")
                 .append("<IAppObject xsi:type=\"AppAircraft\">")
                 .append("<AircraftType>"+AircraftType+"</AircraftType>")
@@ -228,14 +230,13 @@ public class MoccApiImpl implements MoccApi{
     }
 
 
-    public void addNewAircraft(String userName, String checkCode,
-            final ResponseListner responseListner) {
+    public void addNewAircraft(String userName, final ResponseListner responseListner) {
         //String url = "http://124.127.106.196:80/Login1.ashx";
         StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>")
                 .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
                 .append("<CMD>AddNewAircraft</CMD>")
                 .append("<UserCode>"+userName+"</UserCode>")
-                .append("<CheckCode>"+checkCode+"</CheckCode>")
+                .append("<CheckCode>"+ UserManager.getInstance().getUser().getCheckCode() +"</CheckCode>")
                 .append("<RequestData>")
                 .append("<IAppObject xsi:type=\"AppAircraft\">")
                 .append("<AircraftReg>B1111</AircraftReg>")
@@ -279,14 +280,13 @@ public class MoccApiImpl implements MoccApi{
     }
 
 
-    public void getAllAcType(String userName, String checkCode,
-            final ResponseListner responseListner) {
+    public void getAllAcType(String userName, final ResponseListner responseListner) {
         //String url = "http://124.127.106.196:80/Login1.ashx";
         StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>")
                 .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
                 .append("<CMD>GetAllAcType</CMD>").
                         append("<UserCode>" + userName + "</UserCode>")
-                .append("<CheckCode>"+checkCode+"</CheckCode>")
+                .append("<CheckCode>"+UserManager.getInstance().getUser().getCheckCode()+"</CheckCode>")
                 .append("<RequestData />")
                 .append("</MessageObject>");
         String xmlParam = sb.toString();
@@ -310,14 +310,14 @@ public class MoccApiImpl implements MoccApi{
         net.execute();
     }
 
-    public void getActypeByType(String userName, String checkCode,
+    public void getActypeByType(String userName,
             final ResponseListner responseListner) {
         //String url = "http://124.127.106.196:80/Login1.ashx";
         StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>")
                 .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
                 .append("<CMD>GetActypeByType</CMD>")
                 .append("<UserCode>"+userName+"</UserCode>")
-                .append("<CheckCode>"+checkCode+"</CheckCode>")
+                .append("<CheckCode>"+ UserManager.getInstance().getUser().getCheckCode()+"</CheckCode>")
                 .append("<RequestData>")
                 .append("<IAppObject xsi:type=\"AppAircraftType\">")
                 .append("<AircraftType>CE560</AircraftType>")
@@ -355,13 +355,13 @@ public class MoccApiImpl implements MoccApi{
 
 
 
-    public void getAllUser(String userName, String checkCode, final ResponseListner responseListner) {
+    public void getAllUser(String userName,  final ResponseListner responseListner) {
         //String url = "http://124.127.106.196:80/Login1.ashx";
         StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>")
                 .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
                 .append("<CMD>GetAllUser</CMD>")
                 .append("<UserCode>"+userName+"</UserCode>")
-                .append("<CheckCode>"+checkCode+"</CheckCode>")
+                .append("<CheckCode>"+UserManager.getInstance().getUser().getCheckCode()+"</CheckCode>")
                 .append("<RequestData>")
                 .append("<IAppObject xsi:type=\"AppUser\">")
                 .append("<UserCode>Test</UserCode>")
@@ -373,20 +373,19 @@ public class MoccApiImpl implements MoccApi{
         NetBase net = new NetBase(BASE_URL, xmlParam, new ResponseListner<String>() {
             @Override
             public void onResponse(String response) {
-                if(responseListner != null){
-                    responseListner.onResponse(response);
-                }
                 String xml2json = CommonUtils.xml2JSON(response);
+                LogUtil.LOGD(TAG,"AllUsers ==== " + xml2json);
                 if(!TextUtils.isEmpty(xml2json)){
-
                     AllUsers parse = AllUsers.parse(xml2json);
+                    responseListner.onResponse(parse);
+                } else {
+                    responseListner.onResponse(null);
                 }
             }
 
             @Override
             public void onEmptyOrError(String message) {
-                // TODO Auto-generated method stub
-
+                responseListner.onResponse(null);
             }
         });
         net.execute();
@@ -395,14 +394,13 @@ public class MoccApiImpl implements MoccApi{
 
 
     //一、按用户获取此用户的授权信息
-    public void getGrantsByUserCode(String userName, String checkCode,
-            final ResponseListner responseListner) {
+    public void getGrantsByUserCode(String userName, final ResponseListner responseListner) {
         //String url = "http://124.127.106.196:80/Login1.ashx";
         StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>")
                 .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
                 .append("<CMD>GetGrantsByUserCode</CMD>")
                 .append("<UserCode>"+userName+"</UserCode>")
-                .append("<CheckCode>"+checkCode+"</CheckCode>")
+                .append("<CheckCode>"+UserManager.getInstance().getUser().getCheckCode()+"</CheckCode>")
                 .append("<RequestData>")
                 .append("<IAppObject xsi:type=\"AppUser\">")
                 .append("<UserCode>Test</UserCode>")
@@ -438,14 +436,14 @@ public class MoccApiImpl implements MoccApi{
 
 
     //一、按用户代码获取
-    public void getUserByCode(String userName, String checkCode,
+    public void getUserByCode(String userName,
             final ResponseListner responseListner) {
         //String url = "http://124.127.106.196:80/Login1.ashx";
         StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>")
                 .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
                 .append("<CMD>GetUserByCode</CMD>")
                 .append("<UserCode>"+userName+"</UserCode>")
-                .append("<CheckCode>"+checkCode+"</CheckCode>")
+                .append("<CheckCode>"+UserManager.getInstance().getUser().getCheckCode()+"</CheckCode>")
                 .append("<RequestData>")
                 .append("<IAppObject xsi:type=\"AppUser\">")
                 .append("<UserCode>Test</UserCode>")
@@ -479,14 +477,14 @@ public class MoccApiImpl implements MoccApi{
 
 
 
-    public void getAllUserNew(String userName, String checkCode,
+    public void getAllUserNew(String userName,
             final ResponseListner responseListner) {
         //String url = "http://124.127.106.196:80/Login1.ashx";
         StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>")
                 .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
                 .append("<CMD>GetAllUserNew</CMD>")
                 .append("<UserCode>"+userName+"</UserCode>")
-                .append("<CheckCode>"+checkCode+"</CheckCode>")
+                .append("<CheckCode>"+UserManager.getInstance().getUser().getCheckCode()+"</CheckCode>")
                 .append("<RequestData>")
                 .append("<IAppObject xsi:type=\"AppUser\">")
                 .append("<UserCode>Test</UserCode>")
@@ -520,14 +518,14 @@ public class MoccApiImpl implements MoccApi{
 
 
 
-    public void addFlightCd(String userName, String checkCode,
+    public void addFlightCd(String userName,
             final ResponseListner responseListner) {
         //String url = "http://124.127.106.196:80/Login1.ashx";
         StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>")
                 .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
                 .append("<CMD>AddFlightCd</CMD>")
                 .append("<UserCode>"+userName+"</UserCode>")
-                .append("<CheckCode>"+checkCode+"</CheckCode>")
+                .append("<CheckCode>"+UserManager.getInstance().getUser().getCheckCode()+"</CheckCode>")
                 .append("<RequestData>")
                 .append("<IAppObject xsi:type=\"AircraftCd\">")
                 .append("<AircraftReg>B8888</AircraftReg>")
@@ -572,13 +570,13 @@ public class MoccApiImpl implements MoccApi{
         net.execute();
     }
 
-    public  void addFlightInfo(String userName, String checkCode, ResponseListner responseListner) {
+    public  void addFlightInfo(String userName,  ResponseListner responseListner) {
         //String url = "http://124.127.106.196:80/Login1.ashx";
         StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>")
                 .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
                 .append("<CMD>AddFlightInfo</CMD>")
                 .append("<UserCode>"+userName+"</UserCode>")
-                .append("<CheckCode>"+checkCode+"</CheckCode>")
+                .append("<CheckCode>"+UserManager.getInstance().getUser().getCheckCode()+"</CheckCode>")
                 .append("<RequestData>")
                 .append("<IAppObject xsi:type=\"FlightInfo\">")
                 .append("<FlightId>1</FlightId>")

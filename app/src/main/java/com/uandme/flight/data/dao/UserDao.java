@@ -23,50 +23,15 @@ public class UserDao extends AbstractDao<User, Long> {
      * Can be used for QueryBuilder and for referencing column names.
     */
     public static class Properties {
-        public final static Property Id = new Property(0, long.class, "id", true, "ID");
-        public final static Property Uuid = new Property(1, String.class, "uuid", false, "UUID");
-        public final static Property Email = new Property(2, String.class, "email", false, "EMAIL");
-        public final static Property Role = new Property(3, String.class, "role", false, "ROLE");
-        public final static Property Created_at = new Property(4, String.class, "created_at", false, "CREATED_AT");
-        public final static Property Updated_at = new Property(5, String.class, "updated_at", false, "UPDATED_AT");
-        public final static Property First_name = new Property(6, String.class, "first_name", false, "FIRST_NAME");
-        public final static Property Last_name = new Property(7, String.class, "last_name", false, "LAST_NAME");
-        public final static Property Handicap_style = new Property(8, String.class, "handicap_style", false, "HANDICAP_STYLE");
-        public final static Property Handicap_style_1 = new Property(9, String.class, "handicap_style_1", false, "HANDICAP_STYLE_1");
-        public final static Property Handicap_style_2 = new Property(10, String.class, "handicap_style_2", false, "HANDICAP_STYLE_2");
-        public final static Property Height = new Property(11, double.class, "height", false, "HEIGHT");
-        public final static Property Weight = new Property(12, double.class, "weight", false, "WEIGHT");
-        public final static Property Birth_year = new Property(13, int.class, "birth_year", false, "BIRTH_YEAR");
-        public final static Property Gender = new Property(14, int.class, "gender", false, "GENDER");
-        public final static Property Right_handed = new Property(15, int.class, "right_handed", false, "RIGHT_HANDED");
-        public final static Property Grip_posture = new Property(16, String.class, "grip_posture", false, "GRIP_POSTURE");
-        public final static Property Grip_position = new Property(17, String.class, "grip_position", false, "GRIP_POSITION");
-        public final static Property Is_phone_timer = new Property(18, String.class, "is_phone_timer", false, "IS_PHONE_TIMER");
-        public final static Property Video_record = new Property(19, String.class, "video_record", false, "VIDEO_RECORD");
-        public final static Property Auto_save = new Property(20, String.class, "auto_save", false, "AUTO_SAVE");
-        public final static Property Auto_comment = new Property(21, String.class, "auto_comment", false, "AUTO_COMMENT");
-        public final static Property Sound_effect = new Property(22, String.class, "sound_effect", false, "SOUND_EFFECT");
-        public final static Property Text_hint = new Property(23, String.class, "text_hint", false, "TEXT_HINT");
-        public final static Property Power_save = new Property(24, String.class, "power_save", false, "POWER_SAVE");
-        public final static Property Unit = new Property(25, String.class, "unit", false, "UNIT");
-        public final static Property Impact_detect = new Property(26, String.class, "impact_detect", false, "IMPACT_DETECT");
-        public final static Property Goals = new Property(27, String.class, "goals", false, "GOALS");
-        public final static Property User_image_file_name = new Property(28, String.class, "user_image_file_name", false, "USER_IMAGE_FILE_NAME");
-        public final static Property User_image_content_type = new Property(29, String.class, "user_image_content_type", false, "USER_IMAGE_CONTENT_TYPE");
-        public final static Property User_image_file_size = new Property(30, String.class, "user_image_file_size", false, "USER_IMAGE_FILE_SIZE");
-        public final static Property User_image_fingerprint = new Property(31, String.class, "user_image_fingerprint", false, "USER_IMAGE_FINGERPRINT");
-        public final static Property Versions = new Property(32, String.class, "versions", false, "VERSIONS");
-        public final static Property Language = new Property(33, String.class, "language", false, "LANGUAGE");
-        public final static Property Timezone = new Property(34, String.class, "timezone", false, "TIMEZONE");
-        public final static Property Test_account = new Property(35, String.class, "test_account", false, "TEST_ACCOUNT");
-        public final static Property User_role = new Property(36, String.class, "user_role", false, "USER_ROLE");
-        public final static Property Flags = new Property(37, String.class, "flags", false, "FLAGS");
-        public final static Property Authentication_token = new Property(38, String.class, "authentication_token", false, "AUTHENTICATION_TOKEN");
-        public final static Property Profile = new Property(39, String.class, "profile", false, "PROFILE");
-        public final static Property Avatar_url = new Property(40, String.class, "avatar_url", false, "AVATAR_URL");
-        public final static Property Facebook_connected = new Property(41, boolean.class, "facebook_connected", false, "FACEBOOK_CONNECTED");
-        public final static Property Wechat_connected = new Property(42, boolean.class, "wechat_connected", false, "WECHAT_CONNECTED");
-        public final static Property Position = new Property(43, int.class, "position", false, "POSITION");
+        public final static Property Id = new Property(0, Long.class, "id", true, "_id");
+        public final static Property UserName = new Property(1, String.class, "UserName", false, "USER_NAME");
+        public final static Property UserCode = new Property(2, String.class, "UserCode", false, "USER_CODE");
+        public final static Property DepCode = new Property(3, String.class, "DepCode", false, "DEP_CODE");
+        public final static Property UserPassWord = new Property(4, String.class, "UserPassWord", false, "USER_PASS_WORD");
+        public final static Property CodeCheck = new Property(5, String.class, "CodeCheck", false, "CODE_CHECK");
+        public final static Property Grant_S_M = new Property(6, String.class, "Grant_S_M", false, "GRANT__S__M");
+        public final static Property ActiveStart = new Property(7, String.class, "ActiveStart", false, "ACTIVE_START");
+        public final static Property SysVersion = new Property(8, int.class, "SysVersion", false, "SYS_VERSION");
     };
 
 
@@ -82,50 +47,15 @@ public class UserDao extends AbstractDao<User, Long> {
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "'user' (" + //
-                "'ID' INTEGER PRIMARY KEY NOT NULL ," + // 0: id
-                "'UUID' TEXT," + // 1: uuid
-                "'EMAIL' TEXT," + // 2: email
-                "'ROLE' TEXT," + // 3: role
-                "'CREATED_AT' TEXT," + // 4: created_at
-                "'UPDATED_AT' TEXT," + // 5: updated_at
-                "'FIRST_NAME' TEXT," + // 6: first_name
-                "'LAST_NAME' TEXT," + // 7: last_name
-                "'HANDICAP_STYLE' TEXT," + // 8: handicap_style
-                "'HANDICAP_STYLE_1' TEXT," + // 9: handicap_style_1
-                "'HANDICAP_STYLE_2' TEXT," + // 10: handicap_style_2
-                "'HEIGHT' REAL NOT NULL ," + // 11: height
-                "'WEIGHT' REAL NOT NULL ," + // 12: weight
-                "'BIRTH_YEAR' INTEGER NOT NULL ," + // 13: birth_year
-                "'GENDER' INTEGER NOT NULL ," + // 14: gender
-                "'RIGHT_HANDED' INTEGER NOT NULL ," + // 15: right_handed
-                "'GRIP_POSTURE' TEXT," + // 16: grip_posture
-                "'GRIP_POSITION' TEXT," + // 17: grip_position
-                "'IS_PHONE_TIMER' TEXT," + // 18: is_phone_timer
-                "'VIDEO_RECORD' TEXT," + // 19: video_record
-                "'AUTO_SAVE' TEXT," + // 20: auto_save
-                "'AUTO_COMMENT' TEXT," + // 21: auto_comment
-                "'SOUND_EFFECT' TEXT," + // 22: sound_effect
-                "'TEXT_HINT' TEXT," + // 23: text_hint
-                "'POWER_SAVE' TEXT," + // 24: power_save
-                "'UNIT' TEXT," + // 25: unit
-                "'IMPACT_DETECT' TEXT," + // 26: impact_detect
-                "'GOALS' TEXT," + // 27: goals
-                "'USER_IMAGE_FILE_NAME' TEXT," + // 28: user_image_file_name
-                "'USER_IMAGE_CONTENT_TYPE' TEXT," + // 29: user_image_content_type
-                "'USER_IMAGE_FILE_SIZE' TEXT," + // 30: user_image_file_size
-                "'USER_IMAGE_FINGERPRINT' TEXT," + // 31: user_image_fingerprint
-                "'VERSIONS' TEXT," + // 32: versions
-                "'LANGUAGE' TEXT," + // 33: language
-                "'TIMEZONE' TEXT," + // 34: timezone
-                "'TEST_ACCOUNT' TEXT," + // 35: test_account
-                "'USER_ROLE' TEXT," + // 36: user_role
-                "'FLAGS' TEXT," + // 37: flags
-                "'AUTHENTICATION_TOKEN' TEXT," + // 38: authentication_token
-                "'PROFILE' TEXT," + // 39: profile
-                "'AVATAR_URL' TEXT," + // 40: avatar_url
-                "'FACEBOOK_CONNECTED' INTEGER NOT NULL ," + // 41: facebook_connected
-                "'WECHAT_CONNECTED' INTEGER NOT NULL ," + // 42: wechat_connected
-                "'POSITION' INTEGER NOT NULL );"); // 43: position
+                "'_id' INTEGER PRIMARY KEY AUTOINCREMENT ," + // 0: id
+                "'USER_NAME' TEXT NOT NULL UNIQUE ," + // 1: UserName
+                "'USER_CODE' TEXT," + // 2: UserCode
+                "'DEP_CODE' TEXT," + // 3: DepCode
+                "'USER_PASS_WORD' TEXT," + // 4: UserPassWord
+                "'CODE_CHECK' TEXT," + // 5: CodeCheck
+                "'GRANT__S__M' TEXT," + // 6: Grant_S_M
+                "'ACTIVE_START' TEXT," + // 7: ActiveStart
+                "'SYS_VERSION' INTEGER NOT NULL );"); // 8: SysVersion
     }
 
     /** Drops the underlying database table. */
@@ -138,246 +68,64 @@ public class UserDao extends AbstractDao<User, Long> {
     @Override
     protected void bindValues(SQLiteStatement stmt, User entity) {
         stmt.clearBindings();
-        stmt.bindLong(1, entity.getId());
  
-        String uuid = entity.getUuid();
-        if (uuid != null) {
-            stmt.bindString(2, uuid);
+        Long id = entity.getId();
+        if (id != null) {
+            stmt.bindLong(1, id);
+        }
+        stmt.bindString(2, entity.getUserName());
+ 
+        String UserCode = entity.getUserCode();
+        if (UserCode != null) {
+            stmt.bindString(3, UserCode);
         }
  
-        String email = entity.getEmail();
-        if (email != null) {
-            stmt.bindString(3, email);
+        String DepCode = entity.getDepCode();
+        if (DepCode != null) {
+            stmt.bindString(4, DepCode);
         }
  
-        String role = entity.getRole();
-        if (role != null) {
-            stmt.bindString(4, role);
+        String UserPassWord = entity.getUserPassWord();
+        if (UserPassWord != null) {
+            stmt.bindString(5, UserPassWord);
         }
  
-        String created_at = entity.getCreated_at();
-        if (created_at != null) {
-            stmt.bindString(5, created_at);
+        String CodeCheck = entity.getCodeCheck();
+        if (CodeCheck != null) {
+            stmt.bindString(6, CodeCheck);
         }
  
-        String updated_at = entity.getUpdated_at();
-        if (updated_at != null) {
-            stmt.bindString(6, updated_at);
+        String Grant_S_M = entity.getGrant_S_M();
+        if (Grant_S_M != null) {
+            stmt.bindString(7, Grant_S_M);
         }
  
-        String first_name = entity.getFirst_name();
-        if (first_name != null) {
-            stmt.bindString(7, first_name);
+        String ActiveStart = entity.getActiveStart();
+        if (ActiveStart != null) {
+            stmt.bindString(8, ActiveStart);
         }
- 
-        String last_name = entity.getLast_name();
-        if (last_name != null) {
-            stmt.bindString(8, last_name);
-        }
- 
-        String handicap_style = entity.getHandicap_style();
-        if (handicap_style != null) {
-            stmt.bindString(9, handicap_style);
-        }
- 
-        String handicap_style_1 = entity.getHandicap_style_1();
-        if (handicap_style_1 != null) {
-            stmt.bindString(10, handicap_style_1);
-        }
- 
-        String handicap_style_2 = entity.getHandicap_style_2();
-        if (handicap_style_2 != null) {
-            stmt.bindString(11, handicap_style_2);
-        }
-        stmt.bindDouble(12, entity.getHeight());
-        stmt.bindDouble(13, entity.getWeight());
-        stmt.bindLong(14, entity.getBirth_year());
-        stmt.bindLong(15, entity.getGender());
-        stmt.bindLong(16, entity.getRight_handed());
- 
-        String grip_posture = entity.getGrip_posture();
-        if (grip_posture != null) {
-            stmt.bindString(17, grip_posture);
-        }
- 
-        String grip_position = entity.getGrip_position();
-        if (grip_position != null) {
-            stmt.bindString(18, grip_position);
-        }
- 
-        String is_phone_timer = entity.getIs_phone_timer();
-        if (is_phone_timer != null) {
-            stmt.bindString(19, is_phone_timer);
-        }
- 
-        String video_record = entity.getVideo_record();
-        if (video_record != null) {
-            stmt.bindString(20, video_record);
-        }
- 
-        String auto_save = entity.getAuto_save();
-        if (auto_save != null) {
-            stmt.bindString(21, auto_save);
-        }
- 
-        String auto_comment = entity.getAuto_comment();
-        if (auto_comment != null) {
-            stmt.bindString(22, auto_comment);
-        }
- 
-        String sound_effect = entity.getSound_effect();
-        if (sound_effect != null) {
-            stmt.bindString(23, sound_effect);
-        }
- 
-        String text_hint = entity.getText_hint();
-        if (text_hint != null) {
-            stmt.bindString(24, text_hint);
-        }
- 
-        String power_save = entity.getPower_save();
-        if (power_save != null) {
-            stmt.bindString(25, power_save);
-        }
- 
-        String unit = entity.getUnit();
-        if (unit != null) {
-            stmt.bindString(26, unit);
-        }
- 
-        String impact_detect = entity.getImpact_detect();
-        if (impact_detect != null) {
-            stmt.bindString(27, impact_detect);
-        }
- 
-        String goals = entity.getGoals();
-        if (goals != null) {
-            stmt.bindString(28, goals);
-        }
- 
-        String user_image_file_name = entity.getUser_image_file_name();
-        if (user_image_file_name != null) {
-            stmt.bindString(29, user_image_file_name);
-        }
- 
-        String user_image_content_type = entity.getUser_image_content_type();
-        if (user_image_content_type != null) {
-            stmt.bindString(30, user_image_content_type);
-        }
- 
-        String user_image_file_size = entity.getUser_image_file_size();
-        if (user_image_file_size != null) {
-            stmt.bindString(31, user_image_file_size);
-        }
- 
-        String user_image_fingerprint = entity.getUser_image_fingerprint();
-        if (user_image_fingerprint != null) {
-            stmt.bindString(32, user_image_fingerprint);
-        }
- 
-        String versions = entity.getVersions();
-        if (versions != null) {
-            stmt.bindString(33, versions);
-        }
- 
-        String language = entity.getLanguage();
-        if (language != null) {
-            stmt.bindString(34, language);
-        }
- 
-        String timezone = entity.getTimezone();
-        if (timezone != null) {
-            stmt.bindString(35, timezone);
-        }
- 
-        String test_account = entity.getTest_account();
-        if (test_account != null) {
-            stmt.bindString(36, test_account);
-        }
- 
-        String user_role = entity.getUser_role();
-        if (user_role != null) {
-            stmt.bindString(37, user_role);
-        }
- 
-        String flags = entity.getFlags();
-        if (flags != null) {
-            stmt.bindString(38, flags);
-        }
- 
-        String authentication_token = entity.getAuthentication_token();
-        if (authentication_token != null) {
-            stmt.bindString(39, authentication_token);
-        }
- 
-        String profile = entity.getProfile();
-        if (profile != null) {
-            stmt.bindString(40, profile);
-        }
- 
-        String avatar_url = entity.getAvatar_url();
-        if (avatar_url != null) {
-            stmt.bindString(41, avatar_url);
-        }
-        stmt.bindLong(42, entity.getFacebook_connected() ? 1l: 0l);
-        stmt.bindLong(43, entity.getWechat_connected() ? 1l: 0l);
-        stmt.bindLong(44, entity.getPosition());
+        stmt.bindLong(9, entity.getSysVersion());
     }
 
     /** @inheritdoc */
     @Override
     public Long readKey(Cursor cursor, int offset) {
-        return cursor.getLong(offset + 0);
+        return cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0);
     }    
 
     /** @inheritdoc */
     @Override
     public User readEntity(Cursor cursor, int offset) {
         User entity = new User( //
-            cursor.getLong(offset + 0), // id
-            cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // uuid
-            cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // email
-            cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // role
-            cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // created_at
-            cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // updated_at
-            cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6), // first_name
-            cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7), // last_name
-            cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8), // handicap_style
-            cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9), // handicap_style_1
-            cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10), // handicap_style_2
-            cursor.getDouble(offset + 11), // height
-            cursor.getDouble(offset + 12), // weight
-            cursor.getInt(offset + 13), // birth_year
-            cursor.getInt(offset + 14), // gender
-            cursor.getInt(offset + 15), // right_handed
-            cursor.isNull(offset + 16) ? null : cursor.getString(offset + 16), // grip_posture
-            cursor.isNull(offset + 17) ? null : cursor.getString(offset + 17), // grip_position
-            cursor.isNull(offset + 18) ? null : cursor.getString(offset + 18), // is_phone_timer
-            cursor.isNull(offset + 19) ? null : cursor.getString(offset + 19), // video_record
-            cursor.isNull(offset + 20) ? null : cursor.getString(offset + 20), // auto_save
-            cursor.isNull(offset + 21) ? null : cursor.getString(offset + 21), // auto_comment
-            cursor.isNull(offset + 22) ? null : cursor.getString(offset + 22), // sound_effect
-            cursor.isNull(offset + 23) ? null : cursor.getString(offset + 23), // text_hint
-            cursor.isNull(offset + 24) ? null : cursor.getString(offset + 24), // power_save
-            cursor.isNull(offset + 25) ? null : cursor.getString(offset + 25), // unit
-            cursor.isNull(offset + 26) ? null : cursor.getString(offset + 26), // impact_detect
-            cursor.isNull(offset + 27) ? null : cursor.getString(offset + 27), // goals
-            cursor.isNull(offset + 28) ? null : cursor.getString(offset + 28), // user_image_file_name
-            cursor.isNull(offset + 29) ? null : cursor.getString(offset + 29), // user_image_content_type
-            cursor.isNull(offset + 30) ? null : cursor.getString(offset + 30), // user_image_file_size
-            cursor.isNull(offset + 31) ? null : cursor.getString(offset + 31), // user_image_fingerprint
-            cursor.isNull(offset + 32) ? null : cursor.getString(offset + 32), // versions
-            cursor.isNull(offset + 33) ? null : cursor.getString(offset + 33), // language
-            cursor.isNull(offset + 34) ? null : cursor.getString(offset + 34), // timezone
-            cursor.isNull(offset + 35) ? null : cursor.getString(offset + 35), // test_account
-            cursor.isNull(offset + 36) ? null : cursor.getString(offset + 36), // user_role
-            cursor.isNull(offset + 37) ? null : cursor.getString(offset + 37), // flags
-            cursor.isNull(offset + 38) ? null : cursor.getString(offset + 38), // authentication_token
-            cursor.isNull(offset + 39) ? null : cursor.getString(offset + 39), // profile
-            cursor.isNull(offset + 40) ? null : cursor.getString(offset + 40), // avatar_url
-            cursor.getShort(offset + 41) != 0, // facebook_connected
-            cursor.getShort(offset + 42) != 0, // wechat_connected
-            cursor.getInt(offset + 43) // position
+            cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
+            cursor.getString(offset + 1), // UserName
+            cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // UserCode
+            cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // DepCode
+            cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // UserPassWord
+            cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // CodeCheck
+            cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6), // Grant_S_M
+            cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7), // ActiveStart
+            cursor.getInt(offset + 8) // SysVersion
         );
         return entity;
     }
@@ -385,50 +133,15 @@ public class UserDao extends AbstractDao<User, Long> {
     /** @inheritdoc */
     @Override
     public void readEntity(Cursor cursor, User entity, int offset) {
-        entity.setId(cursor.getLong(offset + 0));
-        entity.setUuid(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
-        entity.setEmail(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
-        entity.setRole(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
-        entity.setCreated_at(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
-        entity.setUpdated_at(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
-        entity.setFirst_name(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
-        entity.setLast_name(cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7));
-        entity.setHandicap_style(cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8));
-        entity.setHandicap_style_1(cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9));
-        entity.setHandicap_style_2(cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10));
-        entity.setHeight(cursor.getDouble(offset + 11));
-        entity.setWeight(cursor.getDouble(offset + 12));
-        entity.setBirth_year(cursor.getInt(offset + 13));
-        entity.setGender(cursor.getInt(offset + 14));
-        entity.setRight_handed(cursor.getInt(offset + 15));
-        entity.setGrip_posture(cursor.isNull(offset + 16) ? null : cursor.getString(offset + 16));
-        entity.setGrip_position(cursor.isNull(offset + 17) ? null : cursor.getString(offset + 17));
-        entity.setIs_phone_timer(cursor.isNull(offset + 18) ? null : cursor.getString(offset + 18));
-        entity.setVideo_record(cursor.isNull(offset + 19) ? null : cursor.getString(offset + 19));
-        entity.setAuto_save(cursor.isNull(offset + 20) ? null : cursor.getString(offset + 20));
-        entity.setAuto_comment(cursor.isNull(offset + 21) ? null : cursor.getString(offset + 21));
-        entity.setSound_effect(cursor.isNull(offset + 22) ? null : cursor.getString(offset + 22));
-        entity.setText_hint(cursor.isNull(offset + 23) ? null : cursor.getString(offset + 23));
-        entity.setPower_save(cursor.isNull(offset + 24) ? null : cursor.getString(offset + 24));
-        entity.setUnit(cursor.isNull(offset + 25) ? null : cursor.getString(offset + 25));
-        entity.setImpact_detect(cursor.isNull(offset + 26) ? null : cursor.getString(offset + 26));
-        entity.setGoals(cursor.isNull(offset + 27) ? null : cursor.getString(offset + 27));
-        entity.setUser_image_file_name(cursor.isNull(offset + 28) ? null : cursor.getString(offset + 28));
-        entity.setUser_image_content_type(cursor.isNull(offset + 29) ? null : cursor.getString(offset + 29));
-        entity.setUser_image_file_size(cursor.isNull(offset + 30) ? null : cursor.getString(offset + 30));
-        entity.setUser_image_fingerprint(cursor.isNull(offset + 31) ? null : cursor.getString(offset + 31));
-        entity.setVersions(cursor.isNull(offset + 32) ? null : cursor.getString(offset + 32));
-        entity.setLanguage(cursor.isNull(offset + 33) ? null : cursor.getString(offset + 33));
-        entity.setTimezone(cursor.isNull(offset + 34) ? null : cursor.getString(offset + 34));
-        entity.setTest_account(cursor.isNull(offset + 35) ? null : cursor.getString(offset + 35));
-        entity.setUser_role(cursor.isNull(offset + 36) ? null : cursor.getString(offset + 36));
-        entity.setFlags(cursor.isNull(offset + 37) ? null : cursor.getString(offset + 37));
-        entity.setAuthentication_token(cursor.isNull(offset + 38) ? null : cursor.getString(offset + 38));
-        entity.setProfile(cursor.isNull(offset + 39) ? null : cursor.getString(offset + 39));
-        entity.setAvatar_url(cursor.isNull(offset + 40) ? null : cursor.getString(offset + 40));
-        entity.setFacebook_connected(cursor.getShort(offset + 41) != 0);
-        entity.setWechat_connected(cursor.getShort(offset + 42) != 0);
-        entity.setPosition(cursor.getInt(offset + 43));
+        entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
+        entity.setUserName(cursor.getString(offset + 1));
+        entity.setUserCode(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
+        entity.setDepCode(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
+        entity.setUserPassWord(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
+        entity.setCodeCheck(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
+        entity.setGrant_S_M(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
+        entity.setActiveStart(cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7));
+        entity.setSysVersion(cursor.getInt(offset + 8));
      }
     
     /** @inheritdoc */

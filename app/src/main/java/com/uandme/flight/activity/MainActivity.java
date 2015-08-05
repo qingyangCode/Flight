@@ -49,7 +49,7 @@ public class MainActivity extends BaseActivity {
         dialog.setCancelable(true);
         dialog.setCanceledOnTouchOutside(false);
         dialog.show();
-        getMoccApi().getAllAircraft(UserManager.getInstance().getUser().getUserCode(),UserManager.getInstance().getUser().getUserCodeCheck(), new ResponseListner<AllAirCraft>() {
+        getMoccApi().getAllAircraft(UserManager.getInstance().getUser().getUserCode(), new ResponseListner<AllAirCraft>() {
 
             @Override public void onResponse(AllAirCraft response) {
                 dialog.dismiss();

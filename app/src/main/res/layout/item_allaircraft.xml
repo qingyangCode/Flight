@@ -36,6 +36,5 @@
             android:text=""
             />
     </LinearLayout>
-    <View  style="@style/common_line_1_style"/>
 
 </LinearLayout>

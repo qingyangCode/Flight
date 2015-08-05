@@ -51,10 +51,13 @@ public abstract class BaseSwipeAdapter extends BaseAdapter {
 
 	@Override
 	public final View getView(int position, View convertView, ViewGroup parent) {
-
+		//if(position == getCount() - 1){
+		//	convertView = bottomAddView(parent);
+		//	return convertView;
+		//}
 		if (convertView == null) {
-			convertView = generateView(position, parent);
-			initialize(convertView, position);
+				convertView = generateView(position, parent);
+				initialize(convertView, position);
 		} else {
 			updateConvertView(convertView, position);
 		}
@@ -62,6 +65,8 @@ public abstract class BaseSwipeAdapter extends BaseAdapter {
 		return convertView;
 
 	}
+
+	protected abstract View bottomAddView(ViewGroup parent);
 
 	/**
 	 * 初始化item布局调用

@@ -2,4 +2,8 @@
 <resources>
     <color name="backgroundColor">#E8E8E0</color>
     <color name="backgroundColorPress">#DBDBD3</color>
+    <color name="common_press_bg_1">#1B1D1F</color>
+    <color name="common_press_bg">#1A000000</color>
+    <color name="common_bg">#282B2D</color>
+    <color name="gray_333">#333333</color>
 </resources>

@@ -32,113 +32,91 @@ public interface MoccApi {
      * @param pwd
      * @param ll
      */
-    public void doLogin(final String userName, final String pwd, final ResponseListner ll);
+    public void doLogin(String userName, String pwd,  ResponseListner ll);
 
     /**
      * 获取所有飞机信息
      * @param userName
-     * @param checkCode
      * @param responseListner
      */
-    public void getAllAircraft(String userName, String checkCode,
-            final ResponseListner responseListner);
+    public void getAllAircraft(String userName, ResponseListner responseListner);
 
     /**
      * 根据机号获取信息
      * @param userName
-     * @param checkCode
      * @param airReg
      * @param responseListner
      */
-    public void getAircraftByAcReg(String userName, String checkCode, String airReg,
-            final ResponseListner responseListner);
+    public void getAircraftByAcReg(String userName,  String airReg, ResponseListner responseListner);
 
     /**
      *
      * @param userName
-     * @param checkCode
      * @param AircraftType
      * @param responseListner
      */
-    public void getAircraftByAcType(String userName, String checkCode, String AircraftType,
-            final ResponseListner responseListner);
+    public void getAircraftByAcType(String userName, String AircraftType, ResponseListner responseListner);
 
     /**
      *
      * @param userName
-     * @param checkCode
      * @param responseListner
      */
-    public void addNewAircraft(String userName, String checkCode,
-            final ResponseListner responseListner);
+    public void addNewAircraft(String userName, ResponseListner responseListner);
 
     /**
      *
      * @param userName
-     * @param checkCode
      * @param responseListner
      */
-    public void getAllAcType(String userName, String checkCode,
-            final ResponseListner responseListner);
+    public void getAllAcType(String userName, ResponseListner responseListner);
 
     /**
      * @param userName
-     * @param checkCode
      * @param responseListner
      */
-    public void getActypeByType(String userName, String checkCode,
-            final ResponseListner responseListner);
+    public void getActypeByType(String userName, ResponseListner responseListner);
 
     /**
      *  @param userName
-     * @param checkCode
      * @param responseListner
      */
-    public void getAllUser(String userName, String checkCode, final ResponseListner responseListner);
+    public void getAllUser(String userName,  ResponseListner responseListner);
 
     /**
      * 按用户获取此用户的授权信息
      * @param userName
-     * @param checkCode
      * @param responseListner
      */
-    public void getGrantsByUserCode(String userName, String checkCode,
-            final ResponseListner responseListner);
+    public void getGrantsByUserCode(String userName, ResponseListner responseListner);
 
     /**按用户代码获取
      *
      * @param userName
-     * @param checkCode
      * @param responseListner
      */
-    public void getUserByCode(String userName, String checkCode,
-            final ResponseListner responseListner);
+    public void getUserByCode(String userName, ResponseListner responseListner);
 
     /**
      *
      * @param userName
-     * @param checkCode
      * @param responseListner
      */
-    public void getAllUserNew(String userName, String checkCode,
-            final ResponseListner responseListner);
+    public void getAllUserNew(String userName, ResponseListner responseListner);
 
     /**
      *
      * @param userName
-     * @param checkCode
      * @param responseListner
      */
-    public void addFlightCd(String userName, String checkCode,
-            final ResponseListner responseListner);
+    public void addFlightCd(String userName, ResponseListner responseListner);
 
     /**
      *
      * @param userName
-     * @param checkCode
      * @param responseListner
      */
-    public  void addFlightInfo(String userName, String checkCode, ResponseListner responseListner);
+    public  void addFlightInfo(String userName, ResponseListner responseListner);
 
     /**
      * 获取飞机座位信息

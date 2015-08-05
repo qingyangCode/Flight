@@ -26,10 +26,11 @@
             android:paddingLeft="15dp"
             android:paddingRight="20dp"
             android:background="#FFFFFF">
-
+                />
             <TextView
                 android:id="@+id/tv_userName"
                 android:layout_width="0dp"
+                android:layout_marginLeft="10dp"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
                 android:layout_weight="0.6"
@@ -38,13 +39,7 @@
                 android:text="姓名"
                 />
 
-            <CheckBox
-                android:id="@+id/cb_checkbox"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginRight="20dp"
-                />
+
         </LinearLayout>
     </com.uandme.autoloadlistview.zlistview.ZSwipeItem>
 

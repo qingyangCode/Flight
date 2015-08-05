@@ -15,8 +15,9 @@
         android:text="座位"
         />
 
-    <EditText
+    <AutoCompleteTextView
         android:id="@+id/tv_passengerName"
+        android:completionThreshold="1"
         android:layout_width="120dp"
         android:layout_marginLeft="5dp"
         android:gravity="center"
