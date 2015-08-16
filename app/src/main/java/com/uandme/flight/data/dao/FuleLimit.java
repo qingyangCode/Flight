@@ -11,8 +11,8 @@ public class FuleLimit {
 
     private Long id;
     private String AcType;
-    private Integer FuleWeight;
-    private Integer FuleLj;
+    private Float FuleWeight;
+    private Float FuleLj;
     private String OpUser;
     private String OpDate;
 
@@ -26,7 +26,7 @@ public class FuleLimit {
         this.id = id;
     }
 
-    public FuleLimit(Long id, String AcType, Integer FuleWeight, Integer FuleLj, String OpUser, String OpDate) {
+    public FuleLimit(Long id, String AcType, Float FuleWeight, Float FuleLj, String OpUser, String OpDate) {
         this.id = id;
         this.AcType = AcType;
         this.FuleWeight = FuleWeight;
@@ -51,19 +51,19 @@ public class FuleLimit {
         this.AcType = AcType;
     }
 
-    public Integer getFuleWeight() {
+    public Float getFuleWeight() {
         return FuleWeight;
     }
 
-    public void setFuleWeight(Integer FuleWeight) {
+    public void setFuleWeight(Float FuleWeight) {
         this.FuleWeight = FuleWeight;
     }
 
-    public Integer getFuleLj() {
+    public Float getFuleLj() {
         return FuleLj;
     }
 
-    public void setFuleLj(Integer FuleLj) {
+    public void setFuleLj(Float FuleLj) {
         this.FuleLj = FuleLj;
     }
 

@@ -76,8 +76,8 @@ public class TablesMain {
         Entity fuleLimit = mSchema.addEntity("FuleLimit");
         fuleLimit.addIdProperty().autoincrement().primaryKey();
         fuleLimit.addStringProperty("AcType");
-        fuleLimit.addIntProperty("FuleWeight");
-        fuleLimit.addIntProperty("FuleLj");
+        fuleLimit.addFloatProperty("FuleWeight");
+        fuleLimit.addFloatProperty("FuleLj");
         fuleLimit.addStringProperty("OpUser");
         fuleLimit.addStringProperty("OpDate");
     }

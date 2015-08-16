@@ -14,4 +14,8 @@ public class DateFormatUtil {
     public static String formatTDate() {
         return  sdfT.format(new Date());
     }
+
+    public static String formatZDate() {
+        return sdfZ.format(new Date());
+    }
 }

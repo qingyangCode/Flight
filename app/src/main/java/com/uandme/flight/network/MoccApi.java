@@ -4,6 +4,7 @@ import com.uandme.flight.entity.AcWeightLimitByAcTypeResponse;
 import com.uandme.flight.entity.AddFlightInfoResponse;
 import com.uandme.flight.entity.AllAcTypeResponse;
 import com.uandme.flight.entity.AllSbResponse;
+import com.uandme.flight.entity.FlightidResponse;
 import com.uandme.flight.entity.FuleLimitByAcType;
 import com.uandme.flight.entity.GrantsByUserCodeResponse;
 import com.uandme.flight.entity.SeatByAcRegResponse;
@@ -143,4 +144,10 @@ public interface MoccApi {
             String ArrAirportName, String MaxFule, String RealFule, String SlieFule, String RouteFule,
             String TofWeight, String LandWeight, String NoFuleWeight, String AirportLimitWeight,
             String BalancePic, String BalancePicName, String OpUser, String OpDate, ResponseListner<AddFlightInfoResponse> responseListner);
+
+    /**
+     * 获取飞机ID
+     * @param responseListner
+     */
+    public void getflightid(ResponseListner<FlightidResponse> responseListner);
 }

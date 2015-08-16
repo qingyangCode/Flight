@@ -85,6 +85,7 @@ public class BasicInfoActivity extends BaseActivity {
         mSpinner.setVisibility(View.VISIBLE);
         //mPlayNO.setText(aircraftReg);
         ApiServiceManager.getInstance().getSeatInfo(aircraftReg ,null);
+        ApiServiceManager.getInstance().getFilghtId(null);
     }
 
     private void getAllSbFromDB() {

@@ -61,7 +61,7 @@ public class UserManager {
     }
 
     private static SystemVersionDao systemVersionDao = null;
-    private static void getSystemVersion() {
+    public static void getSystemVersion() {
         if (systemVersionDao == null)
             systemVersionDao = FlightApplication.getDaoSession().getSystemVersionDao();
 
@@ -82,7 +82,7 @@ public class UserManager {
      * @param versionName
      * @param Version
      */
-    private void insertSystemVersion(String versionName, int Version) {
+    public void insertSystemVersion(String versionName, int Version) {
         SystemVersion systemVersion = new SystemVersion();
         systemVersion.setVserionName(versionName);
         systemVersion.setVserion(Version);

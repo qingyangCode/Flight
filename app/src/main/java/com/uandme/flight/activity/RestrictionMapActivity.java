@@ -1,7 +1,9 @@
 package com.uandme.flight.activity;
 
 import android.content.Intent;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -11,14 +13,23 @@ import com.uandme.flight.R;
 import com.uandme.flight.data.dao.AcWeightLimit;
 import com.uandme.flight.data.dao.AllAcType;
 import com.uandme.flight.data.dao.AllAcTypeDao;
+import com.uandme.flight.data.dao.AllAircraft;
+import com.uandme.flight.data.dao.AllAircraftDao;
+import com.uandme.flight.data.dao.FuleLimit;
+import com.uandme.flight.data.dao.FuleLimitDao;
 import com.uandme.flight.entity.AcWeightLimitByAcTypeResponse;
 import com.uandme.flight.entity.FuleLimitByAcType;
 import com.uandme.flight.entity.LineData;
 import com.uandme.flight.network.ResponseListner;
+import com.uandme.flight.util.ApiServiceManager;
 import com.uandme.flight.util.Constants;
+import com.uandme.flight.util.DateFormatUtil;
 import com.uandme.flight.util.LogUtil;
+import com.uandme.flight.util.MACUtil;
 import com.uandme.flight.util.ToastUtil;
+import com.uandme.flight.util.UserManager;
 import com.uandme.flight.widget.MyLineDegreeView;
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -41,25 +52,31 @@ public class RestrictionMapActivity extends BaseActivity{
     @InjectView(R.id.tv_flyoil)
     EditText mFlyOil;
     @InjectView(R.id.tv_beforeweight)
-    EditText mBeforeWeight;
+    TextView mBeforeWeight;
     @InjectView(R.id.tv_down)
-    EditText mDownWight;
+    TextView mDownWight;
     @InjectView(R.id.tv_mac)
     TextView mMac;
     @InjectView(R.id.line_charview)
     MyLineDegreeView mLineCharView;
-    @InjectView(R.id.tv_reality_focus)
-    TextView mRealityFocus;
-    @InjectView(R.id.tv_slide_focus)
-    TextView mSlideFocus;
-    @InjectView(R.id.tv_fly_focus)
-    TextView mFlyFocus;
-    @InjectView(R.id.tv_be_fore_focus)
-    TextView mBroreFocus;
-    @InjectView(R.id.tv_down_focus)
-    TextView mDownFocus;
+    //@InjectView(R.id.tv_reality_focus)
+    //TextView mRealityFocus;
+    //@InjectView(R.id.tv_slide_focus)
+    //TextView mSlideFocus;
+    //@InjectView(R.id.tv_fly_focus)
+    //TextView mFlyFocus;
+    //@InjectView(R.id.tv_be_fore_focus)
+    //TextView mBroreFocus;
+    //@InjectView(R.id.tv_down_focus)
+    //TextView mDownFocus;
     private ArrayList<Float> lineX;
     private ArrayList<Float> lineY;
+
+    private ArrayList<Float> weightList;
+    private String aircraftType;
+    private double airLj = 0;
+    List<AllAcType> allAcTypeList;
+    private float allWeight;
 
     @Override public int getContentView() {
         return R.layout.activity_restrictionmap;
@@ -70,55 +87,153 @@ public class RestrictionMapActivity extends BaseActivity{
         getTopBarRight("下一步");
         lineX = new ArrayList<>();
         lineY = new ArrayList<>();
-        String aircraftType = getIntent().getStringExtra("AircraftType");
+        aircraftType = getIntent().getStringExtra("AircraftType");
+        weightList = (ArrayList<Float>) getIntent().getSerializableExtra("weightList");
+        AllAircraftDao allAircraftDao = FlightApplication.getDaoSession().getAllAircraftDao();
+        List<AllAircraft> allAircraftList = allAircraftDao.queryBuilder()
+                .where(AllAircraftDao.Properties.AircraftType.eq(aircraftType))
+                .list();
 
-        float weightCg = getWeightCg(mRealityouil);
-        mRealityouil.setText(weightCg + "");
-        float weightCg1 = getWeightCg(mSlideOil);
-        mSlideFocus.setText(weightCg1 + "");
-        float weightCg2 = getWeightCg(mFlyOil);
-        mFlyOil.setText(weightCg2 + "");
-        float weightCg3 = getWeightCg(mBeforeWeight);
-        mBeforeWeight.setText(weightCg3 + "");
-        float weightCg4 = getWeightCg(mDownWight);
-        mDownWight.setText(weightCg4+"");
+        airLj = allAircraftList.get(0).getLj();
 
-        showLineCharView();
+        updateWeightInfos();
+
+
+        //float weightCg = getWeightCg(mRealityouil);
+        //mRealityouil.setText(weightCg + "");
+        //float weightCg1 = getWeightCg(mSlideOil);
+        //mSlideFocus.setText(weightCg1 + "");
+        //float weightCg2 = getWeightCg(mFlyOil);
+        //mFlyOil.setText(weightCg2 + "");
+        //float weightCg3 = getWeightCg(mBeforeWeight);
+        //mBeforeWeight.setText(weightCg3 + "");
+        //float weightCg4 = getWeightCg(mDownWight);
+        //mDownWight.setText(weightCg4+"");
 
         AllAcTypeDao allAcTypeDao = FlightApplication.getDaoSession().getAllAcTypeDao();
-        List<AllAcType> allAcTypeList = allAcTypeDao.queryBuilder()
+        allAcTypeList = allAcTypeDao.queryBuilder()
                 .where(AllAcTypeDao.Properties.AircraftType.eq(aircraftType))
                 .list();
         if (allAcTypeList != null && allAcTypeList.size() > 0) {
             AllAcType allAcType = allAcTypeList.get(0);
             //mMaxOil.setText(allAcTypeList.get(0));
-       /* 获取机型重心限制信息表
-                * @param AircraftType 请求的机型
-                * @param PortLimit 机坪限重
-                * @param TofWeightLimit 起飞重量
-                * @param LandWeightLimit 落地重量
-                * @param Mzfw 最大无油重量
-                * @param OpDate 操作日期
-                * @param SysVersion 版本信息
-            */
-        //获取重心限制信息
-        //SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-        //    String time = sdf.format(new Date());
-            getMoccApi().getAcWeightLimitByAcType(allAcType.getAircraftType(), String.valueOf(allAcType.getPortLimit()),
-                mBeforeWeight.getText().toString(), mDownWight.getText().toString(), String.valueOf(allAcType.getMzfw()),
-                    "2015-08-09T16:00:31", String.valueOf(allAcType.getSysVersion()), new ResponseListner<AcWeightLimitByAcTypeResponse>() {
-                    @Override public void onResponse(AcWeightLimitByAcTypeResponse response) {
-                        if (response != null && response.ResponseObject != null && response.ResponseObject.ResponseCode == Constants.RESULT_OK) {
-                            showCharView(response.ResponseObject.ResponseData.IAppObject);
-                        } else {
-                            ToastUtil.showToast(RestrictionMapActivity.this, R.drawable.toast_warning, getString(R.string.get_data_error));
-                        }
-                    }
-
-                    @Override public void onEmptyOrError(String message) {
+        getMoccApi().getAcWeightLimitByAcType(allAcType.getAircraftType(), String.valueOf(allAcType.getPortLimit()),
+            mBeforeWeight.getText().toString(), mDownWight.getText().toString(), String.valueOf(allAcType.getMzfw()),
+                DateFormatUtil.formatTDate(), String.valueOf(allAcType.getSysVersion()), new ResponseListner<AcWeightLimitByAcTypeResponse>() {
+                @Override public void onResponse(AcWeightLimitByAcTypeResponse response) {
+                    if (response != null && response.ResponseObject != null && response.ResponseObject.ResponseCode == Constants.RESULT_OK) {
+                        showCharView(response.ResponseObject.ResponseData.IAppObject);
+                    } else {
                         ToastUtil.showToast(RestrictionMapActivity.this, R.drawable.toast_warning, getString(R.string.get_data_error));
                     }
-                });
+                }
+
+                @Override public void onEmptyOrError(String message) {
+                    ToastUtil.showToast(RestrictionMapActivity.this, R.drawable.toast_warning, getString(R.string.get_data_error));
+                }
+            });
+        }
+
+        showLineCharView();
+
+        mMaxOil.addTextChangedListener(mTextWatcher);
+        mRealityouil.addTextChangedListener(mTextWatcher);
+        mSlideOil.addTextChangedListener(mTextWatcher);
+        mFlyOil.addTextChangedListener(mTextWatcher);
+
+    }
+
+
+    private TextWatcher mTextWatcher = new TextWatcher() {
+        @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+        }
+
+        @Override public void afterTextChanged(Editable s) {
+            if (!TextUtils.isEmpty(s.toString())) {
+                updateWeightInfos();
+            }
+        }
+    };
+
+    private void updateWeightInfos() {
+        AllAcTypeDao allAcTypeDao = FlightApplication.getDaoSession().getAllAcTypeDao();
+        List<AllAcType> allAcTypeList = allAcTypeDao.queryBuilder()
+                .where(AllAircraftDao.Properties.AircraftType.eq(aircraftType))
+                .list();
+        if (allAcTypeList != null && allAcTypeList.size() > 0) {
+            AllAcType allAcType = allAcTypeList.get(0);
+            int gooodsWeights = 0;
+            for(Float goodsWeight : weightList) {
+                gooodsWeights += goodsWeight;
+            }
+            float upWeight =
+                    allAcType.getMzfw() + Float.parseFloat(mRealityouil.getText().toString().trim()) + gooodsWeights
+                            - Float.parseFloat(mSlideOil.getText().toString().trim());
+            mBeforeWeight.setText(upWeight + "");
+
+            float downWeight =
+                    allAcType.getMzfw() + Float.parseFloat(mRealityouil.getText().toString().trim()) + gooodsWeights
+                            - Float.parseFloat(mSlideOil.getText().toString().trim())  - Float.parseFloat(mFlyOil.getText().toString().trim());
+
+            mDownWight.setText(downWeight + "");
+            allWeight = allAcType.getMzfw() + Float.parseFloat(mRealityouil.getText().toString().trim()) + gooodsWeights;
+
+
+            getFuleLimit();
+
+
+        }
+    }
+
+    private int reqeustCount = 0;
+
+    private void getFuleLimit() {
+        float oilLj = 0;
+        FuleLimitDao fuleLimitDao = FlightApplication.getDaoSession().getFuleLimitDao();
+        List<FuleLimit> fullLimitList = fuleLimitDao.queryBuilder()
+                .where(FuleLimitDao.Properties.AcType.eq(aircraftType))
+                .list();
+        if (fullLimitList != null && fullLimitList.size() > 0) {
+            for (FuleLimit fuleLimit : fullLimitList) {
+                if (Math.abs(fuleLimit.getFuleWeight() - Float.parseFloat(
+                        mRealityouil.getText().toString().trim())) < 80) {
+                    oilLj = fuleLimit.getFuleLj();
+                }
+            }
+        }
+
+        double Cg = (airLj + airLj) / allWeight;
+        float weightCg = (float)Cg;
+        float mac = MACUtil.get560Mac(weightCg);
+        mMac.setText(mac+"");
+
+        if ((fullLimitList == null || fullLimitList.size() == 0) && reqeustCount < 1) {
+            reqeustCount ++;
+            if (allAcTypeList != null && allAcTypeList.size() > 0) {
+                AllAcType allAcType = allAcTypeList.get(0);
+                ApiServiceManager.getInstance().getFuleLimitByAcType(allAcType.getAircraftType(),
+                        allAcType.getPortLimit()+"", mBeforeWeight.getText().toString(),
+                        mDownWight.getText().toString(), allAcType.getMzfw()+"", DateFormatUtil.formatTDate(),
+                        UserManager.getInstance().getUser().getSysVersion()+"", new ResponseListner<FuleLimitByAcType>() {
+
+                            @Override public void onResponse(FuleLimitByAcType response) {
+                                if (response != null && response.ResponseObject != null && response.ResponseObject.ResponseCode == Constants.RESULT_OK) {
+                                    getFuleLimit();
+                                }
+                            }
+
+                            @Override public void onEmptyOrError(String message) {
+                                if (!TextUtils.isEmpty(message))
+                                    ToastUtil.showToast(RestrictionMapActivity.this, R.drawable.toast_warning, message);
+                            }
+                        });
+
+            }
         }
     }
 
@@ -161,7 +276,7 @@ public class RestrictionMapActivity extends BaseActivity{
         LineData lineData = new LineData();
         lineData.setDatasX(lineX);
         lineData.setDatasY(lineY);
-        mLineCharView.setData(lineData);
+        mLineCharView.addData(lineData);
 
     }
 
@@ -187,5 +302,10 @@ public class RestrictionMapActivity extends BaseActivity{
                 startActivity(new Intent(RestrictionMapActivity.this, AircraftPersonnelActivity.class));
             }
         };
+    }
+
+    @Override protected void onStop() {
+        super.onStop();
+        reqeustCount = 0;
     }
 }

@@ -34,15 +34,15 @@
                     android:text="油量信息"
                     android:paddingBottom="10dp"
                     />
-                <TextView
-                    style="@style/common_title_style_30_mt"
-                    android:layout_alignParentRight="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="重心"
-                    android:layout_marginRight="50dp"
-                    android:paddingBottom="10dp"
-                    />
+                <!--<TextView-->
+                    <!--style="@style/common_title_style_30_mt"-->
+                    <!--android:layout_alignParentRight="true"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:text="重心"-->
+                    <!--android:layout_marginRight="50dp"-->
+                    <!--android:paddingBottom="10dp"-->
+                    <!--/>-->
             </RelativeLayout>
 
             <View style="@style/common_line_1_style"/>
@@ -64,16 +64,18 @@
                     android:gravity="center"
                     android:paddingLeft="5dp"
                     android:paddingRight="5dp"
+                    android:background="@drawable/engineeroom_name_bg"
                     android:text="6790"
+                    android:inputType="number"
                     />
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_weight="0.3"
-                    android:text="无"
-                    android:gravity="center"
-                    android:textSize="18dp"
-                    android:layout_height="match_parent"
-                    />
+                <!--<TextView-->
+                    <!--android:layout_width="0dp"-->
+                    <!--android:layout_weight="0.3"-->
+                    <!--android:text="无"-->
+                    <!--android:gravity="center"-->
+                    <!--android:textSize="18dp"-->
+                    <!--android:layout_height="match_parent"-->
+                    <!--/>-->
             </LinearLayout>
 
             <View style="@style/common_line_1_style"/>
@@ -97,15 +99,16 @@
                     android:paddingRight="5dp"
                     android:background="@drawable/engineeroom_name_bg"
                     android:text="6000"
+                    android:inputType="number"
                     />
-                <TextView
-                    android:id="@+id/tv_reality_focus"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.3"
-                    android:textSize="18dp"
-                    android:gravity="center"
-                    />
+                <!--<TextView-->
+                    <!--android:id="@+id/tv_reality_focus"-->
+                    <!--android:layout_width="0dp"-->
+                    <!--android:layout_height="match_parent"-->
+                    <!--android:layout_weight="0.3"-->
+                    <!--android:textSize="18dp"-->
+                    <!--android:gravity="center"-->
+                    <!--/>-->
             </LinearLayout>
 
             <View style="@style/common_line_1_style"/>
@@ -127,15 +130,16 @@
                     android:paddingRight="5dp"
                     android:background="@drawable/engineeroom_name_bg"
                     android:text="100"
+                    android:inputType="number"
                     />
-                <TextView
-                    android:id="@+id/tv_slide_focus"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.3"
-                    android:textSize="18dp"
-                    android:gravity="center"
-                    />
+                <!--<TextView-->
+                    <!--android:id="@+id/tv_slide_focus"-->
+                    <!--android:layout_width="0dp"-->
+                    <!--android:layout_height="match_parent"-->
+                    <!--android:layout_weight="0.3"-->
+                    <!--android:textSize="18dp"-->
+                    <!--android:gravity="center"-->
+                    <!--/>-->
             </LinearLayout>
             <View style="@style/common_line_1_style"/>
             <LinearLayout style="@style/horization_layout">
@@ -145,8 +149,8 @@
                     android:text="航路油量"
                     android:layout_weight="0.3"
                     />
-
                 <EditText
+
                     android:id="@+id/tv_flyoil"
                     style="@style/item_value"
                     android:layout_weight="0.5"
@@ -155,15 +159,16 @@
                     android:paddingRight="5dp"
                     android:background="@drawable/engineeroom_name_bg"
                     android:text="900"
+                    android:inputType="number"
                     />
-                <TextView
-                    android:id="@+id/tv_fly_focus"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.3"
-                    android:textSize="18dp"
-                    android:gravity="center"
-                    />
+                <!--<TextView-->
+                    <!--android:id="@+id/tv_fly_focus"-->
+                    <!--android:layout_width="0dp"-->
+                    <!--android:layout_height="match_parent"-->
+                    <!--android:layout_weight="0.3"-->
+                    <!--android:textSize="18dp"-->
+                    <!--android:gravity="center"-->
+                    <!--/>-->
             </LinearLayout>
             <View style="@style/common_line_1_style"/>
             <LinearLayout style="@style/horization_layout">
@@ -174,24 +179,23 @@
                     android:layout_weight="0.3"
                     />
 
-                <EditText
+                <TextView
                     android:id="@+id/tv_beforeweight"
                     style="@style/item_value"
                     android:layout_weight="0.5"
                     android:gravity="center"
                     android:paddingLeft="5dp"
                     android:paddingRight="5dp"
-                    android:background="@drawable/engineeroom_name_bg"
-                    android:text="3000"
+                    android:text="--"
                     />
-                <TextView
-                    android:id="@+id/tv_be_fore_focus"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.3"
-                    android:textSize="18dp"
-                    android:gravity="center"
-                    />
+                <!--<TextView-->
+                    <!--android:id="@+id/tv_be_fore_focus"-->
+                    <!--android:layout_width="0dp"-->
+                    <!--android:layout_height="match_parent"-->
+                    <!--android:layout_weight="0.3"-->
+                    <!--android:textSize="18dp"-->
+                    <!--android:gravity="center"-->
+                    <!--/>-->
             </LinearLayout>
             <View style="@style/common_line_1_style"/>
             <LinearLayout style="@style/horization_layout">
@@ -202,24 +206,23 @@
                     android:layout_weight="0.3"
                     />
 
-                <EditText
+                <TextView
                     android:id="@+id/tv_down"
                     style="@style/item_value"
                     android:gravity="center"
                     android:layout_weight="0.5"
                     android:paddingLeft="5dp"
                     android:paddingRight="5dp"
-                    android:background="@drawable/engineeroom_name_bg"
-                    android:text="1000"
+                    android:text=" -- "
                     />
-                <TextView
-                    android:id="@+id/tv_down_focus"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.3"
-                    android:textSize="18dp"
-                    android:gravity="center"
-                    />
+                <!--<TextView-->
+                    <!--android:id="@+id/tv_down_focus"-->
+                    <!--android:layout_width="0dp"-->
+                    <!--android:layout_height="match_parent"-->
+                    <!--android:layout_weight="0.3"-->
+                    <!--android:textSize="18dp"-->
+                    <!--android:gravity="center"-->
+                    <!--/>-->
             </LinearLayout>
             <View style="@style/common_line_1_style"/>
             <LinearLayout style="@style/horization_layout">
@@ -237,16 +240,16 @@
                     android:gravity="center"
                     android:paddingLeft="5dp"
                     android:paddingRight="5dp"
-                    android:text=""
+                    android:text="--"
                     />
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_weight="0.3"
-                    android:text="无"
-                    android:gravity="center"
-                    android:textSize="18dp"
-                    android:layout_height="match_parent"
-                    />
+                <!--<TextView-->
+                    <!--android:layout_width="0dp"-->
+                    <!--android:layout_weight="0.3"-->
+                    <!--android:text="无"-->
+                    <!--android:gravity="center"-->
+                    <!--android:textSize="18dp"-->
+                    <!--android:layout_height="match_parent"-->
+                    <!--/>-->
             </LinearLayout>
             <View style="@style/common_line_1_style"/>
         <com.uandme.flight.widget.MyLineDegreeView

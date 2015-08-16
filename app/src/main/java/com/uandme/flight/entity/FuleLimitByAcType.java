@@ -1,6 +1,7 @@
 package com.uandme.flight.entity;
 
 import com.google.gson.Gson;
+import com.uandme.flight.data.dao.FuleLimit;
 import java.util.ArrayList;
 
 /**
@@ -15,16 +16,16 @@ public class FuleLimitByAcType {
     }
 
     public class TResponseData{
-        public ArrayList<TIAppObject> IAppObject;
+        public ArrayList<FuleLimit> IAppObject;
     }
 
-    public class TIAppObject{
-        public String AcType; //机型
-        public String FuleWeight;// 燃油重量
-        public String FuleLj; //力矩
-        public String OpUser; //操作人
-        public String OpDate; //操作日期
-    }
+    //public class TIAppObject{
+    //    public String AcType; //机型
+    //    public String FuleWeight;// 燃油重量
+    //    public String FuleLj; //力矩
+    //    public String OpUser; //操作人
+    //    public String OpDate; //操作日期
+    //}
 
     public static FuleLimitByAcType parse(String jsonStr){
         Gson gson = new Gson();

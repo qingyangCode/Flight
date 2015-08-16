@@ -135,8 +135,7 @@ public class ListViewAdapter extends BaseSwipeAdapter {
 					Cursor cursor = userDao.getDatabase()
 						.rawQuery("delete from "
 								+ userDao.TABLENAME
-								+ "where "
-								+ UserDao.Properties.UserName+ "= '" + userInfos.get(position) +"'", null);
+								+ " where USER_NAME = '" + userInfos.get(position) +"'", null);
 					if (cursor != null) {
 						cursor.moveToFirst();
 						LogUtil.LOGD(TAG, "delete User column count === " + cursor.getColumnCount());

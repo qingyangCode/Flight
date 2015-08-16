@@ -25,8 +25,8 @@ public class FuleLimitDao extends AbstractDao<FuleLimit, Long> {
     public static class Properties {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
         public final static Property AcType = new Property(1, String.class, "AcType", false, "AC_TYPE");
-        public final static Property FuleWeight = new Property(2, Integer.class, "FuleWeight", false, "FULE_WEIGHT");
-        public final static Property FuleLj = new Property(3, Integer.class, "FuleLj", false, "FULE_LJ");
+        public final static Property FuleWeight = new Property(2, Float.class, "FuleWeight", false, "FULE_WEIGHT");
+        public final static Property FuleLj = new Property(3, Float.class, "FuleLj", false, "FULE_LJ");
         public final static Property OpUser = new Property(4, String.class, "OpUser", false, "OP_USER");
         public final static Property OpDate = new Property(5, String.class, "OpDate", false, "OP_DATE");
     };
@@ -46,8 +46,8 @@ public class FuleLimitDao extends AbstractDao<FuleLimit, Long> {
         db.execSQL("CREATE TABLE " + constraint + "'FULE_LIMIT' (" + //
                 "'_id' INTEGER PRIMARY KEY AUTOINCREMENT ," + // 0: id
                 "'AC_TYPE' TEXT," + // 1: AcType
-                "'FULE_WEIGHT' INTEGER," + // 2: FuleWeight
-                "'FULE_LJ' INTEGER," + // 3: FuleLj
+                "'FULE_WEIGHT' REAL," + // 2: FuleWeight
+                "'FULE_LJ' REAL," + // 3: FuleLj
                 "'OP_USER' TEXT," + // 4: OpUser
                 "'OP_DATE' TEXT);"); // 5: OpDate
     }
@@ -73,14 +73,14 @@ public class FuleLimitDao extends AbstractDao<FuleLimit, Long> {
             stmt.bindString(2, AcType);
         }
  
-        Integer FuleWeight = entity.getFuleWeight();
+        Float FuleWeight = entity.getFuleWeight();
         if (FuleWeight != null) {
-            stmt.bindLong(3, FuleWeight);
+            stmt.bindDouble(3, FuleWeight);
         }
  
-        Integer FuleLj = entity.getFuleLj();
+        Float FuleLj = entity.getFuleLj();
         if (FuleLj != null) {
-            stmt.bindLong(4, FuleLj);
+            stmt.bindDouble(4, FuleLj);
         }
  
         String OpUser = entity.getOpUser();
@@ -106,8 +106,8 @@ public class FuleLimitDao extends AbstractDao<FuleLimit, Long> {
         FuleLimit entity = new FuleLimit( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
             cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // AcType
-            cursor.isNull(offset + 2) ? null : cursor.getInt(offset + 2), // FuleWeight
-            cursor.isNull(offset + 3) ? null : cursor.getInt(offset + 3), // FuleLj
+            cursor.isNull(offset + 2) ? null : cursor.getFloat(offset + 2), // FuleWeight
+            cursor.isNull(offset + 3) ? null : cursor.getFloat(offset + 3), // FuleLj
             cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // OpUser
             cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5) // OpDate
         );
@@ -119,8 +119,8 @@ public class FuleLimitDao extends AbstractDao<FuleLimit, Long> {
     public void readEntity(Cursor cursor, FuleLimit entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
         entity.setAcType(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
-        entity.setFuleWeight(cursor.isNull(offset + 2) ? null : cursor.getInt(offset + 2));
-        entity.setFuleLj(cursor.isNull(offset + 3) ? null : cursor.getInt(offset + 3));
+        entity.setFuleWeight(cursor.isNull(offset + 2) ? null : cursor.getFloat(offset + 2));
+        entity.setFuleLj(cursor.isNull(offset + 3) ? null : cursor.getFloat(offset + 3));
         entity.setOpUser(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
         entity.setOpDate(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
      }

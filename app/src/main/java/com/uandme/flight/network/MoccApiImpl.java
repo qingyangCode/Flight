@@ -9,6 +9,7 @@ import com.uandme.flight.entity.AllSameTypeAirCraft;
 import com.uandme.flight.entity.AllSbResponse;
 import com.uandme.flight.entity.AllUsers;
 import com.uandme.flight.entity.AllUsersNewResponse;
+import com.uandme.flight.entity.FlightidResponse;
 import com.uandme.flight.entity.FuleLimitByAcType;
 import com.uandme.flight.entity.GrantsByUserCodeResponse;
 import com.uandme.flight.entity.LoginUserInfo;
@@ -744,6 +745,31 @@ public class MoccApiImpl implements MoccApi{
                 responseListner.onEmptyOrError(message);
             }
         });
+        net.execute();
+    }
+
+    @Override public void getflightid(final ResponseListner<FlightidResponse> responseListner) {
+        StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>")
+                .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
+                .append("<CMD>GetFlightId</CMD>")
+                .append("<UserCode>"+ UserManager.getInstance().getUser().getUserCode()+"</UserCode>")
+                .append("<CheckCode>"+ UserManager.getInstance().getUser().getCheckCode()+"</CheckCode>")
+                .append("<RequestData/>")
+                .append("</MessageObject>")
+                ;
+        final String xmlParam = sb.toString();
+        ResponseListner<String> responseListner1 = new ResponseListner<String>() {
+            @Override public void onResponse(String response) {
+                String xmlStr = CommonUtils.xml2JSON(response);
+                LogUtil.LOGD(TAG, "GetAllSb ===== " + xmlStr);
+                FlightidResponse allAcType = FlightidResponse.parse(xmlStr);
+                responseListner.onResponse(allAcType);
+            }
+
+            @Override public void onEmptyOrError(String message) {
+                responseListner.onEmptyOrError(message);
+            }
+        }; NetBase net = new NetBase(BASE_URL, xmlParam, responseListner1);
         net.execute();
     }
 }
