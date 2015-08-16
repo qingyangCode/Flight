@@ -36,7 +36,7 @@
                 <TextView
                     android:id="@+id/tv_firstName_title"
                     style="@style/item_key"
-                    android:text="差分站"
+                    android:text="设备名称"
                     />
 
                 <Spinner
@@ -108,7 +108,7 @@
                     android:id="@+id/tv_playNO"
                     style="@style/item_value"
                     android:hint="请输入航班号"
-                    android:text=""
+                    android:text="CFI090"
                     />
             </LinearLayout>
 
@@ -126,7 +126,7 @@
                     android:id="@+id/tv_originating"
                     style="@style/item_value"
                     android:hint="请输入起飞机场"
-                    android:text=""
+                    android:text="北京"
                     />
             </LinearLayout>
 
@@ -143,7 +143,7 @@
                     android:id="@+id/tv_destination"
                     style="@style/item_value"
                     android:hint="请输入目的地机场"
-                    android:text=""
+                    android:text="杭州"
                     />
             </LinearLayout>
             <View style="@style/common_line_1_style"

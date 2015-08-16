@@ -76,7 +76,7 @@
     </style>
     <style name="new_popup_dialog_positive_single_btn" parent="@style/new_popup_dialog_btn">
         <item name="android:textColor">#FFFFFF</item>
-        <item name="android:background">@drawable/sp_new_pop_up_dialog_positive_single_btn_bg</item>
+        <item name="android:background">@drawable/dialog_bg_selector</item>
     </style>
     <style name="new_popup_dialog_btn">
         <item name="android:layout_height">50dp</item>

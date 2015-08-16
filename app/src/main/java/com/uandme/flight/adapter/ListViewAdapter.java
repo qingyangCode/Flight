@@ -6,23 +6,27 @@
  * Date：2015-1-4
  */
 
-package com.uandme.autoloadlistview.zlistview;
+package com.uandme.flight.adapter;
 
 import android.app.Activity;
+import android.database.Cursor;
 import android.util.Log;
 import android.util.Pair;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 import com.uandme.autoloadlistview.R;
+import com.uandme.autoloadlistview.zlistview.ZSwipeItem;
 import com.uandme.autoloadlistview.zlistview.adapter.BaseSwipeAdapter;
 import com.uandme.autoloadlistview.zlistview.enums.DragEdge;
 import com.uandme.autoloadlistview.zlistview.enums.ShowMode;
 import com.uandme.autoloadlistview.zlistview.listener.SimpleSwipeListener;
+import com.uandme.flight.FlightApplication;
+import com.uandme.flight.data.dao.User;
+import com.uandme.flight.data.dao.UserDao;
+import com.uandme.flight.util.LogUtil;
 import java.util.List;
 
 public class ListViewAdapter extends BaseSwipeAdapter {
@@ -31,7 +35,7 @@ public class ListViewAdapter extends BaseSwipeAdapter {
 
 
 	private Activity context;
-	private List<Pair<String, Boolean>> userInfos;
+	private List<String> userInfos;
 	private OnBottonClick mOnBottonClick;
 
 	public ListViewAdapter(Activity context) {
@@ -69,11 +73,11 @@ public class ListViewAdapter extends BaseSwipeAdapter {
 		return context.getLayoutInflater().inflate(R.layout.item_bottom_add, parent, false);
 	}
 
-	public void setData(List<Pair<String,Boolean>> pairs) {
+	public void setData(List<String> pairs) {
 		this.userInfos = pairs;
 	}
 
-	public List<Pair<String, Boolean>> getData() {
+	public List<String> getData() {
 		return userInfos;
 	}
 
@@ -84,7 +88,7 @@ public class ListViewAdapter extends BaseSwipeAdapter {
 		LinearLayout ll = (LinearLayout) convertView.findViewById(R.id.ll);
 
 		TextView tv_userName = (TextView) convertView.findViewById(R.id.tv_userName);
-		tv_userName.setText(userInfos.get(position).first);
+		tv_userName.setText(userInfos.get(position));
 
 
 		swipeItem.setShowMode(ShowMode.PullOut);
@@ -127,6 +131,16 @@ public class ListViewAdapter extends BaseSwipeAdapter {
 
 			@Override public void onClick(View v) {
 				if(userInfos.size() > position) {
+					UserDao userDao = FlightApplication.getDaoSession().getUserDao();
+					Cursor cursor = userDao.getDatabase()
+						.rawQuery("delete from "
+								+ userDao.TABLENAME
+								+ "where "
+								+ UserDao.Properties.UserName+ "= '" + userInfos.get(position) +"'", null);
+					if (cursor != null) {
+						cursor.moveToFirst();
+						LogUtil.LOGD(TAG, "delete User column count === " + cursor.getColumnCount());
+					}
 					userInfos.remove(position);
 					notifyDataSetChanged();
 				}

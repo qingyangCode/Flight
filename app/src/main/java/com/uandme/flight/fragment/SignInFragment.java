@@ -75,8 +75,7 @@ public class SignInFragment extends BaseFragment {
                 progressDialog.dismiss();
                 mLayoutTop.setVisibility(View.GONE);
                 if(userInfo != null) {
-                    UserManager.getInstance().onLogin();
-                    User user = UserManager.getInstance().getUser();
+                    User user = new User();
                     user.setUserName(userName);
                     user.setCheckCode(userInfo.getUserCodeCheck());
                     user.setUserCode(userInfo.getUserCode());
@@ -93,7 +92,7 @@ public class SignInFragment extends BaseFragment {
             @Override public void onEmptyOrError(String message) {
                 progressDialog.dismiss();
                 mLayoutTop.setVisibility(View.GONE);
-                ToastUtil.showToast(getActivity(), R.drawable.toast_warning, TextUtils.isEmpty(message)?"Failed login request ." : message);
+                ToastUtil.showToast(getActivity(), R.drawable.toast_warning, TextUtils.isEmpty(message)? getString(R.string.get_data_error) : message);
             }
         });
     }

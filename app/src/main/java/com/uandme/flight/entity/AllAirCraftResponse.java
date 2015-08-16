@@ -1,12 +1,12 @@
 package com.uandme.flight.entity;
 
 import com.google.gson.Gson;
-import com.google.gson.annotations.Expose;
+import com.uandme.flight.data.dao.AllAircraft;
 import java.util.ArrayList;
 
 
 
-public class AllAirCraft {
+public class AllAirCraftResponse {
 	
 	public TResponseObject ResponseObject;
 	public class TResponseObject{
@@ -14,9 +14,10 @@ public class AllAirCraft {
 	}
 	
 	public class TResponseData{
-		public ArrayList<TIAppObject> IAppObject;
+		public ArrayList<AllAircraft> IAppObject;
 	}
 
+	@Deprecated
 	public class TIAppObject{
 		public String AircraftReg;
 		public String UserCode;
@@ -30,11 +31,13 @@ public class AllAirCraft {
 
 	}
 	
-	public static AllAirCraft parse(String jsonStr){
+	public static AllAirCraftResponse parse(String jsonStr){
 		Gson gson = new Gson();
-		AllAirCraft fromJson = null;
+		AllAirCraftResponse fromJson = null;
+		if(jsonStr.contains("\"ResponseData\":\"\""))
+			jsonStr = jsonStr.replace("\"ResponseData\":\"\"","\"ResponseData\":{}");
 		try {
-			fromJson = gson.fromJson(jsonStr, AllAirCraft.class);
+			fromJson = gson.fromJson(jsonStr, AllAirCraftResponse.class);
 		}catch (Exception e) {
 			e.printStackTrace();
 		}

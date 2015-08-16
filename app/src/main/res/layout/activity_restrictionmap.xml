@@ -57,15 +57,14 @@
                     android:layout_weight="0.3"
                     />
 
-                <EditText
+                <TextView
                     android:id="@+id/tv_maxoil"
                     style="@style/item_value"
                     android:layout_weight="0.5"
                     android:gravity="center"
                     android:paddingLeft="5dp"
                     android:paddingRight="5dp"
-                    android:background="@drawable/engineeroom_name_bg"
-                    android:text=""
+                    android:text="6790"
                     />
                 <TextView
                     android:layout_width="0dp"
@@ -97,10 +96,10 @@
                     android:paddingLeft="5dp"
                     android:paddingRight="5dp"
                     android:background="@drawable/engineeroom_name_bg"
-                    android:text=""
+                    android:text="6000"
                     />
                 <TextView
-                    android:id="@+id/tv_empty_focus"
+                    android:id="@+id/tv_reality_focus"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="0.3"
@@ -127,10 +126,10 @@
                     android:paddingLeft="5dp"
                     android:paddingRight="5dp"
                     android:background="@drawable/engineeroom_name_bg"
-                    android:text=""
+                    android:text="100"
                     />
                 <TextView
-                    android:id="@+id/tv_run_focus"
+                    android:id="@+id/tv_slide_focus"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="0.3"
@@ -155,10 +154,10 @@
                     android:paddingLeft="5dp"
                     android:paddingRight="5dp"
                     android:background="@drawable/engineeroom_name_bg"
-                    android:text=""
+                    android:text="900"
                     />
                 <TextView
-                    android:id="@+id/tv_up"
+                    android:id="@+id/tv_fly_focus"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="0.3"
@@ -183,10 +182,10 @@
                     android:paddingLeft="5dp"
                     android:paddingRight="5dp"
                     android:background="@drawable/engineeroom_name_bg"
-                    android:text=""
+                    android:text="3000"
                     />
                 <TextView
-                    android:id="@+id/tv_fly_focus"
+                    android:id="@+id/tv_be_fore_focus"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="0.3"
@@ -211,7 +210,7 @@
                     android:paddingLeft="5dp"
                     android:paddingRight="5dp"
                     android:background="@drawable/engineeroom_name_bg"
-                    android:text=""
+                    android:text="1000"
                     />
                 <TextView
                     android:id="@+id/tv_down_focus"
@@ -231,14 +230,13 @@
                     android:layout_weight="0.3"
                     />
 
-                <EditText
+                <TextView
                     android:id="@+id/tv_mac"
                     style="@style/item_value"
                     android:layout_weight="0.5"
                     android:gravity="center"
                     android:paddingLeft="5dp"
                     android:paddingRight="5dp"
-                    android:background="@drawable/engineeroom_name_bg"
                     android:text=""
                     />
                 <TextView

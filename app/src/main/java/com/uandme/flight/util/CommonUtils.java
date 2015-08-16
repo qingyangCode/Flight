@@ -2,6 +2,8 @@ package com.uandme.flight.util;
 
 import android.app.Activity;
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import com.uandme.flight.entity.LoginUserInfo;
@@ -19,6 +21,19 @@ public class CommonUtils {
 			System.err.println("net" + e.getLocalizedMessage());
 			return "";
 		}
+	}
+
+
+	public static boolean isNetworkConnected(Context context) {
+		if (context != null) {
+			ConnectivityManager mConnectivityManager = (ConnectivityManager) context
+					.getSystemService(Context.CONNECTIVITY_SERVICE);
+			NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
+			if (mNetworkInfo != null) {
+				return mNetworkInfo.isAvailable();
+			}
+		}
+		return false;
 	}
 
 

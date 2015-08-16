@@ -13,6 +13,7 @@ import android.os.Message;
 import android.util.AttributeSet;
 import android.view.View;
 
+import com.uandme.flight.entity.LineData;
 import java.util.ArrayList;
 
 public class MyLineDegreeView extends View {
@@ -47,43 +48,47 @@ public class MyLineDegreeView extends View {
 	private int lastX = 0;
 	private int lastY = 0;
 
-	class LineData {
-		public ArrayList<Integer> datasY = null;
-		public ArrayList<Integer> datasX = null;
+
+	public ArrayList<LineData> getLines() {
+		return lines;
 	}
 
-	private ArrayList<LineData> lines = new ArrayList<MyLineDegreeView.LineData>();
+	public void setLines(ArrayList<LineData> lines) {
+		this.lines = lines;
+	}
+
+	private ArrayList<LineData> lines = new ArrayList<LineData>();
 
 	@SuppressLint("NewApi")
 	public void init() {
 		paint = new Paint();
 		paint.setAntiAlias(true);
 
-		ArrayList<Integer> tempDatasY = new ArrayList<Integer>();
-		tempDatasY.add(100);
-		tempDatasY.add(90);
-		tempDatasY.add(80);
-		tempDatasY.add(70);
-		tempDatasY.add(60);
-		tempDatasY.add(55);
-		lastX = 55;
-		//
-		ArrayList<Integer> tempDatasX = new ArrayList<Integer>();
-		tempDatasX.add(350);
-		tempDatasX.add(340);
-		tempDatasX.add(320);
-		tempDatasX.add(300);
-		tempDatasX.add(270);
-		tempDatasX.add(250);
-		lastY = 250;
+		//ArrayList<Integer> tempDatasY = new ArrayList<Integer>();
+		//tempDatasY.add(100);
+		//tempDatasY.add(90);
+		//tempDatasY.add(80);
+		//tempDatasY.add(70);
+		//tempDatasY.add(60);
+		//tempDatasY.add(55);
+		//lastX = 55;
+		////
+		//ArrayList<Integer> tempDatasX = new ArrayList<Integer>();
+		//tempDatasX.add(350);
+		//tempDatasX.add(340);
+		//tempDatasX.add(320);
+		//tempDatasX.add(300);
+		//tempDatasX.add(270);
+		//tempDatasX.add(250);
+		//lastY = 250;
 
-		LineData data = new LineData();
-		data.datasX = tempDatasX;
-		data.datasY = tempDatasY;
-		setData(data);
+		//LineData data = new LineData();
+		//data.datasX = tempDatasX;
+		//data.datasY = tempDatasY;
+		//setData(data);
 
 		// 6s后动态添加一条曲线
-		refreshHandler.sendMessageDelayed(Message.obtain(), 6000);
+		//refreshHandler.sendMessageDelayed(Message.obtain(), 6000);
 	}
 
 	public void setData(LineData data) {
@@ -99,28 +104,28 @@ public class MyLineDegreeView extends View {
 
 	public Handler refreshHandler = new Handler() {
 		public void handleMessage(android.os.Message msg) {
-			ArrayList<Integer> tempDatasY = new ArrayList<Integer>();
-			tempDatasY.add(90);
-			tempDatasY.add(80);
-			tempDatasY.add(70);
-			tempDatasY.add(60);
-			tempDatasY.add(55);
-			tempDatasY.add(40);
-			//
-			ArrayList<Integer> tempDatasX = new ArrayList<Integer>();
-			tempDatasX.add(350);
-			tempDatasX.add(340);
-			tempDatasX.add(320);
-			tempDatasX.add(300);
-			tempDatasX.add(270);
-			tempDatasX.add(250);
+			//ArrayList<Integer> tempDatasY = new ArrayList<Integer>();
+			//tempDatasY.add(90);
+			//tempDatasY.add(80);
+			//tempDatasY.add(70);
+			//tempDatasY.add(60);
+			//tempDatasY.add(55);
+			//tempDatasY.add(40);
+			////
+			//ArrayList<Integer> tempDatasX = new ArrayList<Integer>();
+			//tempDatasX.add(350);
+			//tempDatasX.add(340);
+			//tempDatasX.add(320);
+			//tempDatasX.add(300);
+			//tempDatasX.add(270);
+			//tempDatasX.add(250);
 
-			LineData data = new LineData();
-			data.datasX = tempDatasX;
-			data.datasY = tempDatasY;
-
-			setTextSize(35);
-			addData(data);
+			//LineData data = new LineData();
+			//data.datasX = tempDatasX;
+			//data.datasY = tempDatasY;
+            //
+			//setTextSize(35);
+			//addData(data);
 		};
 	};
 
@@ -387,9 +392,9 @@ public class MyLineDegreeView extends View {
 		dataPath.reset();
 		int perW = getPerW();
 		int perH = getPerH();
-		for (int i = 0; i < lineData.datasY.size(); i++) {
-			int x = marginLeft + (lineData.datasX.get(i) - LimitminX) * perW;
-			int y = (LimitmaxY - lineData.datasY.get(i)) * perH + marginTop;
+		for (int i = 0; i < lineData.getDatasY().size(); i++) {
+			int x = (int) (marginLeft + (lineData.getDatasX().get(i) - LimitminX) * perW);
+			int y = (int)(LimitmaxY - lineData.getDatasY().get(i)) * perH + marginTop;
 
 			if (i == 0) {
 				dataPath.moveTo(x, y);
@@ -397,9 +402,9 @@ public class MyLineDegreeView extends View {
 				dataPath.lineTo(x, y);
 			}
 		}
-		if (lineData.datasY != null && lineData.datasX != null
-				&& lineData.datasX.size() > 0) {
-			if (lineData.datasX.size() == lineData.datasY.size()) {
+		if (lineData.getDatasY() != null && lineData.getDatasX() != null
+				&& lineData.getDatasX().size() > 0) {
+			if (lineData.getDatasX().size() == lineData.getDatasY().size()) {
 				return dataPath;
 			}
 		}

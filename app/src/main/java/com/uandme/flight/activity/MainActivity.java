@@ -6,15 +6,16 @@ import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import butterknife.InjectView;
-import butterknife.OnClick;
+import com.uandme.flight.FlightApplication;
 import com.uandme.flight.R;
 import com.uandme.flight.adapter.FlightBaseAdapter;
-import com.uandme.flight.entity.AllAirCraft;
+import com.uandme.flight.data.dao.AllAircraft;
+import com.uandme.flight.data.dao.AllAircraftDao;
+import com.uandme.flight.entity.AllAirCraftResponse;
 import com.uandme.flight.network.ResponseListner;
 import com.uandme.flight.util.CommonProgressDialog;
 import com.uandme.flight.util.ToastUtil;
@@ -49,11 +50,18 @@ public class MainActivity extends BaseActivity {
         dialog.setCancelable(true);
         dialog.setCanceledOnTouchOutside(false);
         dialog.show();
-        getMoccApi().getAllAircraft(UserManager.getInstance().getUser().getUserCode(), new ResponseListner<AllAirCraft>() {
+        getMoccApi().getAllAircraft(UserManager.getInstance().getUser().getUserCode(), new ResponseListner<AllAirCraftResponse>() {
 
-            @Override public void onResponse(AllAirCraft response) {
+            @Override public void onResponse(AllAirCraftResponse response) {
                 dialog.dismiss();
-                mListView.setAdapter(new PlanAdapterFlight(MainActivity.this,response.ResponseObject.ResponseData.IAppObject, 50, R.layout.item_allaircraft, R.layout.item_failed));
+                UserManager.getInstance().onLogin();
+                if (response != null && response.ResponseObject != null && response.ResponseObject.ResponseData!= null) {
+                    UserManager.getInstance().insertAllAircrartDB(
+                            response.ResponseObject.ResponseData.IAppObject);
+                    mListView.setAdapter(new PlanAdapterFlight(MainActivity.this,response.ResponseObject.ResponseData.IAppObject, 50, R.layout.item_allaircraft, R.layout.item_failed));
+                } else {
+                    ToastUtil.showToast(MainActivity.this, R.drawable.toast_warning, getString(R.string.get_data_error));
+                }
             }
 
             @Override public void onEmptyOrError(String message) {
@@ -63,14 +71,14 @@ public class MainActivity extends BaseActivity {
         });
     }
 
-    public class PlanAdapterFlight extends FlightBaseAdapter<AllAirCraft.TIAppObject> {
-        public PlanAdapterFlight(Context context, List<AllAirCraft.TIAppObject> iniData,
+    public class PlanAdapterFlight extends FlightBaseAdapter<AllAircraft> {
+        public PlanAdapterFlight(Context context, List<AllAircraft> iniData,
                 int pageSize, int res, int loadingRes) {
             super(context, iniData, pageSize, res, loadingRes);
         }
 
         @Override public View getView(final int position, View convertView, ViewGroup parent,
-               final AllAirCraft.TIAppObject value) {
+               final AllAircraft value) {
             ViewHolder holder = (ViewHolder) convertView.getTag();
             if(holder == null) {
                 holder = new ViewHolder();
@@ -78,16 +86,15 @@ public class MainActivity extends BaseActivity {
                 holder.type = (TextView) convertView.findViewById(R.id.tv_type);
             }
             convertView.setTag(holder);
-            holder.number.setText(value.AircraftReg);
-            holder.type.setText(value.AircraftType);
+            holder.number.setText(value.getAircraftReg());
+            holder.type.setText(value.getAircraftType());
             convertView.setOnClickListener(new View.OnClickListener() {
                 @Override public void onClick(View v) {
                     Intent intent = new Intent(MainActivity.this, BasicInfoActivity.class);
-                    intent.putExtra("Lj", value.Lj);
-                    intent.putExtra("OpDate", value.OpDate);
-                    intent.putExtra("SysVersion", value.SysVersion);
-                    intent.putExtra("AircraftReg", value.AircraftReg);
-                    intent.putExtra("Bw", value.Bw);
+                    intent.putExtra("Lj", value.getLj());
+                    intent.putExtra("AircraftReg", value.getAircraftReg());
+                    intent.putExtra("AircraftType", value.getAircraftType());
+                    intent.putExtra("Bw", value.getBw());
                     startActivity(intent);
                 }
             });

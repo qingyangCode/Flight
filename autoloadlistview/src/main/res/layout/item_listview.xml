@@ -6,11 +6,11 @@
     <com.uandme.autoloadlistview.zlistview.ZSwipeItem
         android:id="@+id/swipe_item"
         android:layout_width="match_parent"
-        android:layout_height="80dp">
+        android:layout_height="55dp">
 
         <LinearLayout
             android:id="@+id/ll"
-            android:layout_width="180dp"
+            android:layout_width="80dp"
             android:layout_height="match_parent"
             android:background="@android:color/holo_red_light"
             android:gravity="center">
@@ -22,7 +22,7 @@
         </LinearLayout>
 
         <LinearLayout android:layout_width="match_parent"
-            android:layout_height="80dp"
+            android:layout_height="55dp"
             android:paddingLeft="15dp"
             android:paddingRight="20dp"
             android:background="#FFFFFF">

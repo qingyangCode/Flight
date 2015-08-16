@@ -7,4 +7,8 @@ public interface Constants {
     final int RESULT_OK = 100;
 
     String DB_ALLUSER = "alluser";
+
+    String DB_AllAcType ="allAcType";
+
+    String DB_ALLAirCart = "allAirCart";
 }

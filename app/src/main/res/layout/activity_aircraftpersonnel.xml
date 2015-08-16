@@ -13,13 +13,38 @@
 
     <com.uandme.flight.widget.AutoLoadListView
         android:id="@+id/mListview"
+        android:layout_above="@+id/bottom"
         android:layout_below="@id/layout_topbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
     <!--</android.support.v4.widget.SwipeRefreshLayout>-->
 
+    <LinearLayout
+        android:id="@+id/bottom"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@android:color/white"
+        >
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5px"
+            android:background="#999999"
+            />
+        <Button
+            android:id="@+id/add_person"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/common_bg_selector_1"
+            android:gravity="center"
+            android:text="添加成员"
+            android:textColor="@color/white"
+            android:textSize="18dp"
+            />
 
+    </LinearLayout>
 
 
 </RelativeLayout>

@@ -19,7 +19,7 @@
          />
 
     <EditText
-        android:id="@+id/textView2"
+        android:id="@+id/tv_userName"
         android:layout_marginTop="12dp"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"

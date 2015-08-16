@@ -5,11 +5,12 @@ import java.util.ArrayList;
 import com.google.gson.Gson;
 
 
-public class AllUsersNew {
+public class AllUsersNewResponse {
 	
 	public TResponseObject ResponseObject;
 	class TResponseObject{
 		public TResponseData ResponseData;
+		public int ResponseCode;
 	}
 	
 	class TResponseData{
@@ -23,9 +24,16 @@ public class AllUsersNew {
 		String AcTypes;
 	}
 	
-	public static AllUsersNew parse(String jsonStr){
+	public static AllUsersNewResponse parse(String jsonStr){
 		Gson gson = new Gson();
-		AllUsersNew fromJson = gson.fromJson(jsonStr, AllUsersNew.class);
+		AllUsersNewResponse fromJson = null;
+		if(jsonStr.contains("\"ResponseData\":\"\""))
+			jsonStr = jsonStr.replace("\"ResponseData\":\"\"","\"ResponseData\":{}");
+		try {
+			fromJson = gson.fromJson(jsonStr, AllUsersNewResponse.class);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
 		return fromJson;
 	}
 

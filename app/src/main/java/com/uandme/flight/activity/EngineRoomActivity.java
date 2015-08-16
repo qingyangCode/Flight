@@ -1,80 +1,81 @@
 package com.uandme.flight.activity;
 
-import android.content.Context;
 import android.content.Intent;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Pair;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import butterknife.InjectView;
 import com.uandme.flight.FlightApplication;
 import com.uandme.flight.R;
-import com.uandme.flight.adapter.FlightBaseAdapter;
+import com.uandme.flight.data.dao.SeatByAcReg;
+import com.uandme.flight.data.dao.SeatByAcRegDao;
 import com.uandme.flight.data.dao.User;
 import com.uandme.flight.data.dao.UserDao;
 import com.uandme.flight.entity.EngineRoom;
-import com.uandme.flight.entity.SeatByAcReg;
+import com.uandme.flight.entity.SeatByAcRegResponse;
 import com.uandme.flight.network.ResponseListner;
+import com.uandme.flight.util.ApiServiceManager;
 import com.uandme.flight.util.CommonProgressDialog;
-import com.uandme.flight.util.Constants;
+import com.uandme.flight.util.CommonUtils;
+import com.uandme.flight.util.LogUtil;
 import com.uandme.flight.util.ToastUtil;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
+import java.util.Map;
+import org.w3c.dom.Text;
 
 /**
  * Created by QingYang on 15/7/23.
  */
-public class EngineRoomActivity extends BaseActivity implements View.OnClickListener{
+public class EngineRoomActivity extends BaseActivity{
     private String TAG = EngineRoom.class.getSimpleName();
-    //@InjectView(R.id.btn1)
-    Button mBtn1;
-    //@InjectView(R.id.btn2)
-    Button mBtn2;
-    //@InjectView(R.id.btn3)
-    Button mBtn3;
-    //@InjectView(R.id.btn5)
-    Button mBtn5;
-    //@InjectView(R.id.btn6)
-    Button mBtn6;
-    //@InjectView(R.id.btn7)
-    Button mBtn7;
-    //@InjectView(R.id.btn8)
-    Button mBtn8;
-    //@InjectView(R.id.btn9)
-    Button mBtn9;
-    //@InjectView(R.id.btn10)
-    Button mBtn10;
-    //@InjectView(R.id.btn11)
-    Button mBtn11;
-    //@InjectView(R.id.tv_seat)
-    EditText mSeat;
-    //@InjectView(R.id.tv_passengerName)
-    EditText mPassengerName;
-    //@InjectView(R.id.tv_Arm)
-    TextView mArm;
-    //@InjectView(R.id.tv_weight)
-    EditText mWeight;
 
+    //EditText mSeat;
+    //EditText mPassengerName;
+    //TextView mArm;
+    //EditText mWeight;
+    //LinearLayout mLinearLayout;
+    View inflate;
     //@InjectView(R.id.mListView)
-    ListView mListView;
+    //ListView mListView;
+    @InjectView(R.id.layout_seat)
+    LinearLayout mLinearLayout;
+    @InjectView(R.id.tv_seat)
+    EditText mSeat;
+    @InjectView(R.id.tv_passengerName)
+    TextView mPassengerName;
+    @InjectView(R.id.tv_Arm)
+    TextView mArm;
+    @InjectView(R.id.tv_weight)
+    EditText mWeight;
+    @InjectView(R.id.mLinearLayout)
+    LinearLayout mSeatLinearLayout;
 
-    private View inflate;
 
 
     private String aircraftReg;
-    private String lj;
-    private String opDate;
-    private String sysVersion;
-    private String bw;
-    private ArrayList<SeatByAcReg.SeatInfos> IAppObject;
+    private String aircraftType;
+    private List<SeatByAcReg> seatList;
+
+
 
     @Override public int getContentView() {
         return R.layout.activity_engineroom;
@@ -82,211 +83,445 @@ public class EngineRoomActivity extends BaseActivity implements View.OnClickList
 
     @Override protected void onloadData() {
         Intent data = getIntent();
-        IAppObject = new ArrayList<>();
+        seatList = new ArrayList<>();
         if (data != null) {
             aircraftReg = data.getStringExtra("AircraftReg");
-            lj = data.getStringExtra("Lj");
-            opDate = data.getStringExtra("OpDate");
-            sysVersion = data.getStringExtra("SysVersion");
-            bw = data.getStringExtra("Bw");
+            aircraftType = data.getStringExtra("AircraftType");
         }
 
-        final CommonProgressDialog dialog = new CommonProgressDialog(this);
-        dialog.setTip("加载中 ..");
-        dialog.setCancelable(true);
-        dialog.setCanceledOnTouchOutside(false);
-        dialog.show();
+
 
         mTopBarTitle.setText("机舱信息");
         mTopBarRight.setText("下一步");
 
-        mListView = (ListView) findViewById(R.id.mListView);
-        inflate = View.inflate(this, R.layout.header_engineroom, null);
-        mBtn1 = (Button) inflate.findViewById(R.id.btn1);
-        mBtn2 = (Button) inflate.findViewById(R.id.btn2);
-        mBtn3 = (Button) inflate.findViewById(R.id.btn3);
-        mBtn5 = (Button) inflate.findViewById(R.id.btn5);
-        mBtn6 = (Button) inflate.findViewById(R.id.btn6);
-        mBtn7 = (Button) inflate.findViewById(R.id.btn7);
-        mBtn8 = (Button) inflate.findViewById(R.id.btn8);
-        mBtn9 = (Button) inflate.findViewById(R.id.btn9);
-        mBtn10 = (Button) inflate.findViewById(R.id.btn10);
-        mBtn11 = (Button) inflate.findViewById(R.id.btn11);
-        mSeat = (EditText) inflate.findViewById(R.id.tv_seat);
-        mPassengerName = (EditText) inflate.findViewById(R.id.tv_passengerName);
-        mArm = (TextView) inflate.findViewById(R.id.tv_Arm);
-        mWeight = (EditText) inflate.findViewById(R.id.tv_weight);
-        mBtn1.setOnClickListener(this);
-        mBtn2.setOnClickListener(this);
-        mBtn3.setOnClickListener(this);
-        mBtn5.setOnClickListener(this);
-        mBtn6.setOnClickListener(this);
-        mBtn7.setOnClickListener(this);
-        mBtn8.setOnClickListener(this);
-        mBtn9.setOnClickListener(this);
-        mBtn10.setOnClickListener(this);
-        mBtn11.setOnClickListener(this);
-
+        //inflate = View.inflate(this, R.layout.header_engineroom, null);
+        //mLinearLayout = (LinearLayout) inflate.findViewById(R.id.layout_seat);
+        //mSeat = (EditText) inflate.findViewById(R.id.tv_seat);
+        //mPassengerName = (EditText) inflate.findViewById(R.id.tv_passengerName);
+        //mArm = (TextView) inflate.findViewById(R.id.tv_Arm);
+        //mWeight = (EditText) inflate.findViewById(R.id.tv_weight);
 
         mSeat.setEnabled(false);
         mSeat.setText("座位");
         mPassengerName.setEnabled(false);
         mPassengerName.setBackgroundResource(0);
         mPassengerName.setGravity(Gravity.CENTER);
-        mPassengerName.setText("乘客姓名");
+        mPassengerName.setText("姓名");
         mArm.setEnabled(false);
-        mArm.setText("力矩 (in.)");
+        mArm.setText("力臂 (in.)");
         mWeight.setEnabled(false);
         mWeight.setBackgroundResource(0);
         mWeight.setText("重量 (lb.)");
-        //ButterKnife.inject(inflate);
-        mListView.addHeaderView(inflate);
+        //mListView.addHeaderView(inflate);
+        getSeatByDB();
+        if (seatList == null || seatList.size() == 0) {
+            if (CommonUtils.isNetworkConnected(this))
+                getSeatByNet();
+        } else {
+            addSeatView();
+        }
+    }
 
 
+    private float lastPosition = 0;
+    private View view = null;
+    private ImageView upView = null;
+    private ImageView downView = null;
+    private boolean isUpSelected;
+    private boolean isDownSelected;
 
-        getMoccApi().getSeatByAcReg(aircraftReg, bw, lj, opDate, sysVersion, new ResponseListner<SeatByAcReg>(){
 
-            @Override public void onResponse(SeatByAcReg response) {
-                if (dialog != null && dialog.isShowing())
-                    dialog.dismiss();
-                if (response != null && response.ResponseObject.ResponseCode == Constants.RESULT_OK) {
-                    IAppObject = response.ResponseObject.ResponseData.IAppObject;
-                    mListView.setAdapter(new EngineAdapter(EngineRoomActivity.this, IAppObject, 50, R.layout.item_seatlayout, R.layout.item_failed));
-                }else {
-                    mListView.setAdapter(new EngineAdapter(EngineRoomActivity.this, new ArrayList<SeatByAcReg.SeatInfos>(), 50, R.layout.item_seatlayout, R.layout.item_failed));
+    private void addSeatView() {
+        for(SeatByAcReg seatByAcReg : seatList) {
+            if (seatByAcReg.getXPos() != 0) {
+                isUpSelected = true;
+                if ((lastPosition + 0.03 < seatByAcReg.getXPos() && lastPosition - 0.03 > seatByAcReg.getXPos()) || lastPosition == 0 || lastPosition != seatByAcReg.getXPos()) {
+                    view = View.inflate(this, R.layout.item_seat, null);
+                    upView = (ImageView) view.findViewById(R.id.iv_up);
+                    downView = (ImageView) view.findViewById(R.id.iv_down);
+                    mLinearLayout.addView(view);
                 }
-            }
+                if (view == null || upView == null || downView == null)
+                    continue;
+                    if ("LEFT".equals(seatByAcReg.getDirection())) {
+                        if (seatByAcReg.getYPos() < 0.45) {
+                            upView.setVisibility(View.VISIBLE);
+                            upView.setBackgroundResource(R.drawable.seat_left_selector);
+                        } else {
+                            downView.setVisibility(View.VISIBLE);
+                            downView.setBackgroundResource(R.drawable.seat_left_selector);
+                        }
+                    } else if ("UP".equals(seatByAcReg.getDirection())) {
+                        if (seatByAcReg.getYPos() < 0.45) {
+                            upView.setVisibility(View.VISIBLE);
+                            upView.setBackgroundResource(R.drawable.seat_up_selector);
+                        } else {
+                            downView.setVisibility(View.VISIBLE);
+                            downView.setBackgroundResource(R.drawable.seat_up_selector);
+                        }
+                    } else if ("DOWN".equals(seatByAcReg.getDirection())) {
+                        if (seatByAcReg.getYPos() < 0.45) {
+                            upView.setVisibility(View.VISIBLE);
+                            upView.setBackgroundResource(R.drawable.seat_down_selector);
+                        } else {
+                            downView.setVisibility(View.VISIBLE);
+                            downView.setBackgroundResource(R.drawable.seat_down_selector);
+                        }
+                    } else if ("RIGHT".equals(seatByAcReg.getDirection())) {
+                        if (seatByAcReg.getYPos() < 0.45) {
+                            upView.setVisibility(View.VISIBLE);
+                            upView.setBackgroundResource(R.drawable.seat_right_selector);
+                        } else {
+                            downView.setVisibility(View.VISIBLE);
+                            downView.setBackgroundResource(R.drawable.seat_right_selector);
+                        }
+                    }
+                lastPosition = seatByAcReg.getXPos();
+                upView.setOnClickListener(new View.OnClickListener() {
+                    @Override public void onClick(View v) {
+                        if (isUpSelected) {
+                            upView.setSelected(true);
+                        } else {
+                            upView.setSelected(false);
+                        }
+                        isUpSelected = !isUpSelected;
+                    }
+                });
+                downView.setOnClickListener(new View.OnClickListener() {
+                    @Override public void onClick(View v) {
+                        if (isDownSelected) {
+                            downView.setSelected(true);
+                        } else {
+                            downView.setSelected(false);
+                        }
+                        isDownSelected = !isDownSelected;
+                    }
+                });
 
-            @Override public void onEmptyOrError(String message) {
-                if (dialog != null && dialog.isShowing())
-                    dialog.dismiss();
-                ToastUtil.showToast(EngineRoomActivity.this, R.drawable.toast_warning,!TextUtils.isEmpty(message) ? message : getString(R.string.get_data_error));
+            }
+        }
+
+    }
+
+    private ArrayList<SeatByAcReg> seatInfos;
+    private ArrayList<Float> weightList;
+    private void getSeatByDB() {
+        seatInfos = new ArrayList<>();
+        weightList = new ArrayList<>();
+        SeatByAcRegDao seatByAcRegDao = FlightApplication.getDaoSession().getSeatByAcRegDao();
+        seatList = seatByAcRegDao.queryBuilder()
+                .where(SeatByAcRegDao.Properties.AcReg.eq(aircraftReg))
+                .list();
+
+        Collections.sort(seatList, new Comparator<SeatByAcReg>() {
+
+            @Override public int compare(SeatByAcReg lhs, SeatByAcReg rhs) {
+                return lhs.getXPos() > rhs.getXPos() ? 1 : -1;
             }
         });
 
+        for ( int index = 0; index < seatList.size() ; index ++) {
+            final SeatByAcReg seatByAcReg = seatList.get(index);
+            LogUtil.LOGD(TAG, "排序后结果： " + seatByAcReg.getXPos() + "   :  " + seatByAcReg.getYPos() +  " ==  " + seatByAcReg.toString());
 
-        List<EngineRoom> engineRooms = new ArrayList<EngineRoom>();
-
-        for (int i = 1; i < 11; i++) {
-            if(i == 4)
-                continue;
-            EngineRoom room = new EngineRoom();
-            room.seat = "seat " + i;
-            room.passengerName = "name "+ i;
-            room.arm = String.valueOf((new Random()).nextInt(400));
-            if(i < 3)
-                room.weight = 200 + "";
-            else if(i < 6)
-                room.weight = 170 + "";
-            else
-                room.weight = 0 +"";
-
-            engineRooms.add(room);
-        }
-
-        //mListView.setAdapter(new EngineAdapter(this, engineRooms, 50, R.layout.item_seatlayout, R.layout.item_failed));
-
-    }
-
-    //@OnClick({R.id.btn1, R.id.btn2, R.id.btn3, R.id.btn5, R.id.btn6, R.id.btn7, R.id.btn8, R.id.btn9, R.id.btn10, R.id.btn11})
-    public void onViewClick(View v) {
-
-    }
-
-    private void switchButtonBackground(Button button) {
-        if(button.isSelected()) {
-            button.setSelected(false);
-        } else {
-            button.setSelected(true);
-        }
-    }
-
-    @Override public void onClick(View v) {
-        switch (v.getId()) {
-            case  R.id.btn1:
-                switchButtonBackground(mBtn1);
-                break;
-            case  R.id.btn2:
-                switchButtonBackground(mBtn2);
-                break;
-            case  R.id.btn3:
-                switchButtonBackground(mBtn3);
-                break;
-            case  R.id.btn5:
-                switchButtonBackground(mBtn5);
-                break;
-            case  R.id.btn6:
-                switchButtonBackground(mBtn6);
-                break;
-            case  R.id.btn7:
-                switchButtonBackground(mBtn7);
-                break;
-            case  R.id.btn8:
-                switchButtonBackground(mBtn8);
-                break;
-            case  R.id.btn9:
-                switchButtonBackground(mBtn9);
-                break;
-            case  R.id.btn10:
-                switchButtonBackground(mBtn10);
-                break;
-            case  R.id.btn11:
-                switchButtonBackground(mBtn11);
-                break;
-        }
-    }
-
-    public class EngineAdapter extends FlightBaseAdapter<SeatByAcReg.SeatInfos>{
-
-        public EngineAdapter(Context context, List<SeatByAcReg.SeatInfos> iniData, int pageSize, int res,
-                int loadingRes) {
-            super(context, iniData, pageSize, res, loadingRes);
-        }
-
-        @Override
-        public View getView(final int position, View convertView, ViewGroup parent, final SeatByAcReg.SeatInfos value) {
-            ViewHolder holder = (ViewHolder) convertView.getTag();
-            if(holder == null) {
-                holder = new ViewHolder();
-                holder.tv_seat = (TextView) convertView.findViewById(R.id.tv_seat);
-                holder.et_passenger = (AutoCompleteTextView) convertView.findViewById(R.id.tv_passengerName);
+            if (seatByAcReg.getXPos() != 0) {
+                View convertView = View.inflate(EngineRoomActivity.this, R.layout.item_seatlayout, null);
+                TextView tv_seat = (TextView) convertView.findViewById(R.id.tv_seat);
+                AutoCompleteTextView et_passenger = (AutoCompleteTextView) convertView.findViewById(R.id.tv_passengerName);
                 final UserDao userDao = FlightApplication.getDaoSession().getUserDao();
                 final List<User> list = userDao.queryBuilder().list();
                 String [] names = new String[list.size()];
                 for(int i = 0; i < list.size(); i++) {
                     names[i] = list.get(i).getUserName();
                 }
-                holder.et_passenger.setAdapter(new ArrayAdapter<String>(EngineRoomActivity.this, R.layout.list_item, names));
-                holder.tv_arm = (TextView) convertView.findViewById(R.id.tv_Arm);
-                holder.et_weight = (EditText) convertView.findViewById(R.id.tv_weight);
+                et_passenger.setAdapter(new ArrayAdapter<String>(EngineRoomActivity.this, R.layout.list_item, names));
+                TextView tv_arm = (TextView) convertView.findViewById(R.id.tv_Arm);
+                final TextView et_weight = (EditText) convertView.findViewById(R.id.tv_weight);
+
+
+                tv_seat.setText(seatByAcReg.getSeatCode());
+                if ("C".equalsIgnoreCase(seatByAcReg.getSeatType())) {
+                    et_passenger.setEnabled(false);
+                    et_passenger.setText("货物");
+                    et_passenger.setBackgroundResource(0);
+                } else {
+                    et_passenger.setText("");
+                    et_passenger.setBackgroundResource(R.drawable.engineeroom_name_bg);
+                }
+                tv_arm.setText(seatByAcReg.getAcTypeLb()+"");
+                et_weight.setText("180");
+                if (180 > seatByAcReg.getAcTypeSeatLimit()) {
+                    et_weight.setBackgroundColor(getResources().getColor(R.color.red));
+                } else {
+                    et_weight.setBackgroundResource(R.drawable.engineeroom_name_bg);
+                }
+                final int position = index;
+                LogUtil.LOGD(TAG, "position ===== " + position);
+                tv_seat.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                    }
+
+                    @Override public void afterTextChanged(Editable s) {
+                        if (!TextUtils.isEmpty(s.toString()))
+                            seatInfos.get(position).setUserName(s.toString());
+                            //seatByAcReg.setUserName(s.toString());
+                    }
+                });
+                et_weight.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                    }
+
+                    @Override public void afterTextChanged(Editable s) {
+                        if (!TextUtils.isEmpty(s.toString())) {
+                            float weight = 0;
+                            try {
+                                weight = Float.parseFloat(s.toString());
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            if (weight > seatByAcReg.getAcTypeSeatLimit()) {
+                                et_weight.setBackgroundColor(getResources().getColor(R.color.red));
+                            } else {
+                                et_weight.setBackgroundResource(R.drawable.engineeroom_name_bg);
+                            }
+                            //seatByAcReg.setAcRegCargWeight(weight);
+                            //try {
+                            weightList.set(position, weight);
+                                //seatInfos.get(position).setAcRegCargWeight(weight);
+                            //} catch (Exception e) {
+                            //    e.printStackTrace();
+                            //}
+                        }
+                    }
+                });
+                mSeatLinearLayout.addView(convertView);
+                seatInfos.add(seatByAcReg);
             }
-            convertView.setTag(holder);
-            holder.tv_seat.setEnabled(false);
-            holder.tv_seat.setText(value.SeatCode);
-            holder.et_passenger.setText(value.userName);
-            holder.et_passenger.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            if (seatByAcReg.getXPos() != 0) {
+                weightList.add(180f);
+            } else {
+                weightList.add(0f);
+            }
 
-                }
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-                }
-
-                @Override public void afterTextChanged(Editable s) {
-                    IAppObject.get(position).userName = s.toString().trim();
-                }
-            });
-            holder.tv_arm.setText(value.AcTypeLb + "");
-            holder.et_weight.setText("180");
-            handleWeight(holder, value);
-
-            return convertView;
         }
 
+
+
+
     }
+
+
+
+    private CommonProgressDialog dialog;
+    private void getSeatByNet() {
+        if (seatList == null) {
+            dialog = new CommonProgressDialog(this);
+            dialog.setTip("加载中 ..");
+            dialog.setCancelable(true);
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.show();
+        }
+
+        ApiServiceManager.getInstance().getSeatInfo(aircraftReg, new ResponseListner<SeatByAcRegResponse>() {
+            @Override public void onResponse(SeatByAcRegResponse response) {
+                if (dialog != null && dialog.isShowing()) {
+                    dialog.dismiss();
+                }
+                getSeatByDB();
+            }
+
+            @Override public void onEmptyOrError(String message) {
+                if (dialog != null && dialog.isShowing()) {
+                    dialog.dismiss();
+                    ToastUtil.showToast(EngineRoomActivity.this, R.drawable.toast_warning, message);
+                }
+            }
+        });
+    }
+
+    //private void switchButtonBackground(Button button) {
+    //    if(button.isSelected()) {
+    //        button.setSelected(false);
+    //    } else {
+    //        button.setSelected(true);
+    //    }
+    //}
+
+
+
+    //private View.OnTouchListener onNameTouchListener = new View.OnTouchListener() {
+    //    @Override public boolean onTouch(View v, MotionEvent event) {
+    //        if(event.getAction() == MotionEvent.ACTION_UP){
+    //            index1 = (Integer) v.getTag();
+    //        }
+    //        return false;
+    //    }
+    //};
+    //
+    //private View.OnTouchListener onWeightTouchListener = new View.OnTouchListener() {
+    //    @Override public boolean onTouch(View v, MotionEvent event) {
+    //        if(event.getAction() == MotionEvent.ACTION_UP){
+    //            index2 = (Integer) v.getTag();
+    //        }
+    //        return false;
+    //    }
+    //};
+
+
+
+
+
+    //private Integer index1 = -1;
+    //private Integer index2 = -1;
+
+
+
+    //public class EngineAdapter extends BaseAdapter{
+    //
+    //    private List<Map<String , String>> nameLists;
+    //    private List<Map<String , String>> weightLists;
+    //    public EngineAdapter() {
+    //        nameLists = new ArrayList<Map<String, String>>();
+    //        weightLists = new ArrayList<Map<String, String>>();
+    //        for(int i = 0; i < seatList.size(); i++) {
+    //            nameLists.add(new HashMap<String, String>());
+    //            weightLists.add(new HashMap<String, String>());
+    //        }
+    //    }
+    //
+    //    @Override public int getCount() {
+    //        return seatList.size();
+    //    }
+    //
+    //    @Override public View getView(final int position, View convertView, ViewGroup parent) {
+    //        final ViewHolder holder;
+    //        if (convertView == null) {
+    //            holder = new ViewHolder();
+    //            convertView = View.inflate(EngineRoomActivity.this, R.layout.item_seatlayout, null);
+    //            holder.tv_seat = (TextView) convertView.findViewById(R.id.tv_seat);
+    //            holder.et_passenger = (AutoCompleteTextView) convertView.findViewById(R.id.tv_passengerName);
+    //            holder.et_passenger.setTag(position);
+    //            holder.et_passenger.setOnTouchListener(onNameTouchListener);
+    //            final UserDao userDao = FlightApplication.getDaoSession().getUserDao();
+    //            final List<User> list = userDao.queryBuilder().list();
+    //            String [] names = new String[list.size()];
+    //            for(int i = 0; i < list.size(); i++) {
+    //                names[i] = list.get(i).getUserName();
+    //            }
+    //            holder.et_passenger.setAdapter(new ArrayAdapter<String>(EngineRoomActivity.this, R.layout.list_item, names));
+    //            holder.tv_arm = (TextView) convertView.findViewById(R.id.tv_Arm);
+    //            holder.et_weight = (EditText) convertView.findViewById(R.id.tv_weight);
+    //            holder.et_weight.setTag(position);
+    //            holder.et_weight.setOnTouchListener(onWeightTouchListener);
+    //            convertView.setTag(holder);
+    //        } else {
+    //            holder = (ViewHolder) convertView.getTag();
+    //            holder.et_passenger.setTag(position);
+    //            holder.et_weight.setTag(position);
+    //        }
+    //        final SeatByAcReg seatInfos = seatList.get(position);
+    //
+    //        holder.tv_seat.setEnabled(false);
+    //        holder.tv_seat.setText(seatInfos.getSeatCode());
+    //        TextWatcher nameWatcher = new TextWatcher() {
+    //            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+    //
+    //            }
+    //
+    //            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+    //
+    //            }
+    //
+    //            @Override public void afterTextChanged(Editable s) {
+    //                //seatInfos.userName = s.toString().trim();
+    //                if (!TextUtils.isEmpty(s)) {
+    //                    int position = (Integer) holder.et_passenger.getTag();
+    //                    // 当EditText数据发生改变的时候存到data变量中
+    //                    nameLists.get(position).put("userNames", s.toString());
+    //                }
+    //            }
+    //        };
+    //        TextWatcher weightWatcher = new TextWatcher() {
+    //            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+    //
+    //            }
+    //
+    //            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+    //
+    //            }
+    //
+    //            @Override public void afterTextChanged(Editable s) {
+    //                //seatInfos.userName = s.toString().trim();
+    //                if (!TextUtils.isEmpty(s)) {
+    //                    int tag = (int) holder.et_weight.getTag();
+    //                    weightLists.get(tag).put("userWeight", s.toString());
+    //                    LogUtil.LOGD(TAG, "========userWeight=======" + s.toString());
+    //                }
+    //            }
+    //        };
+    //        holder.et_passenger.addTextChangedListener(nameWatcher);
+    //        holder.et_weight.addTextChangedListener(weightWatcher);
+    //
+    //        if (nameLists != null && nameLists.size() > position) {
+    //            String userName = nameLists.get(position).get("userNames");
+    //            if(!TextUtils.isEmpty(userName)) {
+    //                holder.et_passenger.setText(userName);
+    //            } else {
+    //                holder.et_passenger.setText("");
+    //            }
+    //
+    //
+    //
+    //        }
+    //        if (weightLists != null && weightLists.size() > 0) {
+    //            String weight = weightLists.get(position).get("userWeight");
+    //            if (!TextUtils.isEmpty(weight)) {
+    //                holder.et_weight.setText(weight);
+    //            } else {
+    //                holder.et_weight.setText("180");
+    //            }
+    //        }
+    //
+    //        holder.tv_arm.setText(seatInfos.getAcTypeLb() + "");
+    //
+    //        //holder.et_passenger.clearFocus();
+    //        //if (index1 != -1 && index1 == position) {
+    //        //    holder.et_passenger.requestFocus();
+    //        //}
+    //        //
+    //        //if(index2 != -1 && index2 == position) {
+    //        //    holder.et_weight.requestFocus();
+    //        //}
+    //
+    //        handleWeight(holder, seatInfos);
+    //
+    //
+    //
+    //        return convertView;
+    //    }
+    //
+    //    @Override public Object getItem(int position) {
+    //        return null;
+    //    }
+    //
+    //    @Override public long getItemId(int position) {
+    //        return 0;
+    //    }
+    //}
 
     class ViewHolder {
         TextView tv_seat;
@@ -295,7 +530,7 @@ public class EngineRoomActivity extends BaseActivity implements View.OnClickList
         EditText et_weight;
     }
 
-    private void handleWeight(final ViewHolder holder, final SeatByAcReg.SeatInfos value) {
+    private void handleWeight(final ViewHolder holder, final SeatByAcReg value) {
         holder.et_weight.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
@@ -313,7 +548,7 @@ public class EngineRoomActivity extends BaseActivity implements View.OnClickList
                         @Override public void afterTextChanged(Editable s) {
                             if (!TextUtils.isEmpty(s)) {
                                 float weight = Float.parseFloat(s.toString());
-                                if (weight > value.AcTypeSeatLimit) {
+                                if (weight > value.getAcTypeSeatLimit()) {
                                     holder.et_weight.setBackgroundColor(getResources().getColor(R.color.red));
                                 } else {
                                     holder.et_weight.setBackgroundResource(R.drawable.engineeroom_name_bg);
@@ -331,7 +566,13 @@ public class EngineRoomActivity extends BaseActivity implements View.OnClickList
         return new View.OnClickListener() {
 
             @Override public void onClick(View v) {
-                startActivity(new Intent(EngineRoomActivity.this, RestrictionMapActivity.class));
+                Intent intent =
+                            new Intent(EngineRoomActivity.this, RestrictionMapActivity.class);
+                if(!TextUtils.isEmpty(aircraftType)) {
+                    intent.putExtra("AircraftType", aircraftType);
+                }
+                intent.putExtra("weightList", weightList);
+                startActivity(intent);
             }
         };
     }
