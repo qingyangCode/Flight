@@ -17,6 +17,7 @@ import com.uandme.flight.data.dao.AllAircraft;
 import com.uandme.flight.data.dao.AllAircraftDao;
 import com.uandme.flight.data.dao.FuleLimit;
 import com.uandme.flight.data.dao.FuleLimitDao;
+import com.uandme.flight.data.dao.SeatByAcReg;
 import com.uandme.flight.entity.AcWeightLimitByAcTypeResponse;
 import com.uandme.flight.entity.FuleLimitByAcType;
 import com.uandme.flight.entity.LineData;
@@ -24,15 +25,12 @@ import com.uandme.flight.network.ResponseListner;
 import com.uandme.flight.util.ApiServiceManager;
 import com.uandme.flight.util.Constants;
 import com.uandme.flight.util.DateFormatUtil;
-import com.uandme.flight.util.LogUtil;
+import com.uandme.flight.util.FormatUtil;
 import com.uandme.flight.util.MACUtil;
 import com.uandme.flight.util.ToastUtil;
 import com.uandme.flight.util.UserManager;
 import com.uandme.flight.widget.MyLineDegreeView;
-import java.io.Serializable;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import org.w3c.dom.Text;
 
@@ -72,7 +70,7 @@ public class RestrictionMapActivity extends BaseActivity{
     private ArrayList<Float> lineX;
     private ArrayList<Float> lineY;
 
-    private ArrayList<Float> weightList;
+    private ArrayList<SeatByAcReg> seatList;
     private String aircraftType;
     private double airLj = 0;
     List<AllAcType> allAcTypeList;
@@ -88,7 +86,7 @@ public class RestrictionMapActivity extends BaseActivity{
         lineX = new ArrayList<>();
         lineY = new ArrayList<>();
         aircraftType = getIntent().getStringExtra("AircraftType");
-        weightList = (ArrayList<Float>) getIntent().getSerializableExtra("weightList");
+        seatList = (ArrayList<SeatByAcReg>) getIntent().getSerializableExtra("seatList");
         AllAircraftDao allAircraftDao = FlightApplication.getDaoSession().getAllAircraftDao();
         List<AllAircraft> allAircraftList = allAircraftDao.queryBuilder()
                 .where(AllAircraftDao.Properties.AircraftType.eq(aircraftType))
@@ -168,19 +166,24 @@ public class RestrictionMapActivity extends BaseActivity{
         if (allAcTypeList != null && allAcTypeList.size() > 0) {
             AllAcType allAcType = allAcTypeList.get(0);
             int gooodsWeights = 0;
-            for(Float goodsWeight : weightList) {
-                gooodsWeights += goodsWeight;
-            }
+            if (seatList != null && seatList.size() > 0)
+                for(SeatByAcReg seatByAcReg : seatList)
+                    gooodsWeights += seatByAcReg.getAcRegSbWeight() + seatByAcReg.getAcRegCargWeight();
+
+            String realOil = mRealityouil.getText().toString().trim();
+            String slideOil = mSlideOil.getText().toString().trim();
+            String flyOil = mFlyOil.getText().toString().trim();
             float upWeight =
-                    allAcType.getMzfw() + Float.parseFloat(mRealityouil.getText().toString().trim()) + gooodsWeights
-                            - Float.parseFloat(mSlideOil.getText().toString().trim());
-            mBeforeWeight.setText(upWeight + "");
+                    allAcType.getMzfw() + (!TextUtils.isEmpty(realOil) ? Float.parseFloat(realOil) : 0) + gooodsWeights
+                            - (!TextUtils.isEmpty(slideOil) ? Float.parseFloat(slideOil) : 0);
+            mBeforeWeight.setText(FormatUtil.formatTo2Decimal(upWeight));
 
             float downWeight =
-                    allAcType.getMzfw() + Float.parseFloat(mRealityouil.getText().toString().trim()) + gooodsWeights
-                            - Float.parseFloat(mSlideOil.getText().toString().trim())  - Float.parseFloat(mFlyOil.getText().toString().trim());
+                    allAcType.getMzfw() + (!TextUtils.isEmpty(realOil) ? Float.parseFloat(realOil) : 0) + gooodsWeights
+                            - (!TextUtils.isEmpty(slideOil) ? Float.parseFloat(slideOil) : 0)  - (!TextUtils.isEmpty(
+                            flyOil) ? Float.parseFloat(flyOil) : 0);
 
-            mDownWight.setText(downWeight + "");
+            mDownWight.setText(FormatUtil.formatTo2Decimal(downWeight));
             allWeight = allAcType.getMzfw() + Float.parseFloat(mRealityouil.getText().toString().trim()) + gooodsWeights;
 
 
@@ -209,8 +212,22 @@ public class RestrictionMapActivity extends BaseActivity{
 
         double Cg = (airLj + airLj) / allWeight;
         float weightCg = (float)Cg;
-        float mac = MACUtil.get560Mac(weightCg);
-        mMac.setText(mac+"");
+        float mac = 0;
+        if (MACUtil.TYPE_CE560.equals(aircraftType)) {
+            mac = MACUtil.get560Mac(weightCg);
+        } else if (MACUtil.TYPE_CE680.equals(aircraftType)) {
+            mac = MACUtil.get680Mac(weightCg);
+        } else if (MACUtil.TYPE_CE750.equals(aircraftType)) {
+            mac = MACUtil.get750Mac(weightCg);
+        } else if (MACUtil.TYPE_G450.equals(aircraftType)) {
+            mac = MACUtil.getG450Mac(weightCg);
+        }
+
+        if (mac != 0)
+            mMac.setText(FormatUtil.formatTo2Decimal(mac));
+        else
+            mMac.setText(" -- ");
+
 
         if ((fullLimitList == null || fullLimitList.size() == 0) && reqeustCount < 1) {
             reqeustCount ++;

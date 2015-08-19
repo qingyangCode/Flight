@@ -40,6 +40,7 @@ public class SeatByAcRegDao extends AbstractDao<SeatByAcReg, Long> {
         public final static Property YPos = new Property(14, Float.class, "YPos", false, "YPOS");
         public final static Property Direction = new Property(15, String.class, "Direction", false, "DIRECTION");
         public final static Property UserName = new Property(16, String.class, "userName", false, "USER_NAME");
+        public final static Property SeatWeight = new Property(17, float.class, "seatWeight", false, "SEAT_WEIGHT");
     };
 
 
@@ -71,7 +72,8 @@ public class SeatByAcRegDao extends AbstractDao<SeatByAcReg, Long> {
                 "'XPOS' REAL," + // 13: XPos
                 "'YPOS' REAL," + // 14: YPos
                 "'DIRECTION' TEXT," + // 15: Direction
-                "'USER_NAME' TEXT);"); // 16: userName
+                "'USER_NAME' TEXT," + // 16: userName
+                "'SEAT_WEIGHT' REAL NOT NULL );"); // 17: seatWeight
     }
 
     /** Drops the underlying database table. */
@@ -169,6 +171,7 @@ public class SeatByAcRegDao extends AbstractDao<SeatByAcReg, Long> {
         if (userName != null) {
             stmt.bindString(17, userName);
         }
+        stmt.bindDouble(18, entity.getSeatWeight());
     }
 
     /** @inheritdoc */
@@ -197,7 +200,8 @@ public class SeatByAcRegDao extends AbstractDao<SeatByAcReg, Long> {
             cursor.isNull(offset + 13) ? null : cursor.getFloat(offset + 13), // XPos
             cursor.isNull(offset + 14) ? null : cursor.getFloat(offset + 14), // YPos
             cursor.isNull(offset + 15) ? null : cursor.getString(offset + 15), // Direction
-            cursor.isNull(offset + 16) ? null : cursor.getString(offset + 16) // userName
+            cursor.isNull(offset + 16) ? null : cursor.getString(offset + 16), // userName
+            cursor.getFloat(offset + 17) // seatWeight
         );
         return entity;
     }
@@ -222,6 +226,7 @@ public class SeatByAcRegDao extends AbstractDao<SeatByAcReg, Long> {
         entity.setYPos(cursor.isNull(offset + 14) ? null : cursor.getFloat(offset + 14));
         entity.setDirection(cursor.isNull(offset + 15) ? null : cursor.getString(offset + 15));
         entity.setUserName(cursor.isNull(offset + 16) ? null : cursor.getString(offset + 16));
+        entity.setSeatWeight(cursor.getFloat(offset + 17));
      }
     
     /** @inheritdoc */

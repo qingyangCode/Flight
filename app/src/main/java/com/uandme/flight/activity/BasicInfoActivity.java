@@ -10,6 +10,7 @@ import android.widget.Spinner;
 import butterknife.InjectView;
 import com.uandme.flight.FlightApplication;
 import com.uandme.flight.R;
+import com.uandme.flight.data.dao.AddFlightInfo;
 import com.uandme.flight.data.dao.AllAircraft;
 import com.uandme.flight.data.dao.AllSb;
 import com.uandme.flight.data.dao.AllSbDao;
@@ -17,7 +18,10 @@ import com.uandme.flight.entity.AllSbResponse;
 import com.uandme.flight.entity.SeatByAcRegResponse;
 import com.uandme.flight.network.ResponseListner;
 import com.uandme.flight.util.ApiServiceManager;
+import com.uandme.flight.util.FormatUtil;
 import com.uandme.flight.util.ToastUtil;
+import com.uandme.flight.util.UserManager;
+import java.text.Format;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +43,7 @@ public class BasicInfoActivity extends BaseActivity {
     private String aircraftType;
     private Double lj;
     private int bw;
-    private List<AllAircraft> list;
+    private List<AllSb> allSbList;
 
     @Override public int getContentView() {
         return R.layout.activity_basicinfo;
@@ -53,9 +57,9 @@ public class BasicInfoActivity extends BaseActivity {
             lj = data.getDoubleExtra("Lj", 0);
             bw = data.getIntExtra("Bw", 0);
             mWeight.setEnabled(false);
-            mWeight.setText(bw + "");
+            mWeight.setText(FormatUtil.formatTo2Decimal(bw));
             mFocus.setEnabled(false);
-            mFocus.setText((int) (lj / bw) + "");
+            mFocus.setText(FormatUtil.formatTo2Decimal(lj / bw));
         }
 
         mTopBarTitle.setText("飞机基本信息");
@@ -85,17 +89,25 @@ public class BasicInfoActivity extends BaseActivity {
         mSpinner.setVisibility(View.VISIBLE);
         //mPlayNO.setText(aircraftReg);
         ApiServiceManager.getInstance().getSeatInfo(aircraftReg ,null);
-        ApiServiceManager.getInstance().getFilghtId(null);
+        ApiServiceManager.getInstance().getFilghtId(new ResponseListner<String>() {
+            @Override public void onResponse(String response) {
+                UserManager.getInstance().getAddFlightInfo().setFlightId(response);
+            }
+
+            @Override public void onEmptyOrError(String message) {
+
+            }
+        });
     }
 
     private void getAllSbFromDB() {
         AllSbDao allSbDao = FlightApplication.getDaoSession().getAllSbDao();
-        List<AllSb> list =
+        allSbList =
                 allSbDao.queryBuilder().where(AllSbDao.Properties.AcType.eq(aircraftType)).list();
-        if (list != null && list.size() > 0) {
-            titles = new String[list.size()];
-            for (int i = 0; i < list.size(); i++) {
-                titles[i] = list.get(i).getSbName();
+        if (allSbList != null && allSbList.size() > 0) {
+            titles = new String[allSbList.size()];
+            for (int i = 0; i < allSbList.size(); i++) {
+                titles[i] = allSbList.get(i).getSbName();
             }
         }
     }
@@ -105,6 +117,21 @@ public class BasicInfoActivity extends BaseActivity {
 
         public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
             //view.setText("你的血型是："+m[arg2]);
+            if (allSbList != null && allSbList.size() > arg2) {
+                AllSb allSb = allSbList.get(arg2);
+                double newWeight = bw + allSb.getSbWeight();
+                mWeight.setText(FormatUtil.formatTo2Decimal(newWeight));
+
+                double weighCg = lj / newWeight;
+                mFocus.setText(FormatUtil.formatTo2Decimal(weighCg));
+
+                AddFlightInfo addFlightInfo = UserManager.getInstance().getAddFlightInfo();
+                addFlightInfo.setNoFuleWeight(FormatUtil.formatTo2Decimal(newWeight));
+                addFlightInfo.setWeightCg(FormatUtil.formatTo2Decimal(weighCg));
+            }
+
+
+
         }
 
         public void onNothingSelected(AdapterView<?> arg0) {

@@ -3,6 +3,7 @@ package com.uandme.flight.util;
 import android.text.TextUtils;
 import com.uandme.flight.FlightApplication;
 import com.uandme.flight.R;
+import com.uandme.flight.data.dao.AddFlightInfo;
 import com.uandme.flight.data.dao.AllAcType;
 import com.uandme.flight.data.dao.AllAcTypeDao;
 import com.uandme.flight.data.dao.AllAircraft;
@@ -195,46 +196,12 @@ public class UserManager {
         allAircraftDao.insertOrReplaceInTx(allAircarts);
     }
 
-    ///* 获取机型重心限制信息表
-    //            * @param AircraftType 请求的机型
-    //            * @param PortLimit 机坪限重
-    //            * @param TofWeightLimit 起飞重量
-    //            * @param LandWeightLimit 落地重量
-    //            * @param Mzfw 最大无油重量
-    //            * @param OpDate 操作日期
-    //            * @param SysVersion 版本信息
-    //        */
-    ////获取重心限制信息
-    //public void getAcWeightLimitByAcType(String AircraftType) {
-    //    AllAcTypeDao allAcTypeDao = FlightApplication.getDaoSession().getAllAcTypeDao();
-    //    List<AllAcType> allAcTypeList = allAcTypeDao.queryBuilder()
-    //            .where(AllAcTypeDao.Properties.AircraftType.eq(AircraftType))
-    //            .list();
-    //    if (allAcTypeList != null && allAcTypeList.size() > 0) {
-    //        AllAcType allAcType = allAcTypeList.get(0);
-    //        //mMaxOil.setText(allAcTypeList.get(0));
-    //    Date data = new Date();
-    //    FlightApplication.getMoccApi().getAcWeightLimitByAcType(allAcType.getAircraftType(),
-    //            String.valueOf(allAcType.getPortLimit()), mBeforeWeight.getText().toString(),
-    //            mDownWight.getText().toString(), String.valueOf(allAcType.getMzfw()),
-    //            data.toString(), String.valueOf(allAcType.getSysVersion()),
-    //            new ResponseListner<AcWeightLimitByAcTypeResponse>() {
-    //                @Override public void onResponse(AcWeightLimitByAcTypeResponse response) {
-    //                    if (response != null
-    //                            && response.ResponseObject != null
-    //                            && response.ResponseObject.ResponseCode == Constants.RESULT_OK) {
-    //                        LogUtil.LOGD(TAG, "==============");
-    //                    } else {
-    //                        ToastUtil.showToast(RestrictionMapActivity.this,
-    //                                R.drawable.toast_warning, getString(R.string.get_data_error));
-    //                    }
-    //                }
-    //
-    //                @Override public void onEmptyOrError(String message) {
-    //                    ToastUtil.showToast(RestrictionMapActivity.this, R.drawable.toast_warning,
-    //                            getString(R.string.get_data_error));
-    //                }
-    //            });
-    //    }
-    //}
+    private AddFlightInfo mAddFilghtInfo;
+    public AddFlightInfo getAddFlightInfo() {
+        if (mAddFilghtInfo == null) {
+            mAddFilghtInfo = new AddFlightInfo();
+        }
+        return mAddFilghtInfo;
+    }
+
 }

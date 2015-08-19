@@ -25,10 +25,45 @@ public class TablesMain {
         addAllAircraft();//所有机型信息
         addAllSb();//获取机型设备列表
         addSeatInfos();//座椅信息
+        adllFilghtInfo();//添加飞机信息
+    }
+
+
+    private void adllFilghtInfo() {
+        Entity flightInfo = mSchema.addEntity("AddFlightInfo");
+        flightInfo.implementsSerializable();
+        flightInfo.addStringProperty("FlightId");
+        flightInfo.addStringProperty("FlightDate");
+        flightInfo.addStringProperty("AircraftReg");
+        flightInfo.addStringProperty("AircraftType");
+        flightInfo.addStringProperty("FlightNo");
+        flightInfo.addStringProperty("Dep4Code");
+        flightInfo.addStringProperty("DepAirportName");
+        flightInfo.addStringProperty("Arr4Code");
+        flightInfo.addStringProperty("ArrAirportName");
+        flightInfo.addStringProperty("MaxFule");
+        flightInfo.addStringProperty("RealFule");
+        flightInfo.addStringProperty("SlieFule");
+        flightInfo.addStringProperty("RouteFule");
+        flightInfo.addStringProperty("TofWeight");
+        flightInfo.addStringProperty("LandWeight");
+        flightInfo.addStringProperty("NoFuleWeight");
+        flightInfo.addStringProperty("AirportLimitWeight");
+        flightInfo.addStringProperty("BalancePic");
+        flightInfo.addStringProperty("BalancePicName");
+        flightInfo.addStringProperty("OpUser");
+        flightInfo.addStringProperty("OpDate");
+
+        flightInfo.addStringProperty("weightCg");
+
+
+
+
     }
 
     private void addSeatInfos() {
         Entity seatByAcReg = mSchema.addEntity("SeatByAcReg");
+        seatByAcReg.implementsSerializable();
         seatByAcReg.addIdProperty().autoincrement().primaryKey();
         seatByAcReg.addStringProperty("AcReg");
         seatByAcReg.addIntProperty("SeatId");
@@ -46,6 +81,7 @@ public class TablesMain {
         seatByAcReg.addFloatProperty("YPos");
         seatByAcReg.addStringProperty("Direction");
         seatByAcReg.addStringProperty("userName");
+        seatByAcReg.addFloatProperty("seatWeight").notNull();
     }
 
     private void addAllSb() {

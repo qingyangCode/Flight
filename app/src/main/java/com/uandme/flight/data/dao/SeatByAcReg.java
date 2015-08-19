@@ -7,7 +7,7 @@ package com.uandme.flight.data.dao;
 /**
  * Entity mapped to table SEAT_BY_AC_REG.
  */
-public class SeatByAcReg {
+public class SeatByAcReg implements java.io.Serializable {
 
     private Long id;
     private String AcReg;
@@ -26,6 +26,7 @@ public class SeatByAcReg {
     private Float YPos;
     private String Direction;
     private String userName;
+    private float seatWeight;
 
     // KEEP FIELDS - put your custom fields here
     // KEEP FIELDS END
@@ -37,7 +38,7 @@ public class SeatByAcReg {
         this.id = id;
     }
 
-    public SeatByAcReg(Long id, String AcReg, Integer SeatId, String SeatCode, String SeatType, Float AcTypeSeatLimit, Float AcTypeLb, Float AcRegCargWeight, Float AcRegSbWeight, Float SeatLastLimit, String OpUser, String OpDate, String SysVersion, Float XPos, Float YPos, String Direction, String userName) {
+    public SeatByAcReg(Long id, String AcReg, Integer SeatId, String SeatCode, String SeatType, Float AcTypeSeatLimit, Float AcTypeLb, Float AcRegCargWeight, Float AcRegSbWeight, Float SeatLastLimit, String OpUser, String OpDate, String SysVersion, Float XPos, Float YPos, String Direction, String userName, float seatWeight) {
         this.id = id;
         this.AcReg = AcReg;
         this.SeatId = SeatId;
@@ -55,6 +56,7 @@ public class SeatByAcReg {
         this.YPos = YPos;
         this.Direction = Direction;
         this.userName = userName;
+        this.seatWeight = seatWeight;
     }
 
     public Long getId() {
@@ -191,6 +193,14 @@ public class SeatByAcReg {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public float getSeatWeight() {
+        return seatWeight;
+    }
+
+    public void setSeatWeight(float seatWeight) {
+        this.seatWeight = seatWeight;
     }
 
     // KEEP METHODS - put your custom methods here

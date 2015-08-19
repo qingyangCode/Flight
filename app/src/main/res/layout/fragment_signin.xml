@@ -57,7 +57,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="17dp"
                 android:gravity="center"
-                android:text="中国民用飞行校验中心载重平衡系统"
+                android:text="@string/app_title"
                 android:textColor="@color/gray_333"
                 android:textSize="26dp"
                 />

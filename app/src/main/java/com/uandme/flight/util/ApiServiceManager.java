@@ -114,14 +114,14 @@ public class ApiServiceManager {
      * 获取添加飞机的ID
      * @param responseResponseListner
      */
-    public void getFilghtId(final ResponseListner<FlightidResponse> responseResponseListner) {
+    public void getFilghtId(final ResponseListner<String> responseResponseListner) {
         FlightApplication.getMoccApi().getflightid(new ResponseListner<FlightidResponse>() {
             @Override public void onResponse(FlightidResponse response) {
                 if (response != null
                         && response.ResponseObject != null
                         && response.ResponseObject.ResponseCode == Constants.RESULT_OK) {
-                    if (responseResponseListner != null)
-                        responseResponseListner.onResponse(response);
+                    if (responseResponseListner != null && response.ResponseObject != null)
+                        responseResponseListner.onResponse(response.ResponseObject.ResponseError);
                 }
             }
 
