@@ -128,9 +128,24 @@ public interface MoccApi {
 
     /**
      * 请求增加机上人员信息
+     * @param AircraftReg //机号
+     * @param SeatId //座椅编号
+     * @param FlightId  //航班编号
+     * @param SeatCode  //座椅代码
+     * @param SeatType //座椅类型 S座椅 C货物
+     * @param AcTypeSeatLimit  //机型座椅限重
+     * @param AcTypeLj  //机型座椅力臂
+     * @param AcRegCagrWeight  //飞机额外物品重量
+     * @param AcRegCagLj 座椅力臂
+     * @param SeatLastLimit //机型限重减去飞机额外物品后的最大重量限制
+     * @param PassagerName //乘客名称
+     * @param RealWeight //乘客/货 实际重量
+     * @param OpUser
+     * @param OpDate
+     * @param responseListner
      */
     public void addFlightCd(String AircraftReg, String SeatId, String FlightId, String SeatCode,
-            String SeatType, String AcTypeSeatLimit, String AcTypeLj, String AcRegCagWeight, String AcRegCagLj,
+            String SeatType, String AcTypeSeatLimit, String AcTypeLj, String AcRegCagrWeight, String AcRegCagLj,
             String SeatLastLimit, String PassagerName, String RealWeight,
             String OpUser, String OpDate ,ResponseListner<GrantsByUserCodeResponse> responseListner);
 

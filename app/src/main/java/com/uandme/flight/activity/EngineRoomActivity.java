@@ -26,14 +26,20 @@ import com.uandme.flight.data.dao.SeatByAcRegDao;
 import com.uandme.flight.data.dao.User;
 import com.uandme.flight.data.dao.UserDao;
 import com.uandme.flight.entity.EngineRoom;
+import com.uandme.flight.entity.GrantsByUserCodeResponse;
 import com.uandme.flight.entity.SeatByAcRegResponse;
 import com.uandme.flight.network.ResponseListner;
 import com.uandme.flight.util.ApiServiceManager;
 import com.uandme.flight.util.CommonProgressDialog;
 import com.uandme.flight.util.CommonUtils;
+import com.uandme.flight.util.Constants;
+import com.uandme.flight.util.DateFormatUtil;
+import com.uandme.flight.util.FormatUtil;
 import com.uandme.flight.util.LogUtil;
 import com.uandme.flight.util.ToastUtil;
+import com.uandme.flight.util.UserManager;
 import java.lang.reflect.Array;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -397,12 +403,63 @@ public class EngineRoomActivity extends BaseActivity{
                     }
                 }
 
+                /**
+                 * 请求增加机上人员信息
+                 * @param AircraftReg //机号
+                 * @param SeatId //座椅编号
+                 * @param FlightId  //航班编号
+                 * @param SeatCode  //座椅代码
+                 * @param SeatType //座椅类型 S座椅 C货物
+                 * @param AcTypeSeatLimit  //机型座椅限重
+                 * @param AcTypeLj  //机型座椅力臂
+                 * @param AcRegCagrWeight  //飞机额外物品重量
+                 * @param AcRegCagLj 座椅力臂
+                 * @param SeatLastLimit //机型限重减去飞机额外物品后的最大重量限制
+                 * @param PassagerName //乘客名称
+                 * @param RealWeight //乘客/货 实际重量
+                 * @param OpUser
+                 * @param OpDate
+                 * @param responseListner
+                 */
+
+                final ArrayList<Integer> failSeatInfo  = new ArrayList<Integer>();
+                for (final SeatByAcReg seatByAcReg : seatList) {
+                    getMoccApi().addFlightCd(aircraftReg, seatByAcReg.getSeatId() + "",
+                            UserManager.getInstance().getAddFlightInfo().getFlightId(),
+                            seatByAcReg.getSeatCode(), seatByAcReg.getSeatType(),
+                            seatByAcReg.getAcTypeSeatLimit() + "", seatByAcReg.getAcTypeLb()"",
+                            seatByAcReg.getAcRegCargWeight(), seatByAcReg.getAcTypeLb(),
+                            (seatByAcReg.getAcTypeSeatLimit() - seatByAcReg.getSeatWeight()) + "",
+                            seatByAcReg.getUserName(), seatByAcReg.getSeatWeight(),
+                            UserManager.getInstance().getUser().getUserCode(),
+                            DateFormatUtil.formatZDate(),
+                            new ResponseListner<GrantsByUserCodeResponse>() {
+                                @Override
+                                public void onResponse(GrantsByUserCodeResponse response) {
+                                    if (response != null
+                                            && response.ResponseObject != null
+                                            && response.ResponseObject.ResponseCode
+                                            == Constants.RESULT_OK) {
+
+                                    } else {
+                                        //上传飞机成员失败
+                                        failSeatInfo.add(seatByAcReg.getSeatId());
+                                    }
+                                }
+
+                                @Override public void onEmptyOrError(String message) {
+                                    LogUtil.LOGD(TAG, "上传飞机成员错误： " + message);
+                                    failSeatInfo.add(seatByAcReg.getSeatId());}
+                            });
+                }
+
                 Intent intent =
                             new Intent(EngineRoomActivity.this, RestrictionMapActivity.class);
                 if(!TextUtils.isEmpty(aircraftType)) {
                     intent.putExtra("AircraftType", aircraftType);
                 }
                 intent.putExtra("seatList", seatList);
+                intent.putExtra("failSeatInfoList", failSeatInfo);
                 startActivity(intent);
             }
         };
