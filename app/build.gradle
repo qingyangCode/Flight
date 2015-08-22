@@ -28,10 +28,10 @@ android {
             storeFile file('deploy/debug.keystore')
         }
         release {
-            keyAlias ''
-            keyPassword ''
-            storeFile file('deploy/')
-            storePassword ''
+            keyAlias 'qingqingworkroom'
+            keyPassword 'qingqing123'
+            storeFile file('deploy/keystore.jks')
+            storePassword 'qingqing123'
         }
     }
 
@@ -41,7 +41,7 @@ android {
             buildConfigField "boolean", "ENABLE_CRASH_REPORT", "true"
             buildConfigField "boolean", "ENABLE_DEVMODE", "true"
             buildConfigField "boolean", "ENABLE_LOG", "true"
-//            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.debug
         }
 
         release {
@@ -50,7 +50,7 @@ android {
             buildConfigField "boolean", "ENABLE_CRASH_REPORT", "false"
             buildConfigField "boolean", "ENABLE_DEVMODE", "false"
             buildConfigField "boolean", "ENABLE_LOG", "false"
-//                signingConfig signingConfigs.release
+            signingConfig signingConfigs.release
         }
     }
 
@@ -71,7 +71,6 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.jakewharton:butterknife:6.0.0'
-    compile 'de.greenrobot:eventbus:2.4.0'
     compile('de.keyboardsurfer.android.widget:crouton:1.8.5@aar') {
         exclude group: 'com.google.android'
     }
