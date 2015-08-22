@@ -2,6 +2,7 @@ package com.uandme.flight.activity;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
 import android.util.Pair;
@@ -20,14 +21,21 @@ import butterknife.OnClick;
 import com.uandme.flight.adapter.ListViewAdapter;
 import com.uandme.flight.FlightApplication;
 import com.uandme.flight.R;
+import com.uandme.flight.data.dao.AddFlightInfo;
+import com.uandme.flight.data.dao.SeatByAcReg;
 import com.uandme.flight.data.dao.User;
 import com.uandme.flight.data.dao.UserDao;
+import com.uandme.flight.entity.AddFlightInfoResponse;
 import com.uandme.flight.entity.GrantsByUserCodeResponse;
 import com.uandme.flight.network.ResponseListner;
 import com.uandme.flight.util.CommonProgressDialog;
+import com.uandme.flight.util.Constants;
+import com.uandme.flight.util.DateFormatUtil;
 import com.uandme.flight.util.ToastUtil;
+import com.uandme.flight.util.UserManager;
 import com.uandme.flight.util.WindowUtil;
 import com.uandme.flight.widget.AutoLoadListView;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import org.w3c.dom.Text;
@@ -49,15 +57,31 @@ public class AircraftPersonnelActivity extends BaseActivity {
 
     private ListViewAdapter listViewAdapter;
     private ArrayList<String> userNames;
+    private String aircraftReg;
+    private String aircraftType;
 
 
     @Override public int getContentView() {
         return R.layout.activity_aircraftpersonnel;
     }
 
+    @Override protected void onResume() {
+        super.onResume();
+        if (UserManager.getInstance().isAddFilghtSuccess()) {
+            finish();
+        }
+    }
+
     @Override protected void onloadData() {
         getTopBarTitle("机上人员姓名");
         getTopBarRight("机长确认");
+
+        Intent data = getIntent();
+        if (data != null) {
+            aircraftReg = data.getStringExtra(Constants.ACTION_AIRCRAFTREG);
+            aircraftType = data.getStringExtra(Constants.ACTION_AIRCRAFTTYPE);
+        }
+
         //// 顶部刷新的样式
         //mSwipeRefreshLayout.setColorSchemeResources(android.R.color.holo_red_light,
         //        android.R.color.holo_green_light, android.R.color.holo_blue_bright,
@@ -157,13 +181,14 @@ public class AircraftPersonnelActivity extends BaseActivity {
                 dialog.dismiss();
                 if (isCancelAble)
                     return;
-                if (response != null && response.ResponseObject != null && response.ResponseObject.ResponseData != null && response.ResponseObject.ResponseData.IAppObject != null) {
-                        if ("Y".equals(response.ResponseObject.ResponseData.IAppObject.get(0).Caption)) {
-                            addFlightInfo();
-                            return;
-                        }
-                }
-                ToastUtil.showToast(AircraftPersonnelActivity.this, R.drawable.toast_warning, "当前操作需机长验证，您输入的不是机长");
+                addFlightInfo();
+                //if (response != null && response.ResponseObject != null && response.ResponseObject.ResponseData != null && response.ResponseObject.ResponseData.IAppObject != null) {
+                //        if ("Y".equals(response.ResponseObject.ResponseData.IAppObject.get(0).Caption)) {
+                //            addFlightInfo();
+                //            return;
+                //        }
+                //}
+                //ToastUtil.showToast(AircraftPersonnelActivity.this, R.drawable.toast_warning, "当前操作需机长验证，您输入的不是机长");
             }
 
             @Override public void onEmptyOrError(String message) {
@@ -179,8 +204,61 @@ public class AircraftPersonnelActivity extends BaseActivity {
     /**
      * 增加航班信息
      */
+
+    /**
+     *
+     * @param FlightId
+     * @param FlightDate //航班日期
+     * @param AircraftReg ////飞机号
+     * @param AircraftType //机型
+     * @param FlightNo //航班号
+     * @param Dep4Code //出发机场四字代码
+     * @param DepAirportName //出发机场名
+     * @param Arr4Code //到达机场四字代码
+     * @param ArrAirportName //到达机场名
+     * @param MaxFule //机型最大燃油
+     * @param RealFule //实际加油
+     * @param SlieFule //滑行油量
+     * @param RouteFule //航段耗油
+     * @param TofWeight //起飞重量
+     * @param LandWeight //落地重量
+     * @param NoFuleWeight//无油重量
+     * @param AirportLimitWeight //机坪限重
+     * @param BalancePic
+     * @param BalancePicName //计算载重图表名
+     * @param OpUser
+     * @param OpDate
+     * @param responseListner
+     */
     private void addFlightInfo() {
-        //getMoccApi().addFlightInfo();
+        AddFlightInfo addFlightInfo = UserManager.getInstance().getAddFlightInfo();
+        getMoccApi().addFlightInfo(addFlightInfo.getFlightId(),
+                    DateFormatUtil.formatZDate(), aircraftReg, aircraftType,
+                    addFlightInfo.getFlightNo(), addFlightInfo.getDep4Code(),
+                    addFlightInfo.getDepAirportName(), addFlightInfo.getArr4Code(),
+                    addFlightInfo.getArrAirportName(), addFlightInfo.getMaxFule(),
+                    addFlightInfo.getRealFule(), addFlightInfo.getSlieFule(),
+                    addFlightInfo.getRouteFule(), addFlightInfo.getTofWeight(),
+                    addFlightInfo.getLandWeight(),
+                    addFlightInfo.getNoFuleWeight(), addFlightInfo.getAirportLimitWeight(),
+                    addFlightInfo.getBalancePic(), addFlightInfo.getBalancePicName(),
+                UserManager.getInstance().getUser().getUserCode(), DateFormatUtil.formatZDate(),
+                new ResponseListner<AddFlightInfoResponse>() {
+
+                    @Override public void onResponse(AddFlightInfoResponse response) {
+                        if (response != null && response.ResponseObject != null && response.ResponseObject.ResponseCode == Constants.RESULT_OK) {
+                            UserManager.getInstance().setAddFlightSuccess(true);
+                            finish();
+                        } else {
+                            ToastUtil.showToast(AircraftPersonnelActivity.this, R.drawable.toast_warning, "服务器繁忙，请稍后再试！");
+                        }
+                    }
+
+                    @Override public void onEmptyOrError(String message) {
+                        ToastUtil.showToast(AircraftPersonnelActivity.this, R.drawable.toast_warning, message);
+                    }
+                });
+
     }
 
 

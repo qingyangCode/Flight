@@ -81,7 +81,11 @@ public class EngineRoomActivity extends BaseActivity{
     private String aircraftType;
     private ArrayList<SeatByAcReg> seatList;
 
-
+    @Override protected void onResume() {
+        super.onResume();
+        if (UserManager.getInstance().isAddFilghtSuccess())
+            finish();
+    }
 
     @Override public int getContentView() {
         return R.layout.activity_engineroom;
@@ -91,8 +95,8 @@ public class EngineRoomActivity extends BaseActivity{
         Intent data = getIntent();
         seatList = new ArrayList<>();
         if (data != null) {
-            aircraftReg = data.getStringExtra("AircraftReg");
-            aircraftType = data.getStringExtra("AircraftType");
+            aircraftReg = data.getStringExtra(Constants.ACTION_AIRCRAFTREG);
+            aircraftType = data.getStringExtra(Constants.ACTION_AIRCRAFTTYPE);
         }
 
 
@@ -309,13 +313,7 @@ public class EngineRoomActivity extends BaseActivity{
             seatList.get(position).setSeatWeight(180f);
 
         }
-
-
-
-
     }
-
-
 
     private CommonProgressDialog dialog;
     private void getSeatByNet() {
@@ -424,13 +422,18 @@ public class EngineRoomActivity extends BaseActivity{
 
                 final ArrayList<Integer> failSeatInfo  = new ArrayList<Integer>();
                 for (final SeatByAcReg seatByAcReg : seatList) {
+                    if (seatByAcReg.getXPos() == 0) {
+                        continue;
+                    }
+                    if (UserManager.getInstance().getUser() == null)
+                        return;
                     getMoccApi().addFlightCd(aircraftReg, seatByAcReg.getSeatId() + "",
                             UserManager.getInstance().getAddFlightInfo().getFlightId(),
                             seatByAcReg.getSeatCode(), seatByAcReg.getSeatType(),
-                            seatByAcReg.getAcTypeSeatLimit() + "", seatByAcReg.getAcTypeLb()"",
-                            seatByAcReg.getAcRegCargWeight(), seatByAcReg.getAcTypeLb(),
+                            seatByAcReg.getAcTypeSeatLimit() + "", seatByAcReg.getAcTypeLb()+"",
+                            seatByAcReg.getAcRegCargWeight()+"", seatByAcReg.getAcTypeLb()+"",
                             (seatByAcReg.getAcTypeSeatLimit() - seatByAcReg.getSeatWeight()) + "",
-                            seatByAcReg.getUserName(), seatByAcReg.getSeatWeight(),
+                            seatByAcReg.getUserName(), seatByAcReg.getSeatWeight()+"",
                             UserManager.getInstance().getUser().getUserCode(),
                             DateFormatUtil.formatZDate(),
                             new ResponseListner<GrantsByUserCodeResponse>() {
@@ -455,11 +458,10 @@ public class EngineRoomActivity extends BaseActivity{
 
                 Intent intent =
                             new Intent(EngineRoomActivity.this, RestrictionMapActivity.class);
-                if(!TextUtils.isEmpty(aircraftType)) {
-                    intent.putExtra("AircraftType", aircraftType);
-                }
-                intent.putExtra("seatList", seatList);
-                intent.putExtra("failSeatInfoList", failSeatInfo);
+                intent.putExtra(Constants.ACTION_AIRCRAFTTYPE, aircraftType);
+                intent.putExtra(Constants.ACTION_AIRCRAFTREG, aircraftReg);
+                //intent.putExtra(Constants.ACTION_SEATLIST, seatList);
+                intent.putExtra(Constants.ACTION_FAILSEATINFOLIST, failSeatInfo);
                 startActivity(intent);
             }
         };

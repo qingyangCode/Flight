@@ -121,7 +121,7 @@ public class ApiServiceManager {
                         && response.ResponseObject != null
                         && response.ResponseObject.ResponseCode == Constants.RESULT_OK) {
                     if (responseResponseListner != null && response.ResponseObject != null)
-                        responseResponseListner.onResponse(response.ResponseObject.ResponseError);
+                        responseResponseListner.onResponse(response.ResponseObject.ResponseErr);
                 }
             }
 

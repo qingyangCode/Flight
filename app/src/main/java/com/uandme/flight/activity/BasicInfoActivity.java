@@ -18,6 +18,7 @@ import com.uandme.flight.entity.AllSbResponse;
 import com.uandme.flight.entity.SeatByAcRegResponse;
 import com.uandme.flight.network.ResponseListner;
 import com.uandme.flight.util.ApiServiceManager;
+import com.uandme.flight.util.Constants;
 import com.uandme.flight.util.FormatUtil;
 import com.uandme.flight.util.ToastUtil;
 import com.uandme.flight.util.UserManager;
@@ -44,6 +45,12 @@ public class BasicInfoActivity extends BaseActivity {
     private Double lj;
     private int bw;
     private List<AllSb> allSbList;
+
+    @Override protected void onResume() {
+        super.onResume();
+        if (UserManager.getInstance().isAddFilghtSuccess())
+            finish();
+    }
 
     @Override public int getContentView() {
         return R.layout.activity_basicinfo;
@@ -142,25 +149,34 @@ public class BasicInfoActivity extends BaseActivity {
     @Override public View.OnClickListener getRightOnClickListener() {
         return new View.OnClickListener() {
             @Override public void onClick(View v) {
-
-                if(TextUtils.isEmpty(mPlayNO.getText().toString().trim())) {
+                String playNO = mPlayNO.getText().toString().trim();
+                String from = mOrigination.getText().toString().trim();
+                String toAirport = mDestination.getText().toString().trim();
+                if(TextUtils.isEmpty(playNO)) {
                     ToastUtil.showToast(BasicInfoActivity.this, R.drawable.toast_warning, "航班号不能为空");
                     return;
-                } else if (TextUtils.isEmpty(mOrigination.getText().toString().trim())) {
+                } else if (TextUtils.isEmpty(from)) {
                     ToastUtil.showToast(BasicInfoActivity.this, R.drawable.toast_warning, "起飞机场不能为空");
                     return;
-                }else if(TextUtils.isEmpty(mDestination.getText().toString().trim())) {
+                }else if(TextUtils.isEmpty(toAirport)) {
                     ToastUtil.showToast(BasicInfoActivity.this, R.drawable.toast_warning, "目的机场不能为空");
                     return;
                 }
 
+                AddFlightInfo addFlightInfo = UserManager.getInstance().getAddFlightInfo();
+                addFlightInfo.setFlightNo(playNO);
+                addFlightInfo.setDep4Code(from);
+                addFlightInfo.setDepAirportName(from);
+                addFlightInfo.setArr4Code(toAirport);
+                addFlightInfo.setArrAirportName(toAirport);
+                addFlightInfo.setNoFuleWeight(mWeight.getText().toString().trim());
 
                 Intent intent = new Intent(BasicInfoActivity.this, EngineRoomActivity.class);
                 //intent.putExtra("Lj", lj);
                 //intent.putExtra("OpDate", opDate);
                 //intent.putExtra("SysVersion", sysVersion);
-                intent.putExtra("AircraftReg", aircraftReg);
-                intent.putExtra("AircraftType", aircraftType);
+                intent.putExtra(Constants.ACTION_AIRCRAFTREG, aircraftReg);
+                intent.putExtra(Constants.ACTION_AIRCRAFTTYPE, aircraftType);
                 //intent.putExtra("Bw", bw);
                 startActivity(intent);
             }

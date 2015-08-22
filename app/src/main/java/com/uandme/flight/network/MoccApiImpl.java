@@ -609,10 +609,38 @@ public class MoccApiImpl implements MoccApi{
         net.execute();
     }
 
+    //StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>")
+    //        .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
+    //        .append("<CMD>GetGrantsByUserCode</CMD>")
+    //        .append("<UserCode>"
+    //                + UserManager.getInstance().getUser().getUserCode()
+    //                + "</UserCode>")
+    //        .append("<CheckCode>"
+    //                + UserManager.getInstance().getUser().getCheckCode()
+    //                + "</CheckCode>")
+    //        .append("<RequestData>")
+    //        .append("<IAppObject xsi:type=\"AppUser\">")
+    //        .append("<AircraftReg>" + AircraftReg + "</AircraftReg>")
+    //        .append("<SeatId>" + SeatId + "</SeatId>")
+    //        .append("<FlightId>" + FlightId + "</FlightId>")
+    //        .append("<SeatCode>" + SeatCode + "</SeatCode>")
+    //        .append("<SeatType>" + SeatType + "</SeatType>")
+    //        .append("<AcTypeSeatLimit>" + AcTypeSeatLimit + "</AcTypeSeatLimit>")
+    //        .append("<AcTypeLj>" + AcTypeLj + "</AcTypeLj>")
+    //        .append("<AcRegCagWeight>" + 20 + "</AcRegCagWeight>")
+    //        .append("<AcRegCagLj>" + AcRegCagLj + "</AcRegCagLj>")
+    //        .append("<SeatLastLimit>" + SeatLastLimit + "</SeatLastLimit>")
+    //        .append("<PassagerName>" + PassagerName + "</PassagerName>")
+    //        .append("<RealWeight>" + RealWeight + "</RealWeight>")
+    //        .append("<OpUser>" + OpUser + "</OpUser>")
+    //        .append("<OpDate> " + OpDate + " </OpDate>")
+    //        .append("</IAppObject>")
+    //        .append("</RequestData>")
+    //        .append("</MessageObject>");
     @Override public void addFlightCd(String AircraftReg, String SeatId, String FlightId, String SeatCode, String SeatType, String AcTypeSeatLimit, String AcTypeLj, String AcRegCagWeight, String AcRegCagLj, String SeatLastLimit, String PassagerName, String RealWeight, String OpUser, String OpDate, final ResponseListner<GrantsByUserCodeResponse> responseListner) {
         StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>")
                 .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
-                .append("<CMD>GetGrantsByUserCode</CMD>")
+                .append("<CMD>AddFlightCd</CMD>")
                 .append("<UserCode>"
                         + UserManager.getInstance().getUser().getUserCode()
                         + "</UserCode>")
@@ -620,7 +648,7 @@ public class MoccApiImpl implements MoccApi{
                         + UserManager.getInstance().getUser().getCheckCode()
                         + "</CheckCode>")
                 .append("<RequestData>")
-                .append("<IAppObject xsi:type=\"AppUser\">")
+                .append("<IAppObject xsi:type=\"AircraftCd\">")
                 .append("<AircraftReg>" + AircraftReg + "</AircraftReg>")
                 .append("<SeatId>" + SeatId + "</SeatId>")
                 .append("<FlightId>" + FlightId + "</FlightId>")
@@ -628,7 +656,7 @@ public class MoccApiImpl implements MoccApi{
                 .append("<SeatType>" + SeatType + "</SeatType>")
                 .append("<AcTypeSeatLimit>" + AcTypeSeatLimit + "</AcTypeSeatLimit>")
                 .append("<AcTypeLj>" + AcTypeLj + "</AcTypeLj>")
-                .append("<AcRegCagWeight>" + AcRegCagWeight + "</AcRegCagWeight>")
+                .append("<AcRegCagWeight>" + 20 + "</AcRegCagWeight>")
                 .append("<AcRegCagLj>" + AcRegCagLj + "</AcRegCagLj>")
                 .append("<SeatLastLimit>" + SeatLastLimit + "</SeatLastLimit>")
                 .append("<PassagerName>" + PassagerName + "</PassagerName>")
@@ -655,11 +683,11 @@ public class MoccApiImpl implements MoccApi{
         net.execute();
     }
 
-    //一、按用户获取此用户的授权信息
-    public void getGrantsByUserCode(String userName, final ResponseListner<GrantsByUserCodeResponse> responseListner) {
-        //String url = "http://124.127.106.196:80/Login1.ashx";
-        StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>")
-                .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
+        //一、按用户获取此用户的授权信息
+        public void getGrantsByUserCode(String userName, final ResponseListner<GrantsByUserCodeResponse> responseListner) {
+            //String url = "http://124.127.106.196:80/Login1.ashx";
+            StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>")
+                    .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
                 .append("<CMD>GetGrantsByUserCode</CMD>")
                 .append("<UserCode>"+ UserManager.getInstance().getUser().getUserCode() +"</UserCode>")
                 .append("<CheckCode>"
@@ -706,7 +734,7 @@ public class MoccApiImpl implements MoccApi{
                         + UserManager.getInstance().getUser().getCheckCode()
                         + "</CheckCode>")
                 .append("<RequestData>")
-                .append("<IAppObject xsi:type=\"AppUser\">")
+                .append("<IAppObject xsi:type=\"FlightInfo\">")
                 .append("<FlightId>" + FlightId + "</FlightId>")
                 .append("<FlightDate>" + FlightDate + "</FlightDate>")
                 .append("<AircraftReg>" + AircraftReg + "</AircraftReg>")

@@ -13,7 +13,7 @@ public class FlightidResponse {
     public class TResponseObject{
         public TResponseData ResponseData;
         public int ResponseCode;
-        public String ResponseError;
+        public String ResponseErr;
     }
 
     public class TResponseData{

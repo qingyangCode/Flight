@@ -35,6 +35,11 @@ public class MainActivity extends BaseActivity {
     private final int SPACETIME = 2000;
     private long mLastBackPressTime;
 
+    @Override protected void onResume() {
+        super.onResume();
+        UserManager.getInstance().setAddFlightSuccess(false);
+    }
+
     @Override public int getContentView() {
         return R.layout.activity_main;
     }

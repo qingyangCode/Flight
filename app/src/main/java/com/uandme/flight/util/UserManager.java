@@ -27,7 +27,7 @@ import java.util.List;
  */
 public class UserManager {
     private String TAG = UserManager.class.getSimpleName();
-
+    private boolean isAddFilghtSuccess = false;
     private User mLoginUserInfo;
 
     private UserManager() {
@@ -204,4 +204,12 @@ public class UserManager {
         return mAddFilghtInfo;
     }
 
+
+    public void setAddFlightSuccess(boolean isAddFilghtSuccess) {
+        this.isAddFilghtSuccess = isAddFilghtSuccess;
+    }
+
+    public boolean isAddFilghtSuccess() {
+        return isAddFilghtSuccess;
+    }
 }

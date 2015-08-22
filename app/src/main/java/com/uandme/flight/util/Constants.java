@@ -11,4 +11,11 @@ public interface Constants {
     String DB_AllAcType ="allAcType";
 
     String DB_ALLAirCart = "allAirCart";
+
+    String ACTION_SEATLIST = "seatList";
+
+    String ACTION_AIRCRAFTREG = "AircraftReg";
+    String ACTION_AIRCRAFTTYPE = "AircraftType";
+    String ACTION_FAILSEATINFOLIST = "failSeatInfoList";
 }
+

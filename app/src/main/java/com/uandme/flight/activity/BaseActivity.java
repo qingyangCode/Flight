@@ -70,6 +70,10 @@ public abstract class BaseActivity extends Activity{
         mTopBarRight.setText(right);
     }
 
+    public void hiddenRightBar() {
+        mTopBarRight.setVisibility(View.GONE);
+    }
+
     public View.OnClickListener getRightOnClickListener(){
         return null;
     }

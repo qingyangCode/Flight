@@ -1,5 +1,6 @@
 package com.uandme.flight.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -11,6 +12,7 @@ import butterknife.InjectView;
 import com.uandme.flight.FlightApplication;
 import com.uandme.flight.R;
 import com.uandme.flight.data.dao.AcWeightLimit;
+import com.uandme.flight.data.dao.AddFlightInfo;
 import com.uandme.flight.data.dao.AllAcType;
 import com.uandme.flight.data.dao.AllAcTypeDao;
 import com.uandme.flight.data.dao.AllAircraft;
@@ -75,9 +77,23 @@ public class RestrictionMapActivity extends BaseActivity{
     private double airLj = 0;
     List<AllAcType> allAcTypeList;
     private float allWeight;
+    private String aircraftreg;
+    private Context mContext;
 
     @Override public int getContentView() {
         return R.layout.activity_restrictionmap;
+    }
+
+    @Override public void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        mContext = RestrictionMapActivity.this;
+    }
+
+    @Override protected void onResume() {
+        super.onResume();
+        if (UserManager.getInstance().isAddFilghtSuccess()) {
+            hiddenRightBar();
+        }
     }
 
     @Override protected void onloadData() {
@@ -85,8 +101,9 @@ public class RestrictionMapActivity extends BaseActivity{
         getTopBarRight("下一步");
         lineX = new ArrayList<>();
         lineY = new ArrayList<>();
-        aircraftType = getIntent().getStringExtra("AircraftType");
-        seatList = (ArrayList<SeatByAcReg>) getIntent().getSerializableExtra("seatList");
+        aircraftType = getIntent().getStringExtra(Constants.ACTION_AIRCRAFTTYPE);
+        aircraftreg = getIntent().getStringExtra(Constants.ACTION_AIRCRAFTREG);
+        seatList = (ArrayList<SeatByAcReg>) getIntent().getSerializableExtra(Constants.ACTION_SEATLIST);
         AllAircraftDao allAircraftDao = FlightApplication.getDaoSession().getAllAircraftDao();
         List<AllAircraft> allAircraftList = allAircraftDao.queryBuilder()
                 .where(AllAircraftDao.Properties.AircraftType.eq(aircraftType))
@@ -316,7 +333,45 @@ public class RestrictionMapActivity extends BaseActivity{
     @Override public View.OnClickListener getRightOnClickListener() {
         return new View.OnClickListener() {
             @Override public void onClick(View v) {
-                startActivity(new Intent(RestrictionMapActivity.this, AircraftPersonnelActivity.class));
+
+                String maxOil = mMaxOil.getText().toString().trim();
+                String realityOil = mRealityouil.getText().toString().trim();
+                String slideOil = mSlideOil.getText().toString().trim();
+                String flyOil = mFlyOil.getText().toString().trim();
+                String beforeWeight = mBeforeWeight.getText().toString().trim();
+                String downWeight = mDownWight.getText().toString().trim();
+                String macValue = mMac.getText().toString().trim();
+
+                if (TextUtils.isEmpty(maxOil)) {
+                    ToastUtil.showToast(mContext, R.drawable.toast_warning, "最大燃油量不能为空");
+                    return;
+                } else if (TextUtils.isEmpty(realityOil)) {
+                    ToastUtil.showToast(mContext, R.drawable.toast_warning, "实际加油量不能为空");
+                    return;
+                } else if (TextUtils.isEmpty(slideOil)) {
+                    ToastUtil.showToast(mContext, R.drawable.toast_warning, "滑行油量不能为空");
+                    return;
+                } else if (TextUtils.isEmpty(flyOil)) {
+                    ToastUtil.showToast(mContext, R.drawable.toast_warning, "航路油量不能为空");
+                    return;
+                }
+
+                AddFlightInfo addFlightInfo = UserManager.getInstance().getAddFlightInfo();
+                addFlightInfo.setMaxFule(maxOil);
+                addFlightInfo.setRealFule(realityOil);
+                addFlightInfo.setSlieFule(slideOil);
+                addFlightInfo.setRouteFule(flyOil);
+                addFlightInfo.setTofWeight(beforeWeight);
+                addFlightInfo.setLandWeight(downWeight);
+                addFlightInfo.setAirportLimitWeight(allAcTypeList.get(0).getPortLimit() + "");
+                addFlightInfo.setBalancePic(addFlightInfo.getFlightNo());
+                addFlightInfo.setBalancePicName(addFlightInfo.getFlightNo());
+
+                Intent intent =
+                        new Intent(RestrictionMapActivity.this, AircraftPersonnelActivity.class);
+                intent.putExtra(Constants.ACTION_AIRCRAFTTYPE, aircraftType);
+                intent.putExtra(Constants.ACTION_AIRCRAFTREG, aircraftreg);
+                startActivity(intent);
             }
         };
     }

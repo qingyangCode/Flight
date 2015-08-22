@@ -154,6 +154,31 @@ public interface MoccApi {
      */
     public void getGrantsByUserCode(String UserCode, ResponseListner<GrantsByUserCodeResponse> responseListner);
 
+    /**
+     *
+     * @param FlightId
+     * @param FlightDate //航班日期
+     * @param AircraftReg ////飞机号
+     * @param AircraftType //机型
+     * @param FlightNo //航班号
+     * @param Dep4Code //出发机场四字代码
+     * @param DepAirportName //出发机场名
+     * @param Arr4Code //到达机场四字代码
+     * @param ArrAirportName //到达机场名
+     * @param MaxFule //机型最大燃油
+     * @param RealFule //实际加油
+     * @param SlieFule //滑行油量
+     * @param RouteFule //航段耗油
+     * @param TofWeight //起飞重量
+     * @param LandWeight //落地重量
+     * @param NoFuleWeight//无油重量
+     * @param AirportLimitWeight //机坪限重
+     * @param BalancePic
+     * @param BalancePicName //计算载重图表名
+     * @param OpUser
+     * @param OpDate
+     * @param responseListner
+     */
     public void addFlightInfo(String FlightId, String FlightDate, String AircraftReg,
             String AircraftType, String FlightNo, String Dep4Code, String DepAirportName, String Arr4Code,
             String ArrAirportName, String MaxFule, String RealFule, String SlieFule, String RouteFule,

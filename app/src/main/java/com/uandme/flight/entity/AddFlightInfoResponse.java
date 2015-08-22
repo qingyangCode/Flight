@@ -16,33 +16,33 @@ public class AddFlightInfoResponse {
     }
 
     public class TResponseData{
-        public ArrayList<AllAcType> IAppObject;
+        public TIAppObject IAppObject;
     }
 
     //改用数据库字段自动生成的bean
     @Deprecated
     public class TIAppObject{
-        public String FlightId;
-        public String FlightDate;
-        public String AircraftReg;
-        public String AircraftType;
-        public String FlightNo;
-        public String Dep4Code;
-        public String DepAirportName;
-        public String Arr4Code;
-        public String ArrAirportName;
-        public String MaxFule;
-        public String RealFule;
         public String SlieFule;
-        public String RouteFule;
-        public String TofWeight;
-        public String LandWeight;
-        public String NoFuleWeight;
-        public String AirportLimitWeight;
         public String BalancePic;
-        public String BalancePicName;
+        public String AircraftType;
+        public String AircraftReg;
         public String OpUser;
+        public String AirportLimitWeight;
+        public String TofWeight;
+        public String RouteFule;
+        public String DepAirportName;
+        public String RealFule;
+        public String LandWeight;
+        public String MaxFule;
+        public String ArrAirportName;
+        public String FlightDate;
+        public String BalancePicName;
+        public String FlightId;
+        public String Arr4Code;
+        public String FlightNo;
         public String OpDate;
+        public String Dep4Code;
+        public String NoFuleWeight;
     }
 
     public static AddFlightInfoResponse parse(String jsonStr){
