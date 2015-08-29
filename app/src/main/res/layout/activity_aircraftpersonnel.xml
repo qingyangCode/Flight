@@ -5,20 +5,12 @@
         android:id="@+id/layout_topbar"
         layout="@layout/include_top_header"/>
 
-    <!--<android.support.v4.widget.SwipeRefreshLayout-->
-        <!--android:id="@+id/swipe_refresh"-->
-        <!--android:layout_below="@id/layout_topbar"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent" >-->
-
-    <com.uandme.flight.widget.AutoLoadListView
+    <ListView
         android:id="@+id/mListview"
         android:layout_above="@+id/bottom"
         android:layout_below="@id/layout_topbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
-
-    <!--</android.support.v4.widget.SwipeRefreshLayout>-->
 
     <LinearLayout
         android:id="@+id/bottom"

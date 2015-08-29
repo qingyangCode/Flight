@@ -1,7 +1,7 @@
 project(':greendao') {
     apply plugin: 'application'
     apply plugin: 'java'
-    mainClassName = 'com.uandme.greendao.Generator'
+    mainClassName = 'com.xiaoqing.greendao.Generator'
 
     dependencies {
         compile fileTree(dir: 'libs', include: ['*.jar'])
@@ -10,9 +10,9 @@ project(':greendao') {
 
     // def outputDir = '../app/src/main/java/'
     def outputDir = '../app/src/main/java/'
-    def classPackage = 'com.uandme.flight.data.dao'
+    def classPackage = 'com.xiaoqing.flight.data.dao'
     def dbVersion = '1'
-    def daoPath = '../app/src/main/java/com/uandme/flight/data/dao/';
+    def daoPath = '../app/src/main/java/com/xiaoqing/flight/data/dao/';
 
     task clearDaoPath {
         def dir = file(daoPath);

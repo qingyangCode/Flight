@@ -63,10 +63,10 @@
 
 -keep class com.google.gson.** { *; }
 
--keep class com.uandme.flight.data.dao.** { *; }
+-keep class com.xiaoqing.flight.data.dao.** { *; }
 
 
--keep class com.uandme.flight.entity.** { *; }
+-keep class com.xiaoqing.flight.entity.** { *; }
 
 
 
@@ -99,8 +99,6 @@
 -keep class android.support.** { *; }
 -keep interface android.support.** { *; }
 
-
--keep class com.zepp.soccer.djinni.** {*;}
 
 -keep class **.R$* {
     <fields>;

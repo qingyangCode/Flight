@@ -10,8 +10,8 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/autoloadlistview" />
             <option value="$PROJECT_DIR$/greendao" />
+            <option value="$PROJECT_DIR$/pull_to_refresh" />
           </set>
         </option>
       </GradleProjectSettings>

@@ -1,4 +1,4 @@
-package com.uandme.greendao.greendao;
+package com.xiaoqing.greendao.greendao;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

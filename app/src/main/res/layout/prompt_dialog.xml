@@ -4,22 +4,40 @@
     android:layout_height="wrap_content"
     android:background="@drawable/sp_new_pop_up_dialog_bg"
     android:gravity="center_horizontal"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    >
 
     <TextView
         android:id="@+id/title"
         style="@style/new_popup_dialog_title"
-        android:text="提示" />
+        android:text="提示"
+        />
 
     <ImageView
         android:visibility="gone"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-         />
+        />
+
+        <EditText
+            android:id="@+id/tv_userName"
+            android:layout_marginTop="12dp"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:minWidth="200dp"
+            android:textSize="19dp"
+            android:textColor="@color/gray_333"
+            android:singleLine="true"
+            android:padding="15dp"
+            android:maxLength="10"
+            android:hint="请输入姓名"
+            android:background="@drawable/engineeroom_name_bg"
+            />
+
 
     <EditText
-        android:id="@+id/tv_userName"
+        android:id="@+id/tv_password"
         android:layout_marginTop="12dp"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
@@ -29,40 +47,17 @@
         android:singleLine="true"
         android:padding="15dp"
         android:maxLength="10"
-        android:hint="请输入姓名"
+        android:hint="请输入密码"
         android:background="@drawable/engineeroom_name_bg"
-         />
-
-    <LinearLayout
-        android:id="@+id/layout_remember_password"
-        android:layout_width="200dp"
-        android:layout_height="61dp"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:visibility="gone"
-        >
-        <CheckBox
-            android:id="@+id/iv_checkbox"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            />
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:textSize="18dp"
-            android:textColor="@color/gray_333"
-            android:text="是否在飞机上"
-            />
-
-    </LinearLayout>
+        />
 
     <LinearLayout
         android:layout_marginTop="55dp"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
-        android:orientation="horizontal" >
+        android:orientation="horizontal"
+        >
 
         <Button
             android:id="@+id/done"
@@ -70,7 +65,8 @@
             android:layout_height="wrap_content"
             android:minHeight="50dp"
             style="@style/new_popup_dialog_positive_single_btn"
-            android:text="确定" />
+            android:text="确定"
+            />
     </LinearLayout>
 
 </LinearLayout>

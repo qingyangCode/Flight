@@ -252,7 +252,7 @@
                     <!--/>-->
             </LinearLayout>
             <View style="@style/common_line_1_style"/>
-        <com.uandme.flight.widget.MyLineDegreeView
+        <com.xiaoqing.flight.widget.MyLineDegreeView
             android:id="@+id/line_charview"
             android:layout_marginTop="50dp"
             android:layout_width="match_parent"

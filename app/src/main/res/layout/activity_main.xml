@@ -2,9 +2,80 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    >
 
-    <include layout="@layout/include_top_header"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="54dp"
+        android:id="@+id/layout_top_bar"
+        android:background="@color/common_bg"
+        >
+        <ImageView
+            android:id="@+id/iv_top_bar_left"
+            android:layout_width="54dp"
+            android:layout_height="54dp"
+            android:layout_centerVertical="true"
+            android:background="@drawable/common_press_bg_selector"
+            />
+
+        <TextView
+            android:id="@+id/tv_top_bar_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:textSize="19dp"
+            android:textColor="@color/white"
+            />
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_height="match_parent"
+            android:paddingLeft="10dp"
+            android:paddingRight="15dp"
+            android:background="@drawable/common_bg_selector_1"
+            >
+
+            <ImageView
+                android:id="@+id/iv_top_bar_right"
+                android:layout_width="28dp"
+                android:layout_height="22dp"
+                android:layout_centerVertical="true"
+                android:src="@drawable/personal_message"
+                />
+            <ImageView
+                android:id="@+id/message_redpoint"
+                android:layout_toRightOf="@id/iv_top_bar_right"
+                android:layout_width="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginLeft="-5dp"
+                android:layout_height="wrap_content"
+                android:src="@drawable/message_redpoint"/>
+        </RelativeLayout>
+
+        <TextView
+            style="@style/common_text_style_19dp"
+            android:id="@+id/tv_top_bar_right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:textColor="@color/green_blue"
+            android:layout_marginRight="18dp"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/common_press_bg_selector"
+            />
+
+
+        <View
+            android:id="@+id/bottom_line"
+            android:layout_width="match_parent"
+            android:layout_height="54dp"
+            android:layout_alignParentBottom="true"
+            android:background="@color/app_bg"
+            android:visibility="gone"
+            />
+    </RelativeLayout>
 
     <ListView
         android:id="@+id/mListView"
@@ -12,7 +83,8 @@
         android:layout_height="wrap_content"
         android:divider="@color/gray_666"
         android:dividerHeight="0.5px"
-        android:scrollbars="none">
+        android:scrollbars="none"
+        >
 
     </ListView>
 

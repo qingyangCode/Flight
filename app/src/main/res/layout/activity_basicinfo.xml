@@ -30,22 +30,12 @@
                 />
 
             <View style="@style/common_line_1_style"/>
-
-            <LinearLayout style="@style/horization_layout">
-
-                <TextView
-                    android:id="@+id/tv_firstName_title"
-                    style="@style/item_key"
-                    android:text="设备名称"
-                    />
-
-                <Spinner
-                    android:id="@+id/spinner"
-                    style="@style/item_value"
-                    android:gravity="right"
-                    android:text=""
-                    />
-            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/layout_chafenzhan"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                />
 
             <View style="@style/common_line_1_style"/>
 
