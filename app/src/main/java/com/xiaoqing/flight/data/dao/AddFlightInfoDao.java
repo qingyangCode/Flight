@@ -14,7 +14,7 @@ import com.xiaoqing.flight.data.dao.AddFlightInfo;
 /** 
  * DAO for table ADD_FLIGHT_INFO.
 */
-public class AddFlightInfoDao extends AbstractDao<AddFlightInfo, Void> {
+public class AddFlightInfoDao extends AbstractDao<AddFlightInfo, String> {
 
     public static final String TABLENAME = "ADD_FLIGHT_INFO";
 
@@ -23,7 +23,7 @@ public class AddFlightInfoDao extends AbstractDao<AddFlightInfo, Void> {
      * Can be used for QueryBuilder and for referencing column names.
     */
     public static class Properties {
-        public final static Property FlightId = new Property(0, String.class, "FlightId", false, "FLIGHT_ID");
+        public final static Property FlightId = new Property(0, String.class, "FlightId", true, "FLIGHT_ID");
         public final static Property FlightDate = new Property(1, String.class, "FlightDate", false, "FLIGHT_DATE");
         public final static Property AircraftReg = new Property(2, String.class, "AircraftReg", false, "AIRCRAFT_REG");
         public final static Property AircraftType = new Property(3, String.class, "AircraftType", false, "AIRCRAFT_TYPE");
@@ -60,7 +60,7 @@ public class AddFlightInfoDao extends AbstractDao<AddFlightInfo, Void> {
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "'ADD_FLIGHT_INFO' (" + //
-                "'FLIGHT_ID' TEXT," + // 0: FlightId
+                "'FLIGHT_ID' TEXT PRIMARY KEY NOT NULL ," + // 0: FlightId
                 "'FLIGHT_DATE' TEXT," + // 1: FlightDate
                 "'AIRCRAFT_REG' TEXT," + // 2: AircraftReg
                 "'AIRCRAFT_TYPE' TEXT," + // 3: AircraftType
@@ -94,11 +94,7 @@ public class AddFlightInfoDao extends AbstractDao<AddFlightInfo, Void> {
     @Override
     protected void bindValues(SQLiteStatement stmt, AddFlightInfo entity) {
         stmt.clearBindings();
- 
-        String FlightId = entity.getFlightId();
-        if (FlightId != null) {
-            stmt.bindString(1, FlightId);
-        }
+        stmt.bindString(1, entity.getFlightId());
  
         String FlightDate = entity.getFlightDate();
         if (FlightDate != null) {
@@ -208,15 +204,15 @@ public class AddFlightInfoDao extends AbstractDao<AddFlightInfo, Void> {
 
     /** @inheritdoc */
     @Override
-    public Void readKey(Cursor cursor, int offset) {
-        return null;
+    public String readKey(Cursor cursor, int offset) {
+        return cursor.getString(offset + 0);
     }    
 
     /** @inheritdoc */
     @Override
     public AddFlightInfo readEntity(Cursor cursor, int offset) {
         AddFlightInfo entity = new AddFlightInfo( //
-            cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0), // FlightId
+            cursor.getString(offset + 0), // FlightId
             cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // FlightDate
             cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // AircraftReg
             cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // AircraftType
@@ -245,7 +241,7 @@ public class AddFlightInfoDao extends AbstractDao<AddFlightInfo, Void> {
     /** @inheritdoc */
     @Override
     public void readEntity(Cursor cursor, AddFlightInfo entity, int offset) {
-        entity.setFlightId(cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0));
+        entity.setFlightId(cursor.getString(offset + 0));
         entity.setFlightDate(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
         entity.setAircraftReg(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
         entity.setAircraftType(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
@@ -271,15 +267,18 @@ public class AddFlightInfoDao extends AbstractDao<AddFlightInfo, Void> {
     
     /** @inheritdoc */
     @Override
-    protected Void updateKeyAfterInsert(AddFlightInfo entity, long rowId) {
-        // Unsupported or missing PK type
-        return null;
+    protected String updateKeyAfterInsert(AddFlightInfo entity, long rowId) {
+        return entity.getFlightId();
     }
     
     /** @inheritdoc */
     @Override
-    public Void getKey(AddFlightInfo entity) {
-        return null;
+    public String getKey(AddFlightInfo entity) {
+        if(entity != null) {
+            return entity.getFlightId();
+        } else {
+            return null;
+        }
     }
 
     /** @inheritdoc */

@@ -9,7 +9,7 @@ package com.xiaoqing.flight.data.dao;
  */
 public class AcWeightLimit {
 
-    private long id;
+    private Long id;
     private String AcType;
     private String Weight;
     private String WeightCg1;
@@ -23,11 +23,11 @@ public class AcWeightLimit {
     public AcWeightLimit() {
     }
 
-    public AcWeightLimit(long id) {
+    public AcWeightLimit(Long id) {
         this.id = id;
     }
 
-    public AcWeightLimit(long id, String AcType, String Weight, String WeightCg1, String WeightCg2, String OpUser, String OpDate) {
+    public AcWeightLimit(Long id, String AcType, String Weight, String WeightCg1, String WeightCg2, String OpUser, String OpDate) {
         this.id = id;
         this.AcType = AcType;
         this.Weight = Weight;
@@ -37,11 +37,11 @@ public class AcWeightLimit {
         this.OpDate = OpDate;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

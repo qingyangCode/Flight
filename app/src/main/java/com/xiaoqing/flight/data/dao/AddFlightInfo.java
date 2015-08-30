@@ -9,6 +9,7 @@ package com.xiaoqing.flight.data.dao;
  */
 public class AddFlightInfo implements java.io.Serializable {
 
+    /** Not-null value. */
     private String FlightId;
     private String FlightDate;
     private String AircraftReg;
@@ -38,6 +39,10 @@ public class AddFlightInfo implements java.io.Serializable {
     public AddFlightInfo() {
     }
 
+    public AddFlightInfo(String FlightId) {
+        this.FlightId = FlightId;
+    }
+
     public AddFlightInfo(String FlightId, String FlightDate, String AircraftReg, String AircraftType, String FlightNo, String Dep4Code, String DepAirportName, String Arr4Code, String ArrAirportName, String MaxFule, String RealFule, String SlieFule, String RouteFule, String TofWeight, String LandWeight, String NoFuleWeight, String AirportLimitWeight, String BalancePic, String BalancePicName, String OpUser, String OpDate, String weightCg) {
         this.FlightId = FlightId;
         this.FlightDate = FlightDate;
@@ -63,10 +68,12 @@ public class AddFlightInfo implements java.io.Serializable {
         this.weightCg = weightCg;
     }
 
+    /** Not-null value. */
     public String getFlightId() {
         return FlightId;
     }
 
+    /** Not-null value; ensure this value is available before it is saved to the database. */
     public void setFlightId(String FlightId) {
         this.FlightId = FlightId;
     }

@@ -26,13 +26,60 @@ public class TablesMain {
         addAllSb();//获取机型设备列表
         addSeatInfos();//座椅信息
         adllFilghtInfo();//添加飞机信息
+        getSystemNotice();//系统消息
+        getIsReadSystemNotice();// 是否阅读过消息
+        getAircraftPerson();// 机上成员用户表
+        getAcGrants();//获取用户授权机型
+
+        getSyncDB();//同步数据
     }
 
+    private void getSyncDB() {
+        Entity actionFeed = mSchema.addEntity("ActionFeed");
+        actionFeed.setTableName("ACTION_FEED");
+        actionFeed.addIdProperty().autoincrement();
+        actionFeed.addIntProperty("feed_type");
+        actionFeed.addStringProperty("feed_id");
+        actionFeed.addStringProperty("UserCode");
+        actionFeed.addIntProperty("feed_status");//aircraftReg,aircraftType
+    }
+
+    private void getAcGrants() {
+        Entity acGrants = mSchema.addEntity("AcGrants");
+        acGrants.setTableName("AcGrants");
+        acGrants.addIdProperty().autoincrement();
+        acGrants.addStringProperty("UserCode");
+        acGrants.addStringProperty("AcReg");//授权机号
+        acGrants.addStringProperty("AcType");//授权机型
+        acGrants.addDoubleProperty("AcRegBw");//机型基本空重
+        acGrants.addDoubleProperty("AcLj"); //机型基本力矩
+        acGrants.addStringProperty("IsCaption");//是否是机长
+        acGrants.addIntProperty("SysVersion");
+    }
+
+    private void getAircraftPerson() {
+        Entity passenger = mSchema.addEntity("Passenger");
+        passenger.addIdProperty().autoincrement();
+        passenger.addStringProperty("userName");
+        passenger.addDoubleProperty("userWeight");
+        passenger.addStringProperty("AircraftReg");
+        passenger.addBooleanProperty("isChecked");
+    }
+
+    private void getIsReadSystemNotice() {
+        Entity readSystemBotice = mSchema.addEntity("ReadSystemNotice");
+        readSystemBotice.implementsSerializable();
+        readSystemBotice.addIdProperty().autoincrement();
+        readSystemBotice.addStringProperty("LMsgId");
+        readSystemBotice.addBooleanProperty("isReaded");
+        readSystemBotice.addStringProperty("MsustRead");
+        readSystemBotice.addStringProperty("UserCode");
+    }
 
     private void adllFilghtInfo() {
         Entity flightInfo = mSchema.addEntity("AddFlightInfo");
         flightInfo.implementsSerializable();
-        flightInfo.addStringProperty("FlightId");
+        flightInfo.addStringProperty("FlightId").primaryKey().notNull();
         flightInfo.addStringProperty("FlightDate");
         flightInfo.addStringProperty("AircraftReg");
         flightInfo.addStringProperty("AircraftType");
@@ -64,7 +111,7 @@ public class TablesMain {
     private void addSeatInfos() {
         Entity seatByAcReg = mSchema.addEntity("SeatByAcReg");
         seatByAcReg.implementsSerializable();
-        seatByAcReg.addIdProperty().autoincrement().primaryKey();
+        seatByAcReg.addIdProperty().autoincrement();
         seatByAcReg.addStringProperty("AcReg");
         seatByAcReg.addIntProperty("SeatId");
         seatByAcReg.addStringProperty("SeatCode");
@@ -86,7 +133,7 @@ public class TablesMain {
 
     private void addAllSb() {
         Entity allSb = mSchema.addEntity("AllSb");
-        allSb.addIdProperty().autoincrement().primaryKey();
+        allSb.addIdProperty().autoincrement();
         allSb.addIntProperty("SbId");
         allSb.addStringProperty("SbName");
         allSb.addDoubleProperty("SbWeight");
@@ -96,7 +143,7 @@ public class TablesMain {
 
     private void addAllAircraft() {
         Entity allAircraft = mSchema.addEntity("AllAircraft");
-        allAircraft.addIdProperty().autoincrement().primaryKey();
+        allAircraft.addIdProperty().autoincrement();
         allAircraft.addStringProperty("AircraftReg");//操作人
         allAircraft.addStringProperty("UserCode");//机型
         allAircraft.addStringProperty("AircraftType");//机型
@@ -110,7 +157,7 @@ public class TablesMain {
 
     private void addFuleLimit() {
         Entity fuleLimit = mSchema.addEntity("FuleLimit");
-        fuleLimit.addIdProperty().autoincrement().primaryKey();
+        fuleLimit.addIdProperty().autoincrement();
         fuleLimit.addStringProperty("AcType");
         fuleLimit.addFloatProperty("FuleWeight");
         fuleLimit.addFloatProperty("FuleLj");
@@ -120,7 +167,7 @@ public class TablesMain {
 
     private void addAcWeightLimit() {
         Entity acWeoghtLimit = mSchema.addEntity("AcWeightLimit");
-        acWeoghtLimit.addIdProperty().autoincrement().notNull();
+        acWeoghtLimit.addIdProperty().autoincrement();
         acWeoghtLimit.addStringProperty("AcType");
         acWeoghtLimit.addStringProperty("Weight");
         acWeoghtLimit.addStringProperty("WeightCg1");
@@ -131,7 +178,7 @@ public class TablesMain {
 
     private void addAllAcType() {
         Entity allAcType = mSchema.addEntity("AllAcType");
-        allAcType.addIdProperty().autoincrement().primaryKey();
+        allAcType.addIdProperty().autoincrement();
         allAcType.addStringProperty("AircraftType").notNull();
         allAcType.addIntProperty("PortLimit").notNull();
         allAcType.addStringProperty("LimitType");
@@ -150,7 +197,7 @@ public class TablesMain {
     private void addSystemVersion() {
         Entity systemVersion = mSchema.addEntity("SystemVersion");
         systemVersion.setTableName("SystemVersion");
-        systemVersion.addIdProperty().autoincrement().primaryKey();
+        systemVersion.addIdProperty().autoincrement();
         systemVersion.addStringProperty("VserionName");
         systemVersion.addIntProperty("vserion").notNull();
     }
@@ -158,7 +205,7 @@ public class TablesMain {
     private void addUser() {
         Entity user = mSchema.addEntity("User");
         user.setTableName("user");
-        user.addIdProperty().autoincrement().primaryKey();
+        user.addIdProperty().autoincrement();
         user.addStringProperty("UserName").unique().notNull();
         user.addStringProperty("UserCode");
         user.addStringProperty("DepCode");
@@ -168,5 +215,19 @@ public class TablesMain {
         user.addStringProperty("ActiveStart");
         user.addIntProperty("SysVersion").notNull();
     }
+
+    private void getSystemNotice() {
+        Entity systemNotice = mSchema.addEntity("SystemNotice");
+        systemNotice.implementsSerializable();
+        systemNotice.setTableName("SystemNotice");
+        systemNotice.addIdProperty().autoincrement();
+        systemNotice.addStringProperty("LMsgId"); // 消息ID是唯一的标识
+        systemNotice.addStringProperty("StrMessageContent"); //消息内容
+        systemNotice.addStringProperty("StrSendUser"); //发送消息的人
+        systemNotice.addStringProperty("DtSendDate"); //消息发送日期
+        systemNotice.addStringProperty("MsustRead"); //是否必读 Y必读 N否
+
+    }
+
 
 }

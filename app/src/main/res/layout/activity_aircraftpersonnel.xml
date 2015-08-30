@@ -10,6 +10,10 @@
         android:layout_above="@+id/bottom"
         android:layout_below="@id/layout_topbar"
         android:layout_width="match_parent"
+        android:divider="#dedede"
+        android:dividerHeight="0.5dp"
+        android:listSelector="#dedede"
+        android:scrollbars="none"
         android:layout_height="wrap_content"/>
 
     <LinearLayout

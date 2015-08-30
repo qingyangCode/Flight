@@ -6,8 +6,10 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -16,6 +18,8 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 import com.xiaoqing.flight.FlightApplication;
 import com.xiaoqing.flight.R;
+import com.xiaoqing.flight.data.dao.Passenger;
+import com.xiaoqing.flight.data.dao.PassengerDao;
 import com.xiaoqing.flight.data.dao.SeatByAcReg;
 import com.xiaoqing.flight.data.dao.SeatByAcRegDao;
 import com.xiaoqing.flight.data.dao.User;
@@ -135,7 +139,12 @@ public class EngineRoomActivity extends BaseActivity{
 
     @OnClick(R.id.add_person)
     public void onAddPersonClick() {
-        startActivity(new Intent(this, AircraftPersonnelActivity.class));
+        Intent intent = new Intent(this, AircraftPersonnelActivity.class);
+        intent.putExtra(Constants.ACTION_AIRCRAFTREG, aircraftReg);
+        intent.putExtra(Constants.ACTION_AIRCRAFTTYPE, aircraftType);
+        startActivity(intent);
+        overridePendingTransition(R.anim.alpha_in, R.anim.alpha_out);
+        finish();
     }
 
     private void addSeatView() {
@@ -278,19 +287,31 @@ public class EngineRoomActivity extends BaseActivity{
 
         showList.addAll(lists);
 
+        showSeatDetail();
+    }
+
+    private void showSeatDetail() {
+       final  PassengerDao passengerDao = FlightApplication.getDaoSession().getPassengerDao();
         for ( int index = 0; index < showList.size() ; index ++) {
             final SeatByAcReg seatByAcReg = showList.get(index);
-            LogUtil.LOGD(TAG, "排序后结果： " + seatByAcReg.getXPos() + "   :  " + seatByAcReg.getYPos() +  " ==  " + seatByAcReg.toString());
+            LogUtil.LOGD(TAG, "排序后结果： "
+                    + seatByAcReg.getXPos()
+                    + "   :  "
+                    + seatByAcReg.getYPos()
+                    + " ==  "
+                    + seatByAcReg.toString());
             final int position = index;
             if (seatByAcReg.getXPos() != 0) {
                 View convertView = View.inflate(EngineRoomActivity.this, R.layout.item_seatlayout, null);
                 TextView tv_seat = (TextView) convertView.findViewById(R.id.tv_seat);
                 AutoCompleteTextView et_passenger = (AutoCompleteTextView) convertView.findViewById(R.id.tv_passengerName);
-                final UserDao userDao = FlightApplication.getDaoSession().getUserDao();
-                final List<User> list = userDao.queryBuilder().list();
-                String [] names = new String[list.size()];
-                for(int i = 0; i < list.size(); i++) {
-                    names[i] = list.get(i).getUserName();
+
+                List<Passenger> passengerList = passengerDao.queryBuilder()
+                        .where(PassengerDao.Properties.AircraftReg.eq(aircraftReg))
+                        .list();
+                String [] names = new String[passengerList.size()];
+                for(int i = 0; i < passengerList.size(); i++) {
+                    names[i] = passengerList.get(i).getUserName();
                 }
                 et_passenger.setAdapter(new ArrayAdapter<String>(EngineRoomActivity.this, R.layout.list_item, names));
                 TextView tv_arm = (TextView) convertView.findViewById(R.id.tv_Arm);
@@ -327,8 +348,15 @@ public class EngineRoomActivity extends BaseActivity{
                     }
 
                     @Override public void afterTextChanged(Editable s) {
-                        if (!TextUtils.isEmpty(s.toString()))
+                        if (!TextUtils.isEmpty(s.toString())) {
                             showList.get(position).setUserName(s.toString());
+                            List<Passenger> list = passengerDao.queryBuilder()
+                                    .where(PassengerDao.Properties.UserName.eq(s.toString()))
+                                    .list();
+                            if (list != null && list.size() > 0) {
+                                et_weight.setText(list.get(0).getUserWeight()+"");
+                            }
+                        }
                     }
                 });
                 et_weight.addTextChangedListener(new TextWatcher() {
@@ -401,6 +429,7 @@ public class EngineRoomActivity extends BaseActivity{
         EditText et_weight;
     }
 
+
     private void handleWeight(final ViewHolder holder, final SeatByAcReg value) {
         holder.et_weight.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override public void onFocusChange(View v, boolean hasFocus) {
@@ -432,6 +461,7 @@ public class EngineRoomActivity extends BaseActivity{
         });
 
     }
+
 
     @Override public View.OnClickListener getRightOnClickListener() {
         return new View.OnClickListener() {

@@ -4,7 +4,9 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.text.TextUtils;
+import android.util.Pair;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +23,8 @@ import butterknife.OnClick;
 import com.xiaoqing.flight.FlightApplication;
 import com.xiaoqing.flight.R;
 import com.xiaoqing.flight.data.dao.AddFlightInfo;
+import com.xiaoqing.flight.data.dao.Passenger;
+import com.xiaoqing.flight.data.dao.PassengerDao;
 import com.xiaoqing.flight.data.dao.User;
 import com.xiaoqing.flight.data.dao.UserDao;
 import com.xiaoqing.flight.entity.AddFlightInfoResponse;
@@ -33,7 +37,10 @@ import com.xiaoqing.flight.util.ToastUtil;
 import com.xiaoqing.flight.util.UserManager;
 import com.xiaoqing.flight.util.WindowUtil;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
+import org.w3c.dom.Text;
 
 /**
  * Created by QingYang on 15/7/29.
@@ -49,10 +56,13 @@ public class AircraftPersonnelActivity extends BaseActivity {
     @InjectView(R.id.add_person) Button mAddPerson;
 
     private ListViewAdapter listViewAdapter;
-    private ArrayList<String> userNames;
     private String aircraftReg;
     private String aircraftType;
-    private CommonProgressDialog progressDialog;
+
+    private List<Passenger> passengerList;
+    private boolean isShowCheckBox = false;
+    private PassengerDao passengerDao;
+    private boolean isLongClick;
 
     @Override public int getContentView() {
         return R.layout.activity_aircraftpersonnel;
@@ -67,7 +77,6 @@ public class AircraftPersonnelActivity extends BaseActivity {
 
     @Override protected void onloadData() {
         getTopBarTitle("机上人员姓名");
-        //getTopBarRight("机长确认");
 
         Intent data = getIntent();
         if (data != null) {
@@ -75,12 +84,17 @@ public class AircraftPersonnelActivity extends BaseActivity {
             aircraftType = data.getStringExtra(Constants.ACTION_AIRCRAFTTYPE);
         }
 
-        final UserDao userDao = FlightApplication.getDaoSession().getUserDao();
-        final List<User> list = userDao.queryBuilder().list();
-        userNames = new ArrayList<>();
-        for (User user : list) {
-            userNames.add(user.getUserName());
+        //final UserDao userDao = FlightApplication.getDaoSession().getUserDao();
+        //final List<User> list = userDao.queryBuilder().list();
+        passengerDao = FlightApplication.getDaoSession().getPassengerDao();
+        passengerList = passengerDao.queryBuilder()
+                .where(PassengerDao.Properties.AircraftReg.eq(aircraftReg))
+                .list();
+
+        if (passengerList != null && passengerList.size() > 0) {
+            getTopBarRight("编辑");
         }
+
         listViewAdapter = new ListViewAdapter();
         mAutoLoadListView.setAdapter(listViewAdapter);
     }
@@ -89,7 +103,7 @@ public class AircraftPersonnelActivity extends BaseActivity {
     class ListViewAdapter extends BaseAdapter {
 
         @Override public int getCount() {
-            return userNames.size();
+            return passengerList.size();
         }
 
         @Override public Object getItem(int position) {
@@ -100,7 +114,7 @@ public class AircraftPersonnelActivity extends BaseActivity {
             return 0;
         }
 
-        @Override public View getView(int position, View convertView, ViewGroup parent) {
+        @Override public View getView(final int position, View convertView, ViewGroup parent) {
             ViewHoler holder = null;
             if (convertView == null) {
                 holder = new ViewHoler();
@@ -112,13 +126,35 @@ public class AircraftPersonnelActivity extends BaseActivity {
             } else {
                 holder = (ViewHoler) convertView.getTag();
             }
-            holder.userName.setText(userNames.get(position));
+
+            Passenger passenger = passengerList.get(position);
+            if (isShowCheckBox) {
+                holder.checkBox.setVisibility(View.VISIBLE);
+                holder.checkBox.setChecked(passenger.getIsChecked());
+            } else {
+                holder.checkBox.setVisibility(View.GONE);
+            }
+
+            holder.userName.setText(passenger.getUserName());
             final CheckBox checkBox = holder.checkBox;
             holder.layout.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override public boolean onLongClick(View v) {
-                    checkBox.setChecked(true);
+                    isLongClick = true;
+                    if (!isShowCheckBox) {
+                        getTopBarRight("删除");
+                        passengerList.get(position).setIsChecked(true);
+                    } else {
+                        getTopBarRight("编辑");
+                    }
+                    isShowCheckBox = !isShowCheckBox;
                     notifyDataSetChanged();
                     return false;
+                }
+            });
+
+            holder.checkBox.setOnClickListener(new View.OnClickListener() {
+                @Override public void onClick(View v) {
+                    passengerList.get(position).setIsChecked(checkBox.isChecked());
                 }
             });
             return convertView;
@@ -130,6 +166,9 @@ public class AircraftPersonnelActivity extends BaseActivity {
         TextView userName;
         CheckBox checkBox;
     }
+
+
+
 
     @OnClick(R.id.add_person) public void onAddPersonClick() {
         showDialog("添加机上成员", "请输入姓名", "请输入用户体重", ACTION_ADDPERSION);
@@ -147,6 +186,14 @@ public class AircraftPersonnelActivity extends BaseActivity {
         if (!TextUtils.isEmpty(titleText)) title.setText(titleText);
         final TextView tv_userName = (TextView) view.findViewById(R.id.tv_userName);
         if (!TextUtils.isEmpty(hintText)) tv_userName.setHint(hintText);
+        if (!TextUtils.isEmpty(hintText2)) tv_password.setHint(hintText2);
+        tv_password.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                alBuilder.dismiss();
+                addPassenger(tv_userName, tv_password, flag);
+                return false;
+            }
+        });
 
 
 
@@ -158,38 +205,8 @@ public class AircraftPersonnelActivity extends BaseActivity {
         done.setOnClickListener(new View.OnClickListener() {
 
             @Override public void onClick(View v) {
-                String userName = tv_userName.getText().toString().trim();
-                String password = tv_password.getText().toString().trim();
-                if (TextUtils.isEmpty(userName)) {
-                    ToastUtil.showToast(AircraftPersonnelActivity.this, R.drawable.toast_warning,
-                            "姓名不能为空！");
-                    return;
-                } else if (TextUtils.isEmpty(password)) {
-                    String text = "";
-                    if(flag == ACTION_ADDPERSION) {
-                        text = "用户体重不能为空";
-                    } else {
-                        text = "机长密码不能为空";
-                    }
-                    ToastUtil.showToast(AircraftPersonnelActivity.this, R.drawable.toast_warning, text);
-                    return;
-                }
                 alBuilder.dismiss();
-                if (flag == ACTION_ADDPERSION) {
-                    userNames.add(userName);
-                    listViewAdapter.notifyDataSetChanged();
-                    try {
-                        UserDao userDao = FlightApplication.getDaoSession().getUserDao();
-                        User user = new User();
-                        user.setUserName(userName);
-                        user.setUserCode(userName);
-                        userDao.insert(user);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    confirm(userName, password);
-                }
+                addPassenger(tv_userName, tv_password, flag);
             }
         });
         WindowManager.LayoutParams lp = window.getAttributes();
@@ -202,129 +219,130 @@ public class AircraftPersonnelActivity extends BaseActivity {
         window.setGravity(Gravity.CENTER);
     }
 
-    /**
-     * 验证机长信息
-     *
-     * @param userName
-     */
+    private void addPassenger(TextView tv_userName, TextView tv_password, int flag) {
+        String userName = tv_userName.getText().toString().trim();
+        String password = tv_password.getText().toString().trim();
+        if (TextUtils.isEmpty(userName)) {
+            ToastUtil.showToast(AircraftPersonnelActivity.this, R.drawable.toast_warning,
+                    "姓名不能为空！");
+            return;
+        } else if (TextUtils.isEmpty(password)) {
+            String text = "";
+            if(flag == ACTION_ADDPERSION) {
+                text = "用户体重不能为空";
+            } else {
+                text = "机长密码不能为空";
+            }
+            ToastUtil.showToast(AircraftPersonnelActivity.this, R.drawable.toast_warning, text);
+            return;
+        }
 
-    private boolean isCancelAble;
+        if (flag == ACTION_ADDPERSION) {
 
-    private void confirm(String userName, String password) {
-        isCancelAble = false;
-        showProgressDialog();
-        getMoccApi().validCaption(userName, aircraftType, password, new ResponseListner<ValidCaptionResponse>() {
-            @Override public void onResponse(ValidCaptionResponse response) {
-                hiddenDialog();
-                if (isCancelAble) return;
-                if (response != null && response.ResponseObject != null) {
-                    if (response.ResponseObject.ResponseCode == Constants.RESULT_OK) {
-                        addFlightInfo();
-                    } else if ("NO".equalsIgnoreCase(response.ResponseObject.ResponseErr)) {
-                        ToastUtil.showToast(AircraftPersonnelActivity.this,
-                                R.drawable.toast_warning, "当前操作需机长验证，请输入机长信息");
-                    } else {
-                        ToastUtil.showToast(AircraftPersonnelActivity.this,
-                                R.drawable.toast_warning, "未获取到机长信息");
-                    }
+            try {
+                Passenger passenger = new Passenger();
+                passenger.setAircraftReg(aircraftReg);
+                passenger.setIsChecked(false);
+                passenger.setUserName(userName);
+                passenger.setUserWeight(Double.parseDouble(password));
+                passengerList.add(passenger);
+                passengerDao.insert(passenger);
+                listViewAdapter.notifyDataSetChanged();
+                if (TextUtils.isEmpty(mTopBarRight.getText())) {
+                    getTopBarRight("删除");
+                    isShowCheckBox = true;
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-
-            @Override public void onEmptyOrError(String message) {
-                hiddenDialog();
-                if (isCancelAble) return;
-                ToastUtil.showToast(AircraftPersonnelActivity.this, R.drawable.toast_warning,
-                        getString(R.string.get_data_error));
-            }
-        });
-    }
-
-    private void showProgressDialog() {
-        if (progressDialog == null) {
-            progressDialog = new CommonProgressDialog(this);
-            progressDialog.setTip("正在验证..");
-            progressDialog.setCancelable(true);
-            progressDialog.setCanceledOnTouchOutside(false);
-        }
-        progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-            @Override public void onCancel(DialogInterface dialog) {
-                isCancelAble = true;
-            }
-        });
-        progressDialog.show();
-    }
-
-    private void hiddenDialog() {
-        if (progressDialog != null && progressDialog.isShowing()) {
-            progressDialog.dismiss();
+        } else {
+            //confirm(userName, password);
         }
     }
 
-    /**
-     * 增加航班信息
-     */
 
-    /**
-     * @param FlightDate //航班日期
-     * @param AircraftReg ////飞机号
-     * @param AircraftType //机型
-     * @param FlightNo //航班号
-     * @param Dep4Code //出发机场四字代码
-     * @param DepAirportName //出发机场名
-     * @param Arr4Code //到达机场四字代码
-     * @param ArrAirportName //到达机场名
-     * @param MaxFule //机型最大燃油
-     * @param RealFule //实际加油
-     * @param SlieFule //滑行油量
-     * @param RouteFule //航段耗油
-     * @param TofWeight //起飞重量
-     * @param LandWeight //落地重量
-     * @param AirportLimitWeight //机坪限重
-     * @param BalancePicName //计算载重图表名
-     */
-    private void addFlightInfo() {
-        showProgressDialog();
-        AddFlightInfo addFlightInfo = UserManager.getInstance().getAddFlightInfo();
-        getMoccApi().addFlightInfo(addFlightInfo.getFlightId(), DateFormatUtil.formatZDate(),
-                aircraftReg, aircraftType, addFlightInfo.getFlightNo(), addFlightInfo.getDep4Code(),
-                addFlightInfo.getDepAirportName(), addFlightInfo.getArr4Code(),
-                addFlightInfo.getArrAirportName(), addFlightInfo.getMaxFule(),
-                addFlightInfo.getRealFule(), addFlightInfo.getSlieFule(),
-                addFlightInfo.getRouteFule(), addFlightInfo.getTofWeight(),
-                addFlightInfo.getLandWeight(), addFlightInfo.getNoFuleWeight(),
-                addFlightInfo.getAirportLimitWeight(), addFlightInfo.getBalancePic(),
-                addFlightInfo.getBalancePicName(),
-                UserManager.getInstance().getUser().getUserCode(), DateFormatUtil.formatZDate(),
-                new ResponseListner<AddFlightInfoResponse>() {
 
-                    @Override public void onResponse(AddFlightInfoResponse response) {
-                        hiddenDialog();
-                        if (response != null
-                                && response.ResponseObject != null
-                                && response.ResponseObject.ResponseCode == Constants.RESULT_OK) {
-                            ToastUtil.showToast(AircraftPersonnelActivity.this,
-                                    R.drawable.toast_warning, "航班信息添加成功");
-                            UserManager.getInstance().setAddFlightSuccess(true);
-                            finish();
-                        } else {
-                            ToastUtil.showToast(AircraftPersonnelActivity.this,
-                                    R.drawable.toast_warning, "服务器繁忙，请稍后再试！");
-                        }
-                    }
 
-                    @Override public void onEmptyOrError(String message) {
-                        hiddenDialog();
-                        ToastUtil.showToast(AircraftPersonnelActivity.this,
-                                R.drawable.toast_warning, message);
-                    }
-                });
-    }
+
+
 
     @Override public View.OnClickListener getRightOnClickListener() {
         return new View.OnClickListener() {
             @Override public void onClick(View v) {
-                showDialog("机长确认", "请输入机长姓名", "机长密码", ACTION_CONFIRM);
+                //showDialog("机长确认", "请输入机长姓名", "机长密码", ACTION_CONFIRM);
+                if (isShowCheckBox) {
+                    if("删除".equals(mTopBarRight.getText().toString())) {
+                        int deleteCount = 0;
+                        for (Passenger passenger : passengerList) {
+                            if (passenger.getIsChecked()) {
+                                deleteCount ++;
+                                break;
+                            }
+                        }
+                        if (deleteCount > 0) {
+                            new AlertDialog.Builder(mContext).setMessage("确认删除选中的用户？").setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                @Override public void onClick(DialogInterface dialog, int which) {
+                                    getTopBarRight("编辑");
+                                    isShowCheckBox = false;
+                                    deletePassenger();
+                                }
+                            }).setNegativeButton("取消", null).setCancelable(false).show();
+                        } else if (!isLongClick) {
+                            ToastUtil.showToast(mContext, R.drawable.toast_warning, "请选择要删除的用户");
+
+                    }
+                    }
+
+                } else {
+                    getTopBarRight("删除");
+                    isShowCheckBox = true;
+                    listViewAdapter.notifyDataSetChanged();
+                }
+                isLongClick = false;
             }
         };
+    }
+
+
+    private void deletePassenger() {
+        List<Passenger> passengers = new ArrayList<>();
+        passengers.addAll(passengerList);
+        for(Passenger passenger : passengers) {
+            if (passenger.getIsChecked()) {
+                passengerDao.delete(passenger);
+                passengerList.remove(passenger);
+            }
+        }
+        listViewAdapter.notifyDataSetChanged();
+    }
+
+    @Override protected void onPause() {
+        super.onPause();
+        isShowCheckBox = false;
+        listViewAdapter.notifyDataSetChanged();
+    }
+
+    @Override public void onLeftClick() {
+        //super.onLeftClick();
+        backPress();
+
+    }
+
+    @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+            backPress();
+            return true;
+        } else {
+            return super.onKeyDown(keyCode, event);
+        }
+    }
+
+    private void backPress() {
+        Intent intent = new Intent(mContext, EngineRoomActivity.class);
+        intent.putExtra(Constants.ACTION_AIRCRAFTREG, aircraftReg);
+        intent.putExtra(Constants.ACTION_AIRCRAFTTYPE, aircraftType);
+        startActivity(intent);
+        finish();
+        overridePendingTransition(R.anim.alpha_in, R.anim.alpha_out);
     }
 }

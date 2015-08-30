@@ -23,7 +23,7 @@ public class AcWeightLimitDao extends AbstractDao<AcWeightLimit, Long> {
      * Can be used for QueryBuilder and for referencing column names.
     */
     public static class Properties {
-        public final static Property Id = new Property(0, long.class, "id", true, "_id");
+        public final static Property Id = new Property(0, Long.class, "id", true, "_id");
         public final static Property AcType = new Property(1, String.class, "AcType", false, "AC_TYPE");
         public final static Property Weight = new Property(2, String.class, "Weight", false, "WEIGHT");
         public final static Property WeightCg1 = new Property(3, String.class, "WeightCg1", false, "WEIGHT_CG1");
@@ -45,7 +45,7 @@ public class AcWeightLimitDao extends AbstractDao<AcWeightLimit, Long> {
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "'AC_WEIGHT_LIMIT' (" + //
-                "'_id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL ," + // 0: id
+                "'_id' INTEGER PRIMARY KEY AUTOINCREMENT ," + // 0: id
                 "'AC_TYPE' TEXT," + // 1: AcType
                 "'WEIGHT' TEXT," + // 2: Weight
                 "'WEIGHT_CG1' TEXT," + // 3: WeightCg1
@@ -64,7 +64,11 @@ public class AcWeightLimitDao extends AbstractDao<AcWeightLimit, Long> {
     @Override
     protected void bindValues(SQLiteStatement stmt, AcWeightLimit entity) {
         stmt.clearBindings();
-        stmt.bindLong(1, entity.getId());
+ 
+        Long id = entity.getId();
+        if (id != null) {
+            stmt.bindLong(1, id);
+        }
  
         String AcType = entity.getAcType();
         if (AcType != null) {
@@ -100,14 +104,14 @@ public class AcWeightLimitDao extends AbstractDao<AcWeightLimit, Long> {
     /** @inheritdoc */
     @Override
     public Long readKey(Cursor cursor, int offset) {
-        return cursor.getLong(offset + 0);
+        return cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0);
     }    
 
     /** @inheritdoc */
     @Override
     public AcWeightLimit readEntity(Cursor cursor, int offset) {
         AcWeightLimit entity = new AcWeightLimit( //
-            cursor.getLong(offset + 0), // id
+            cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
             cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // AcType
             cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // Weight
             cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // WeightCg1
@@ -121,7 +125,7 @@ public class AcWeightLimitDao extends AbstractDao<AcWeightLimit, Long> {
     /** @inheritdoc */
     @Override
     public void readEntity(Cursor cursor, AcWeightLimit entity, int offset) {
-        entity.setId(cursor.getLong(offset + 0));
+        entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
         entity.setAcType(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
         entity.setWeight(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
         entity.setWeightCg1(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));

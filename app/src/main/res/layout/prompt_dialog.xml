@@ -48,6 +48,8 @@
         android:padding="15dp"
         android:maxLength="10"
         android:hint="请输入密码"
+        android:inputType="number"
+        android:imeOptions="actionDone"
         android:background="@drawable/engineeroom_name_bg"
         />
 

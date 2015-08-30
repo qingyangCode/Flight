@@ -49,6 +49,14 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustNothing"
             />
+        <activity
+            android:name=".activity.SystemNoticeActivity"
+            android:screenOrientation="portrait"
+            />
+        <activity
+            android:name=".activity.SystemNoticeDetailActivity"
+            android:screenOrientation="portrait"
+            />
     </application>
 
 </manifest>

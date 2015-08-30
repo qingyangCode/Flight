@@ -1,16 +1,25 @@
 package com.xiaoqing.flight.util;
 
+import android.content.Context;
+import android.content.Intent;
 import com.xiaoqing.flight.FlightApplication;
+import com.xiaoqing.flight.data.dao.ActionFeed;
+import com.xiaoqing.flight.data.dao.AddFlightInfo;
+import com.xiaoqing.flight.data.dao.AddFlightInfoDao;
 import com.xiaoqing.flight.data.dao.AllAircraft;
 import com.xiaoqing.flight.data.dao.AllAircraftDao;
 import com.xiaoqing.flight.data.dao.AllSb;
 import com.xiaoqing.flight.data.dao.AllSbDao;
 import com.xiaoqing.flight.data.dao.FuleLimit;
 import com.xiaoqing.flight.data.dao.FuleLimitDao;
+import com.xiaoqing.flight.data.dao.ReadSystemNotice;
+import com.xiaoqing.flight.data.dao.ReadSystemNoticeDao;
 import com.xiaoqing.flight.data.dao.SeatByAcReg;
 import com.xiaoqing.flight.data.dao.SeatByAcRegDao;
-import com.xiaoqing.flight.data.dao.SystemVersion;
-import com.xiaoqing.flight.data.dao.SystemVersionDao;
+import com.xiaoqing.flight.data.dao.SystemNotice;
+import com.xiaoqing.flight.data.dao.SystemNoticeDao;
+import com.xiaoqing.flight.data.dao.User;
+import com.xiaoqing.flight.entity.AddFlightInfoResponse;
 import com.xiaoqing.flight.entity.AllSbResponse;
 import com.xiaoqing.flight.entity.FlightidResponse;
 import com.xiaoqing.flight.entity.FuleLimitByAcType;
@@ -18,6 +27,7 @@ import com.xiaoqing.flight.entity.MessageResponse;
 import com.xiaoqing.flight.entity.SeatByAcRegResponse;
 import com.xiaoqing.flight.network.MoccApi;
 import com.xiaoqing.flight.network.ResponseListner;
+import com.xiaoqing.flight.network.synchronous.FeedType;
 import java.util.List;
 
 /**
@@ -161,21 +171,6 @@ public class ApiServiceManager {
                                 fuleLimitDao.insertInTx(
                                         response.ResponseObject.ResponseData.IAppObject);
                             }
-
-                            //SystemVersionDao systemVersionDao =
-                            //        FlightApplication.getDaoSession().getSystemVersionDao();
-                            //List<SystemVersion> fuleLimit = systemVersionDao.queryBuilder()
-                            //        .where(SystemVersionDao.Properties.VserionName.eq("FuleLimit"))
-                            //        .list();
-                            //if (fuleLimit != null && fuleLimit.size() > 0) {
-                            //    if (fuleLimit.get(0).getVserion() != 0) {
-                            //        FuleLimitDao fuleLimitDao =
-                            //                FlightApplication.getDaoSession().getFuleLimitDao();
-                            //        fuleLimitDao.insertInTx(response.ResponseObject.ResponseData.IAppObject);
-                            //        UserManager.getSystemVersion();
-                            //        UserManager.getInstance().insertSystemVersion("FuleLimit", response.ResponseObject.ResponseData.IAppObject.get(0).);
-                            //    }
-                            //}
                         }
                     }
 
@@ -191,23 +186,94 @@ public class ApiServiceManager {
      * @param responseListner
      */
     public void getSystemMessage(String startTime, final ResponseListner<MessageResponse> responseListner) {
-        FlightApplication.getMoccApi().getMessageByDate(startTime, new ResponseListner<MessageResponse>() {
+        FlightApplication.getMoccApi().getMessageByDate(startTime,
+                new ResponseListner<MessageResponse>() {
+                    @Override public void onResponse(MessageResponse response) {
+                        if (response != null
+                                && response.ResponseObject != null
+                                && response.ResponseObject.ResponseCode == Constants.RESULT_OK) {
 
-            @Override public void onResponse(MessageResponse response) {
-                if (response != null && response.ResponseObject != null && response.ResponseObject.ResponseCode == Constants.RESULT_OK) {
-                    if (responseListner != null) {
-                        responseListner.onResponse(response);
+                            SystemNoticeDao systemNoticeDao =
+                                    FlightApplication.getDaoSession().getSystemNoticeDao();
+                            List<SystemNotice> list = systemNoticeDao.queryBuilder().list();
+
+                            ReadSystemNoticeDao readSystemNoticeDao =
+                                    FlightApplication.getDaoSession().getReadSystemNoticeDao();
+                            List<ReadSystemNotice> readNoticeList =
+                                    readSystemNoticeDao.queryBuilder()
+                                            .where(ReadSystemNoticeDao.Properties.UserCode.eq(
+                                                    UserManager.getInstance()
+                                                            .getUser()
+                                                            .getUserCode()))
+                                            .list();
+
+                            if (list != null && list.size() > 0) {
+                                systemNoticeDao.deleteInTx(list);
+                            }
+                            List<SystemNotice> iAppObject =
+                                    response.ResponseObject.ResponseData.IAppObject;
+                            if (iAppObject != null && iAppObject.size() > 0) {
+                                iAppObject.remove(iAppObject.size() - 1);
+                                systemNoticeDao.insertInTx(iAppObject);
+
+                                if (iAppObject.size() != readNoticeList.size()) {
+                                    sendHasNewNotice(true);
+                                } else {
+                                    sendHasNewNotice(false);
+                                }
+                            }
+
+                            if (responseListner != null) {
+                                responseListner.onResponse(response);
+                            }
+                        }
                     }
-                }
-            }
 
-            @Override public void onEmptyOrError(String message) {
-                if (responseListner != null)
-                    responseListner.onEmptyOrError(message);
-            }
-        });
+                    private void sendHasNewNotice(boolean hasNewMessage) {
+                        Context context = FlightApplication.getContext();
+                        context.sendBroadcast(new Intent(Constants.BROADCAST_SYSTEMNOTICE).putExtra(
+                                Constants.PARAM_HASNEWNOTICE, hasNewMessage));
+                    }
+
+                    @Override public void onEmptyOrError(String message) {
+                        if (responseListner != null) responseListner.onEmptyOrError(message);
+                    }
+                });
     }
 
+    public void addFlightInfo(AddFlightInfo addFlightInfo, final ResponseListner<AddFlightInfoResponse> responseListner) {
+        getMoccApi().addFlightInfo(addFlightInfo.getFlightId(), DateFormatUtil.formatZDate(),
+                addFlightInfo.getAircraftReg(), addFlightInfo.getAircraftType(), addFlightInfo.getFlightNo(), addFlightInfo.getDep4Code(),
+                addFlightInfo.getDepAirportName(), addFlightInfo.getArr4Code(),
+                addFlightInfo.getArrAirportName(), addFlightInfo.getMaxFule(),
+                addFlightInfo.getRealFule(), addFlightInfo.getSlieFule(),
+                addFlightInfo.getRouteFule(), addFlightInfo.getTofWeight(),
+                addFlightInfo.getLandWeight(), addFlightInfo.getNoFuleWeight(),
+                addFlightInfo.getAirportLimitWeight(), addFlightInfo.getBalancePic(),
+                addFlightInfo.getBalancePicName(),
+                UserManager.getInstance().getUser().getUserCode(), DateFormatUtil.formatZDate(),
+                new ResponseListner<AddFlightInfoResponse>() {
 
+                    @Override public void onResponse(AddFlightInfoResponse response) {
+                        if (response != null && response.ResponseObject != null && response.ResponseObject.ResponseCode == Constants.RESULT_OK) {
+                            ActionFeed actionFeed = new ActionFeed();
+                            actionFeed.setFeed_id(UserManager.getInstance().getAddFlightInfo().getFlightId());
+                            actionFeed.setUserCode(
+                                    UserManager.getInstance().getUser().getUserCode());
+                            actionFeed.setFeed_type(FeedType.toInt(FeedType.ADD_PLAYINFO));
+                            UserManager.getInstance().deleteActionFeed(actionFeed);
+                            UserManager.getInstance().deleteFlightInfo();
+                        }
 
+                        if (responseListner != null) {
+                            responseListner.onResponse(response);
+                        }
+                    }
+
+                    @Override public void onEmptyOrError(String message) {
+                        if (responseListner != null)
+                            responseListner.onEmptyOrError(message);
+                    }
+                });
+    }
 }

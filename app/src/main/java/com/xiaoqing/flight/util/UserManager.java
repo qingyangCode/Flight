@@ -2,7 +2,12 @@ package com.xiaoqing.flight.util;
 
 import com.xiaoqing.flight.FlightApplication;
 import com.xiaoqing.flight.R;
+import com.xiaoqing.flight.data.dao.AcGrants;
+import com.xiaoqing.flight.data.dao.AcGrantsDao;
+import com.xiaoqing.flight.data.dao.ActionFeed;
+import com.xiaoqing.flight.data.dao.ActionFeedDao;
 import com.xiaoqing.flight.data.dao.AddFlightInfo;
+import com.xiaoqing.flight.data.dao.AddFlightInfoDao;
 import com.xiaoqing.flight.data.dao.AllAcType;
 import com.xiaoqing.flight.data.dao.AllAcTypeDao;
 import com.xiaoqing.flight.data.dao.AllAircraft;
@@ -15,6 +20,9 @@ import com.xiaoqing.flight.data.dao.UserDao;
 import com.xiaoqing.flight.entity.AllAcTypeResponse;
 import com.xiaoqing.flight.entity.AllUsers;
 import com.xiaoqing.flight.network.ResponseListner;
+import com.xiaoqing.flight.network.synchronous.FeedType;
+import de.greenrobot.dao.query.QueryBuilder;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -187,6 +195,23 @@ public class UserManager {
         }
     }
 
+    public void insertAcGrants(ArrayList<AcGrants> acGrantses) {
+        List<SystemVersion> list = getQueryBuilderByVersionName(Constants.DB_ACGRANTS);
+        if (list != null && list.size() > 0) {
+            if (acGrantses.get(0).getSysVersion() != list.get(0).getVserion()) {
+                insertAcGrants2DB(acGrantses);
+            }
+        } else if (acGrantses != null ) {
+            insertAcGrants2DB(acGrantses);
+        }
+    }
+
+    private void insertAcGrants2DB(ArrayList<AcGrants> acGrantses) {
+        AcGrantsDao acGrantsDao = FlightApplication.getDaoSession().getAcGrantsDao();
+        insertSystemVersion(Constants.DB_ACGRANTS, acGrantses.get(0).getSysVersion());
+        acGrantsDao.insertInTx(acGrantses);
+    }
+
     private void insertAllAircart(ArrayList<AllAircraft> allAircarts) {
         AllAircraftDao allAircraftDao = FlightApplication.getDaoSession().getAllAircraftDao();
         insertSystemVersion(Constants.DB_ALLAirCart, allAircarts.get(0).getSysVersion());
@@ -210,4 +235,39 @@ public class UserManager {
         return isAddFilghtSuccess;
     }
 
+    public void insertActionFeed( FeedType feedType, String dataId) {
+        ActionFeedDao actionFeedDao = FlightApplication.getDaoSession().getActionFeedDao();
+        ActionFeed actionFeed = new ActionFeed();
+        actionFeed.setUserCode(UserManager.getInstance().getUser().getUserCode());
+        actionFeed.setFeed_type(FeedType.toInt(feedType));
+        actionFeed.setFeed_id(dataId);
+        actionFeedDao.insert(actionFeed);
+    }
+
+    public void deleteActionFeed(ActionFeed actionFeed) {
+            final ActionFeedDao actionFeedDao = FlightApplication.getDaoSession().getActionFeedDao();
+            final QueryBuilder<ActionFeed> builder = actionFeedDao.queryBuilder();
+            builder.where(ActionFeedDao.Properties.Feed_type.eq(actionFeed.getFeed_type()),
+                    ActionFeedDao.Properties.Feed_id.eq(actionFeed.getFeed_id())).buildDelete().executeDeleteWithoutDetachingEntities();
+    }
+
+    public void insertFlightInfo() {
+        AddFlightInfoDao addFlightInfoDao = FlightApplication.getDaoSession().getAddFlightInfoDao();
+        List<AddFlightInfo> list = addFlightInfoDao.queryBuilder().where(
+                AddFlightInfoDao.Properties.FlightId.eq(UserManager.getInstance().getAddFlightInfo().getFlightId())).list();
+        if (list != null && list.size() > 0) {
+            addFlightInfoDao.delete(list.get(0));
+        }
+        addFlightInfoDao.insert(UserManager.getInstance().getAddFlightInfo());
+    }
+
+    public void deleteFlightInfo() {
+        AddFlightInfoDao addFlightInfoDao = FlightApplication.getDaoSession().getAddFlightInfoDao();
+        List<AddFlightInfo> list = addFlightInfoDao.queryBuilder().where(
+                AddFlightInfoDao.Properties.FlightId.eq(
+                        UserManager.getInstance().getAddFlightInfo().getFlightId())).list();
+        if (list != null && list.size() > 0) {
+            addFlightInfoDao.delete(list.get(0));
+        }
+    }
 }

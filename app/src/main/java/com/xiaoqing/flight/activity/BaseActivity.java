@@ -1,6 +1,7 @@
 package com.xiaoqing.flight.activity;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -17,6 +18,8 @@ import com.xiaoqing.flight.network.MoccApi;
  */
 public abstract class BaseActivity extends Activity{
 
+    protected Context mContext;
+
     @InjectView(R.id.iv_top_bar_left)
     ImageView mTopBarLeft;
     @InjectView(R.id.tv_top_bar_title)
@@ -27,6 +30,7 @@ public abstract class BaseActivity extends Activity{
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mContext = this;
         setContentView(getContentView());
         ButterKnife.inject(this);
         initView();

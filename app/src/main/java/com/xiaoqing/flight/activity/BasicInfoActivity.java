@@ -43,8 +43,8 @@ public class BasicInfoActivity extends BaseActivity {
     private ArrayAdapter<String> adapter;
     private String aircraftReg;
     private String aircraftType;
-    private Double lj;
-    private int bw;
+    private double lj;
+    private double bw;
     private List<AllSb> allSbList;
 
     @Override protected void onResume() {
@@ -63,7 +63,7 @@ public class BasicInfoActivity extends BaseActivity {
             aircraftReg = data.getStringExtra("AircraftReg");
             aircraftType = data.getStringExtra("AircraftType");
             lj = data.getDoubleExtra("Lj", 0);
-            bw = data.getIntExtra("Bw", 0);
+            bw = data.getDoubleExtra("Bw", 0);
             mWeight.setEnabled(false);
             mWeight.setText(FormatUtil.formatTo2Decimal(bw));
             mFocus.setEnabled(false);
@@ -173,6 +173,8 @@ public class BasicInfoActivity extends BaseActivity {
                 }
 
                 AddFlightInfo addFlightInfo = UserManager.getInstance().getAddFlightInfo();
+                addFlightInfo.setAircraftReg(aircraftReg);
+                addFlightInfo.setAircraftType(aircraftType);
                 addFlightInfo.setFlightNo(playNO);
                 addFlightInfo.setDep4Code(from);
                 addFlightInfo.setDepAirportName(from);

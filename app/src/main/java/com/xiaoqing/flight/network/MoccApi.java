@@ -1,5 +1,6 @@
 package com.xiaoqing.flight.network;
 
+import com.xiaoqing.flight.entity.AcGrantsResponse;
 import com.xiaoqing.flight.entity.AcWeightLimitByAcTypeResponse;
 import com.xiaoqing.flight.entity.AddFlightInfoResponse;
 import com.xiaoqing.flight.entity.AllAcTypeResponse;
@@ -212,4 +213,10 @@ public interface MoccApi {
      * @param responseListner
      */
     void getMessageByDate(String startDate, ResponseListner<MessageResponse> responseListner);
+
+    /**
+     * 获取用户授权机型
+     * @param responseResponseListner
+     */
+    void getAcGrants(ResponseListner<AcGrantsResponse> responseResponseListner);
 }

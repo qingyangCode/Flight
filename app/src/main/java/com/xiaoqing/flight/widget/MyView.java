@@ -18,10 +18,10 @@ public class MyView extends View {
 
     public int XPoint=40;    //原点的X坐标
     public int YPoint=260;     //原点的Y坐标
-    public int XScale=55;     //X的刻度长度
-    public int YScale=40;     //Y的刻度长度
-    public int XLength=380;        //X轴的长度
-    public int YLength=240;        //Y轴的长度
+    public int XScale=85;     //X的刻度长度
+    public int YScale=70;     //Y的刻度长度
+    public int XLength=640;        //X轴的长度
+    public int YLength=426;        //Y轴的长度
     public String[] XLabel;    //X的刻度
     public String[] YLabel;    //Y的刻度
     public String[] Data;      //数据
@@ -44,10 +44,10 @@ public class MyView extends View {
         map = new HashMap<String,String[]>();
     }
 
-    public MyView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-        map = new HashMap<String,String[]>();
-    }
+    //public MyView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    //    super(context, attrs, defStyleAttr, defStyleRes);
+    //    map = new HashMap<String,String[]>();
+    //}
 
     public void SetInfo(String[] XLabels,String[] YLabels,String[] AllData,String strTitle)
     {
@@ -87,8 +87,8 @@ public class MyView extends View {
             {
                 canvas.drawText(YLabel[i] , XPoint-22, YPoint-i*YScale+5, paint);  //文字
             }
-            catch(Exception e)
-            {
+            catch(Exception e){
+                e.printStackTrace();
             }
         }
         canvas.drawLine(XPoint,YPoint-YLength,XPoint-3,YPoint-YLength+6,paint);  //箭头
@@ -126,6 +126,8 @@ public class MyView extends View {
         canvas.drawLine(XPoint+XLength,YPoint,XPoint+XLength-6,YPoint-3,paint);    //箭头
         canvas.drawLine(XPoint+XLength,YPoint,XPoint+XLength-6,YPoint+3,paint);
         paint.setTextSize(16);
+        if(Title == null)
+            Title ="";
         canvas.drawText(Title, 150, 50, paint);
     }
     private int YCoord(String y0)  //计算绘制时的Y坐标，无数据时返回-999

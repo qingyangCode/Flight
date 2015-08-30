@@ -9,7 +9,7 @@
             android:layout_height="55dp"
             android:paddingLeft="15dp"
             android:paddingRight="20dp"
-            android:background="#FFFFFF">
+            android:background="@drawable/common_press_bg_selector">
             />
 
             <TextView
