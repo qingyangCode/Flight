@@ -35,7 +35,7 @@ public class SeatByAcRegDao extends AbstractDao<SeatByAcReg, Long> {
         public final static Property SeatLastLimit = new Property(9, Float.class, "SeatLastLimit", false, "SEAT_LAST_LIMIT");
         public final static Property OpUser = new Property(10, String.class, "OpUser", false, "OP_USER");
         public final static Property OpDate = new Property(11, String.class, "OpDate", false, "OP_DATE");
-        public final static Property SysVersion = new Property(12, String.class, "SysVersion", false, "SYS_VERSION");
+        public final static Property SysVersion = new Property(12, Integer.class, "SysVersion", false, "SYS_VERSION");
         public final static Property XPos = new Property(13, Float.class, "XPos", false, "XPOS");
         public final static Property YPos = new Property(14, Float.class, "YPos", false, "YPOS");
         public final static Property Direction = new Property(15, String.class, "Direction", false, "DIRECTION");
@@ -68,7 +68,7 @@ public class SeatByAcRegDao extends AbstractDao<SeatByAcReg, Long> {
                 "'SEAT_LAST_LIMIT' REAL," + // 9: SeatLastLimit
                 "'OP_USER' TEXT," + // 10: OpUser
                 "'OP_DATE' TEXT," + // 11: OpDate
-                "'SYS_VERSION' TEXT," + // 12: SysVersion
+                "'SYS_VERSION' INTEGER," + // 12: SysVersion
                 "'XPOS' REAL," + // 13: XPos
                 "'YPOS' REAL," + // 14: YPos
                 "'DIRECTION' TEXT," + // 15: Direction
@@ -147,9 +147,9 @@ public class SeatByAcRegDao extends AbstractDao<SeatByAcReg, Long> {
             stmt.bindString(12, OpDate);
         }
  
-        String SysVersion = entity.getSysVersion();
+        Integer SysVersion = entity.getSysVersion();
         if (SysVersion != null) {
-            stmt.bindString(13, SysVersion);
+            stmt.bindLong(13, SysVersion);
         }
  
         Float XPos = entity.getXPos();
@@ -196,7 +196,7 @@ public class SeatByAcRegDao extends AbstractDao<SeatByAcReg, Long> {
             cursor.isNull(offset + 9) ? null : cursor.getFloat(offset + 9), // SeatLastLimit
             cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10), // OpUser
             cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11), // OpDate
-            cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12), // SysVersion
+            cursor.isNull(offset + 12) ? null : cursor.getInt(offset + 12), // SysVersion
             cursor.isNull(offset + 13) ? null : cursor.getFloat(offset + 13), // XPos
             cursor.isNull(offset + 14) ? null : cursor.getFloat(offset + 14), // YPos
             cursor.isNull(offset + 15) ? null : cursor.getString(offset + 15), // Direction
@@ -221,7 +221,7 @@ public class SeatByAcRegDao extends AbstractDao<SeatByAcReg, Long> {
         entity.setSeatLastLimit(cursor.isNull(offset + 9) ? null : cursor.getFloat(offset + 9));
         entity.setOpUser(cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10));
         entity.setOpDate(cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11));
-        entity.setSysVersion(cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12));
+        entity.setSysVersion(cursor.isNull(offset + 12) ? null : cursor.getInt(offset + 12));
         entity.setXPos(cursor.isNull(offset + 13) ? null : cursor.getFloat(offset + 13));
         entity.setYPos(cursor.isNull(offset + 14) ? null : cursor.getFloat(offset + 14));
         entity.setDirection(cursor.isNull(offset + 15) ? null : cursor.getString(offset + 15));

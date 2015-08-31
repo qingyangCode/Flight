@@ -3,6 +3,7 @@ package com.xiaoqing.flight.util;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import com.xiaoqing.flight.entity.BaseResponse;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.XML;
@@ -32,5 +33,10 @@ public class CommonUtils {
 		return false;
 	}
 
+	public void commonIsNotNull(BaseResponse response) {
+		if (response != null) {
+
+		}
+	}
 
 }

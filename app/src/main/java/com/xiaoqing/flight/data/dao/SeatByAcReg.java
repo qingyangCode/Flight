@@ -21,7 +21,7 @@ public class SeatByAcReg implements java.io.Serializable {
     private Float SeatLastLimit;
     private String OpUser;
     private String OpDate;
-    private String SysVersion;
+    private Integer SysVersion;
     private Float XPos;
     private Float YPos;
     private String Direction;
@@ -38,7 +38,7 @@ public class SeatByAcReg implements java.io.Serializable {
         this.id = id;
     }
 
-    public SeatByAcReg(Long id, String AcReg, Integer SeatId, String SeatCode, String SeatType, Float AcTypeSeatLimit, Float AcTypeLb, Float AcRegCargWeight, Float AcRegSbWeight, Float SeatLastLimit, String OpUser, String OpDate, String SysVersion, Float XPos, Float YPos, String Direction, String userName, float seatWeight) {
+    public SeatByAcReg(Long id, String AcReg, Integer SeatId, String SeatCode, String SeatType, Float AcTypeSeatLimit, Float AcTypeLb, Float AcRegCargWeight, Float AcRegSbWeight, Float SeatLastLimit, String OpUser, String OpDate, Integer SysVersion, Float XPos, Float YPos, String Direction, String userName, float seatWeight) {
         this.id = id;
         this.AcReg = AcReg;
         this.SeatId = SeatId;
@@ -155,11 +155,11 @@ public class SeatByAcReg implements java.io.Serializable {
         this.OpDate = OpDate;
     }
 
-    public String getSysVersion() {
+    public Integer getSysVersion() {
         return SysVersion;
     }
 
-    public void setSysVersion(String SysVersion) {
+    public void setSysVersion(Integer SysVersion) {
         this.SysVersion = SysVersion;
     }
 

@@ -7,15 +7,15 @@ import java.util.ArrayList;
 /**
  * Created by QingYang on 15/8/30.
  */
-public class AcGrantsResponse {
-
+public class AcGrantsResponse extends BaseResponse{
     public TResponseObject ResponseObject;
     public class TResponseObject{
         public TResponseData ResponseData;
         public int ResponseCode;
     }
 
-    public class TResponseData{
+
+    public class TResponseData {
         public ArrayList<AcGrants> IAppObject;
     }
 

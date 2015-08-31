@@ -11,6 +11,7 @@ public class SystemVersion {
 
     private Long id;
     private String VserionName;
+    private String resverved;
     private int vserion;
 
     // KEEP FIELDS - put your custom fields here
@@ -23,9 +24,10 @@ public class SystemVersion {
         this.id = id;
     }
 
-    public SystemVersion(Long id, String VserionName, int vserion) {
+    public SystemVersion(Long id, String VserionName, String resverved, int vserion) {
         this.id = id;
         this.VserionName = VserionName;
+        this.resverved = resverved;
         this.vserion = vserion;
     }
 
@@ -43,6 +45,14 @@ public class SystemVersion {
 
     public void setVserionName(String VserionName) {
         this.VserionName = VserionName;
+    }
+
+    public String getResverved() {
+        return resverved;
+    }
+
+    public void setResverved(String resverved) {
+        this.resverved = resverved;
     }
 
     public int getVserion() {

@@ -7,7 +7,7 @@ import com.xiaoqing.flight.data.dao.AllAcType;
  * Created by QingYang on 15/8/8.
  * 增加航班信息
  */
-public class AddFlightInfoResponse {
+public class AddFlightInfoResponse extends BaseResponse{
     public TResponseObject ResponseObject;
     public class TResponseObject{
         public TResponseData ResponseData;

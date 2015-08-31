@@ -25,7 +25,8 @@ public class SystemVersionDao extends AbstractDao<SystemVersion, Long> {
     public static class Properties {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
         public final static Property VserionName = new Property(1, String.class, "VserionName", false, "VSERION_NAME");
-        public final static Property Vserion = new Property(2, int.class, "vserion", false, "VSERION");
+        public final static Property Resverved = new Property(2, String.class, "resverved", false, "RESVERVED");
+        public final static Property Vserion = new Property(3, int.class, "vserion", false, "VSERION");
     };
 
 
@@ -43,7 +44,8 @@ public class SystemVersionDao extends AbstractDao<SystemVersion, Long> {
         db.execSQL("CREATE TABLE " + constraint + "'SystemVersion' (" + //
                 "'_id' INTEGER PRIMARY KEY AUTOINCREMENT ," + // 0: id
                 "'VSERION_NAME' TEXT," + // 1: VserionName
-                "'VSERION' INTEGER NOT NULL );"); // 2: vserion
+                "'RESVERVED' TEXT," + // 2: resverved
+                "'VSERION' INTEGER NOT NULL );"); // 3: vserion
     }
 
     /** Drops the underlying database table. */
@@ -66,7 +68,12 @@ public class SystemVersionDao extends AbstractDao<SystemVersion, Long> {
         if (VserionName != null) {
             stmt.bindString(2, VserionName);
         }
-        stmt.bindLong(3, entity.getVserion());
+ 
+        String resverved = entity.getResverved();
+        if (resverved != null) {
+            stmt.bindString(3, resverved);
+        }
+        stmt.bindLong(4, entity.getVserion());
     }
 
     /** @inheritdoc */
@@ -81,7 +88,8 @@ public class SystemVersionDao extends AbstractDao<SystemVersion, Long> {
         SystemVersion entity = new SystemVersion( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
             cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // VserionName
-            cursor.getInt(offset + 2) // vserion
+            cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // resverved
+            cursor.getInt(offset + 3) // vserion
         );
         return entity;
     }
@@ -91,7 +99,8 @@ public class SystemVersionDao extends AbstractDao<SystemVersion, Long> {
     public void readEntity(Cursor cursor, SystemVersion entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
         entity.setVserionName(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
-        entity.setVserion(cursor.getInt(offset + 2));
+        entity.setResverved(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
+        entity.setVserion(cursor.getInt(offset + 3));
      }
     
     /** @inheritdoc */

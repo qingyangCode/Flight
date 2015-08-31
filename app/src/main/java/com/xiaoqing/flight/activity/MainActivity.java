@@ -19,6 +19,7 @@ import com.xiaoqing.flight.FlightApplication;
 import com.xiaoqing.flight.R;
 import com.xiaoqing.flight.adapter.FlightBaseAdapter;
 import com.xiaoqing.flight.data.dao.AcGrants;
+import com.xiaoqing.flight.data.dao.AcGrantsDao;
 import com.xiaoqing.flight.data.dao.ActionFeed;
 import com.xiaoqing.flight.data.dao.ActionFeedDao;
 import com.xiaoqing.flight.data.dao.AddFlightInfo;
@@ -58,6 +59,7 @@ public class MainActivity extends BaseActivity {
     SystemNoticeReceiver mSystemNoticeReceiver;
     private ArrayList<AcGrants> AcGrantLists;
     private PlanAdapterFlight planAdapterFlight;
+    private int NETWORKCONNECTCOUNT;
 
     @Override protected void onStart() {
         super.onStart();
@@ -67,8 +69,9 @@ public class MainActivity extends BaseActivity {
 
     @Override protected void onResume() {
         super.onResume();
+
         UserManager.getInstance().setAddFlightSuccess(false);
-        //同步无网络下飞机信息
+        //同步无网络下航班信息
         ActionFeedDao actionFeedDao = FlightApplication.getDaoSession().getActionFeedDao();
         List<ActionFeed> list = actionFeedDao.queryBuilder()
                 .where(ActionFeedDao.Properties.UserCode.eq(
@@ -93,10 +96,11 @@ public class MainActivity extends BaseActivity {
 
     @Override protected void initView() {
         super.initView();
-        mTvTitle.setText("全部飞机");
+        mTvTitle.setText("授权机型列表");
     }
 
     @Override protected void onloadData() {
+        AcGrantLists = new ArrayList<>();
         final CommonProgressDialog dialog = new CommonProgressDialog(this);
         dialog.setTip("加载中 ..");
         dialog.setCancelable(true);
@@ -106,49 +110,45 @@ public class MainActivity extends BaseActivity {
         planAdapterFlight = new PlanAdapterFlight();
         mListView.setAdapter(planAdapterFlight);
 
-        getMoccApi().getAcGrants(new ResponseListner<AcGrantsResponse>() {
-            @Override public void onResponse(AcGrantsResponse response) {
-                dialog.dismiss();
-                if (response != null && response.ResponseObject != null && response.ResponseObject.ResponseData != null && response.ResponseObject.ResponseData.IAppObject != null) {
-                    AcGrantLists =
-                            response.ResponseObject.ResponseData.IAppObject;
-                    UserManager.getInstance().insertAcGrants(AcGrantLists);
-                    planAdapterFlight.notifyDataSetChanged();
-                } else {
-                    layout_empty.setVisibility(View.VISIBLE);
-                }
-            }
-
-            @Override public void onEmptyOrError(String message) {
-                dialog.dismiss();
-                ToastUtil.showToast(MainActivity.this, R.drawable.toast_warning,TextUtils.isEmpty(message) ? getString(R.string.get_data_error) : message);
-            }
-        });
-
-
-        getMoccApi().getAllAircraft(UserManager.getInstance().getUser().getUserCode(), new ResponseListner<AllAirCraftResponse>() {
-
-            @Override public void onResponse(AllAirCraftResponse response) {
-                //dialog.dismiss();
-                UserManager.getInstance().onLogin();
-                if (response != null && response.ResponseObject != null) {
-                    if (response.ResponseObject.ResponseCode == Constants.RESULT_OK) {
-                        UserManager.getInstance().insertAllAircrartDB(
-                                response.ResponseObject.ResponseData.IAppObject);
-                        //mListView.setAdapter(new PlanAdapterFlight(MainActivity.this,response.ResponseObject.ResponseData.IAppObject, 50, R.layout.item_allaircraft, R.layout.item_failed));
+        List<AcGrants> acGrantsFormDB = getAcGrantsFormDB();
+        if (acGrantsFormDB == null || acGrantsFormDB.size() == 0) {
+            NETWORKCONNECTCOUNT ++;
+            ApiServiceManager.getInstance().getAcGrants(new ResponseListner<AcGrantsResponse>() {
+                @Override public void onResponse(AcGrantsResponse response) {
+                    dialog.dismiss();
+                    if (response != null
+                            && response.ResponseObject != null
+                            && response.ResponseObject.ResponseData != null
+                            && response.ResponseObject.ResponseData.IAppObject != null) {
+                    getAcGrantsFormDB();
                     } else {
-                        //ToastUtil.showToast(MainActivity.this, R.drawable.toast_warning, response.ResponseObject.ResponseErr);
+                        layout_empty.setVisibility(View.VISIBLE);
                     }
-                } else {
-                    //ToastUtil.showToast(MainActivity.this, R.drawable.toast_warning, getString(R.string.get_data_error));
                 }
-            }
 
-            @Override public void onEmptyOrError(String message) {
-                //dialog.dismiss();
-                //ToastUtil.showToast(MainActivity.this, R.drawable.toast_warning,TextUtils.isEmpty(message) ? getString(R.string.get_data_error) : message);
-            }
-        });
+                @Override public void onEmptyOrError(String message) {
+                    dialog.dismiss();
+                    ToastUtil.showToast(MainActivity.this, R.drawable.toast_warning,
+                            TextUtils.isEmpty(message) ? getString(R.string.get_data_error) : message);
+                }
+            });
+        } else {
+            dialog.dismiss();
+        }
+    }
+
+    private List<AcGrants> getAcGrantsFormDB() {
+        AcGrantsDao acGrantsDao = FlightApplication.getDaoSession().getAcGrantsDao();
+        List<AcGrants> acGrantses = acGrantsDao.queryBuilder()
+                .where(AcGrantsDao.Properties.UserCode.eq(
+                        UserManager.getInstance().getUser().getUserCode()))
+                .list();
+        if (acGrantses != null && acGrantses.size() > 0) {
+            AcGrantLists.clear();
+            AcGrantLists.addAll(acGrantses);
+            planAdapterFlight.notifyDataSetChanged();
+        }
+        return acGrantses;
     }
 
 
@@ -227,9 +227,9 @@ public class MainActivity extends BaseActivity {
         return false;
     }
 
-
-
-
+    /**
+     * 提示用户查看新系统消息
+     */
     class SystemNoticeReceiver extends BroadcastReceiver {
 
         @Override public void onReceive(Context context, Intent intent) {

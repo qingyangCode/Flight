@@ -106,8 +106,6 @@ public class EngineRoomActivity extends BaseActivity{
             aircraftType = data.getStringExtra(Constants.ACTION_AIRCRAFTTYPE);
         }
 
-
-
         mTopBarTitle.setText("机舱信息");
         mTopBarRight.setText("下一步");
 
@@ -506,33 +504,35 @@ public class EngineRoomActivity extends BaseActivity{
                     }
                     if (UserManager.getInstance().getUser() == null)
                         return;
-                    getMoccApi().addFlightCd(aircraftReg, seatByAcReg.getSeatId() + "",
-                            UserManager.getInstance().getAddFlightInfo().getFlightId(),
-                            seatByAcReg.getSeatCode(), seatByAcReg.getSeatType(),
-                            seatByAcReg.getAcTypeSeatLimit() + "", seatByAcReg.getAcTypeLb()+"",
-                            seatByAcReg.getAcRegCargWeight()+"", seatByAcReg.getAcTypeLb()+"",
-                            (seatByAcReg.getAcTypeSeatLimit() - seatByAcReg.getSeatWeight()) + "",
-                            seatByAcReg.getUserName(), seatByAcReg.getSeatWeight()+"",
-                            UserManager.getInstance().getUser().getUserCode(),
-                            DateFormatUtil.formatZDate(),
-                            new ResponseListner<GrantsByUserCodeResponse>() {
-                                @Override
-                                public void onResponse(GrantsByUserCodeResponse response) {
-                                    if (response != null
-                                            && response.ResponseObject != null
-                                            && response.ResponseObject.ResponseCode
-                                            == Constants.RESULT_OK) {
+                    if (!TextUtils.isEmpty(seatByAcReg.getUserName())) {
+                        getMoccApi().addFlightCd(aircraftReg, seatByAcReg.getSeatId() + "",
+                                UserManager.getInstance().getAddFlightInfo().getFlightId(),
+                                seatByAcReg.getSeatCode(), seatByAcReg.getSeatType(),
+                                seatByAcReg.getAcTypeSeatLimit() + "", seatByAcReg.getAcTypeLb()+"",
+                                seatByAcReg.getAcRegCargWeight()+"", seatByAcReg.getAcTypeLb()+"",
+                                (seatByAcReg.getAcTypeSeatLimit() - seatByAcReg.getSeatWeight()) + "",
+                                seatByAcReg.getUserName(), seatByAcReg.getSeatWeight()+"",
+                                UserManager.getInstance().getUser().getUserCode(),
+                                DateFormatUtil.formatZDate(),
+                                new ResponseListner<GrantsByUserCodeResponse>() {
+                                    @Override
+                                    public void onResponse(GrantsByUserCodeResponse response) {
+                                        if (response != null
+                                                && response.ResponseObject != null
+                                                && response.ResponseObject.ResponseCode
+                                                == Constants.RESULT_OK) {
 
-                                    } else {
-                                        //上传飞机成员失败
-                                        failSeatInfo.add(seatByAcReg.getSeatId());
+                                        } else {
+                                            //上传飞机成员失败
+                                            failSeatInfo.add(seatByAcReg.getSeatId());
+                                        }
                                     }
-                                }
 
-                                @Override public void onEmptyOrError(String message) {
-                                    LogUtil.LOGD(TAG, "上传飞机成员错误： " + message);
-                                    failSeatInfo.add(seatByAcReg.getSeatId());}
-                            });
+                                    @Override public void onEmptyOrError(String message) {
+                                        LogUtil.LOGD(TAG, "上传飞机成员错误： " + message);
+                                        failSeatInfo.add(seatByAcReg.getSeatId());}
+                                });
+                    }
                 }
 
                 Intent intent =

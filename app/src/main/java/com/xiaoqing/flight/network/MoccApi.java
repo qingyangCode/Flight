@@ -5,6 +5,7 @@ import com.xiaoqing.flight.entity.AcWeightLimitByAcTypeResponse;
 import com.xiaoqing.flight.entity.AddFlightInfoResponse;
 import com.xiaoqing.flight.entity.AllAcTypeResponse;
 import com.xiaoqing.flight.entity.AllAirCraftResponse;
+import com.xiaoqing.flight.entity.AllAirportResponse;
 import com.xiaoqing.flight.entity.AllSbResponse;
 import com.xiaoqing.flight.entity.FlightidResponse;
 import com.xiaoqing.flight.entity.FuleLimitByAcType;
@@ -42,31 +43,6 @@ public interface MoccApi {
      */
     public void getAllAircraft(String userName, ResponseListner responseListner);
 
-    /**
-     * 根据机号获取信息
-     */
-    public void getAircraftByAcReg(String userName, String airReg, ResponseListner responseListner);
-
-    /**
-     *
-     * @param userName
-     * @param AircraftType
-     * @param responseListner
-     */
-    public void getAircraftByAcType(String userName, String AircraftType, ResponseListner responseListner);
-
-    /**
-     *
-     * @param userName
-     * @param responseListner
-     */
-    public void addNewAircraft(String userName, ResponseListner responseListner);
-
-    /**
-     * @param userName
-     * @param responseListner
-     */
-    public void getActypeByType(String userName, ResponseListner responseListner);
 
     /**
      *  @param userName
@@ -76,19 +52,7 @@ public interface MoccApi {
 
 
     /**
-     * 按用户代码获取
-     */
-    public void getUserByCode(String userName, ResponseListner responseListner);
-
-    /**
-     *
-     * @param userName
-     * @param responseListner
-     */
-    public void getAllUserNew(String userName, ResponseListner responseListner);
-
-    /**
-     * 获取飞机座位信息
+     * 座椅信息：获取飞机座位信息
      */
     public void getSeatByAcReg(String aircraftReg, String bw, String lj, String opDate, String SysVersion, ResponseListner<SeatByAcRegResponse> responseListner);
 
@@ -126,7 +90,7 @@ public interface MoccApi {
     public void getAllAcType(ResponseListner<AllAcTypeResponse> responseListner);
 
     /**
-     * 获取机型设备列表
+     * 差分站 : 获取机型设备列表
      */
     public void getAllSb(ResponseListner<AllSbResponse> responseListner);
 
@@ -191,11 +155,6 @@ public interface MoccApi {
      */
     public void getflightid(ResponseListner<FlightidResponse> responseListner);
 
-    /**
-     * 根据登录用户获取授权机型
-     * @param responseResponseListner
-     */
-    public void getGrantsByUserCode(ResponseListner<AllAirCraftResponse> responseResponseListner);
 
     /**
      * 验证机长信息
@@ -209,7 +168,6 @@ public interface MoccApi {
     /**
      * 获取系统消息
      * @param startDate // 开始时间
-     * @param endDate // 结束时间
      * @param responseListner
      */
     void getMessageByDate(String startDate, ResponseListner<MessageResponse> responseListner);
@@ -219,4 +177,10 @@ public interface MoccApi {
      * @param responseResponseListner
      */
     void getAcGrants(ResponseListner<AcGrantsResponse> responseResponseListner);
+
+    /**
+     * 机场名称，四字代码
+     * @param responseListner
+     */
+    void getAllAirPort(ResponseListner<AllAirportResponse> responseListner);
 }

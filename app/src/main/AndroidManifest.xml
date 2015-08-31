@@ -33,6 +33,7 @@
             />
         <activity
             android:name=".activity.BasicInfoActivity"
+            android:windowSoftInputMode="stateHidden|adjustResize"
             android:screenOrientation="portrait"
             />
         <activity
@@ -42,6 +43,7 @@
             />
         <activity
             android:name=".activity.RestrictionMapActivity"
+            android:windowSoftInputMode="stateHidden|adjustResize"
             android:screenOrientation="portrait"
             />
         <activity

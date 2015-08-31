@@ -42,6 +42,7 @@ import com.xiaoqing.flight.network.synchronous.FeedType;
 import com.xiaoqing.flight.util.ApiServiceManager;
 import com.xiaoqing.flight.util.CommonProgressDialog;
 import com.xiaoqing.flight.util.Constants;
+import com.xiaoqing.flight.util.DBManager;
 import com.xiaoqing.flight.util.DateFormatUtil;
 import com.xiaoqing.flight.util.FormatUtil;
 import com.xiaoqing.flight.util.MACUtil;
@@ -517,8 +518,8 @@ public class RestrictionMapActivity extends BaseActivity{
      */
     private void addFlightInfo() {
         showProgressDialog();
-        UserManager.getInstance().insertActionFeed(FeedType.ADD_PLAYINFO, UserManager.getInstance().getAddFlightInfo().getFlightId());
-        UserManager.getInstance().insertFlightInfo();
+        DBManager.getInstance().insertActionFeed(FeedType.ADD_PLAYINFO, UserManager.getInstance().getAddFlightInfo().getFlightId());
+        DBManager.getInstance().insertFlightInfo();
         ApiServiceManager.getInstance().addFlightInfo(UserManager.getInstance().getAddFlightInfo(), new ResponseListner<AddFlightInfoResponse>() {
             @Override public void onResponse(AddFlightInfoResponse response) {
                 hiddenDialog();

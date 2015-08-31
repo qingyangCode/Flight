@@ -112,11 +112,12 @@
                     android:text="起飞机场"
                     />
 
-                <EditText
+                <AutoCompleteTextView
                     android:id="@+id/tv_originating"
                     style="@style/item_value"
                     android:hint="请输入起飞机场"
-                    android:text="北京"
+                    android:completionThreshold="1"
+                    android:text=""
                     />
             </LinearLayout>
 
@@ -129,11 +130,12 @@
                     android:text="目的地机场"
                     />
 
-                <EditText
+                <AutoCompleteTextView
                     android:id="@+id/tv_destination"
                     style="@style/item_value"
                     android:hint="请输入目的地机场"
-                    android:text="杭州"
+                    android:completionThreshold="1"
+                    android:text=""
                     />
             </LinearLayout>
             <View style="@style/common_line_1_style"

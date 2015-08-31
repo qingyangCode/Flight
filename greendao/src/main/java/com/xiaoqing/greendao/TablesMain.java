@@ -32,6 +32,15 @@ public class TablesMain {
         getAcGrants();//获取用户授权机型
 
         getSyncDB();//同步数据
+        getAllAirport();//获取所有机场信息(四字代码)
+    }
+
+    private void getAllAirport() {
+        Entity allAirport = mSchema.addEntity("AllAirport");
+        allAirport.addIdProperty().autoincrement();
+        allAirport.addStringProperty("Str4code");//机场四字代码
+        allAirport.addStringProperty("StrAirportName");//机场名字
+        allAirport.addIntProperty("SysVersion");//版本号
     }
 
     private void getSyncDB() {
@@ -123,7 +132,7 @@ public class TablesMain {
         seatByAcReg.addFloatProperty("SeatLastLimit");
         seatByAcReg.addStringProperty("OpUser");
         seatByAcReg.addStringProperty("OpDate");
-        seatByAcReg.addStringProperty("SysVersion");
+        seatByAcReg.addIntProperty("SysVersion");
         seatByAcReg.addFloatProperty("XPos");
         seatByAcReg.addFloatProperty("YPos");
         seatByAcReg.addStringProperty("Direction");
@@ -199,6 +208,7 @@ public class TablesMain {
         systemVersion.setTableName("SystemVersion");
         systemVersion.addIdProperty().autoincrement();
         systemVersion.addStringProperty("VserionName");
+        systemVersion.addStringProperty("resverved");
         systemVersion.addIntProperty("vserion").notNull();
     }
 
@@ -210,7 +220,7 @@ public class TablesMain {
         user.addStringProperty("UserCode");
         user.addStringProperty("DepCode");
         user.addStringProperty("UserPassWord");
-        user.addStringProperty("CheckCode");
+        user.addStringProperty("CodeCheck");
         user.addStringProperty("Grant_S_M");
         user.addStringProperty("ActiveStart");
         user.addIntProperty("SysVersion").notNull();

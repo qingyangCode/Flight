@@ -7,7 +7,7 @@ import java.util.ArrayList;
 /**
  * Created by QingYang on 15/8/8.
  */
-public class AcWeightLimitByAcTypeResponse {
+public class AcWeightLimitByAcTypeResponse extends BaseResponse{
 
     public TResponseObject ResponseObject;
     public class TResponseObject{

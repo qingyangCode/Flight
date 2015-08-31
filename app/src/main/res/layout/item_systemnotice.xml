@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/white"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    >
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -11,7 +12,8 @@
         android:paddingBottom="8dp"
         android:paddingLeft="15dp"
         android:paddingRight="15dp"
-        android:paddingTop="8dp" >
+        android:paddingTop="8dp"
+        >
 
         <!--com.xiaoqing.flight.widget.CircleImageView-->
         <RelativeLayout
@@ -19,12 +21,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             >
-        <ImageView
-            android:id="@+id/iv_icon"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            android:layout_alignParentLeft="true"
-             />
+            <ImageView
+                android:id="@+id/iv_icon"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_alignParentLeft="true"
+                />
             <ImageView
                 android:id="@+id/iv_redpoint"
                 android:layout_width="wrap_content"
@@ -32,20 +34,38 @@
                 android:src="@drawable/message_redpoint"
                 android:visibility="gone"
                 />
+
         </RelativeLayout>
 
+        <TextView
+            android:id="@+id/tv_mustread"
+            android:layout_below="@id/layout_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12dp"
+            android:layout_marginTop="8dp"
+            android:visibility="gone"
+            android:textColor="#ff0000"
+            android:text="必读消息"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_alignTop="@+id/layout_icon"
+            android:layout_toRightOf="@+id/layout_icon"
+            >
         <TextView
             android:id="@+id/tv_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/layout_icon"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="5dp"
-            android:layout_toRightOf="@+id/layout_icon"
             android:singleLine="true"
             android:text="系统消息"
             android:textColor="#333333"
-            android:textSize="18dp" />
+            android:textSize="18dp"
+            />
 
         <TextView
             android:id="@+id/tv_content"
@@ -58,7 +78,8 @@
             android:maxLines="2"
             android:text="系统消息加载中。。。"
             android:textColor="@color/gray_666"
-            android:textSize="14dp" />
+            android:textSize="14dp"
+            />
 
         <TextView
             android:id="@+id/tv_time"
@@ -69,7 +90,9 @@
             android:layout_marginTop="8dp"
             android:text="2015-3-21 13:58"
             android:textColor="@color/gray_999"
-            android:textSize="12dp" />
+            android:textSize="12dp"
+            />
+        </RelativeLayout>
     </RelativeLayout>
 
 </LinearLayout>

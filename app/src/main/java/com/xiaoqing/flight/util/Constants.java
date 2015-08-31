@@ -26,5 +26,11 @@ public interface Constants {
     String DB_ACGRANTS = "acgrants";
     int RESLUT_READNOTICE = 2;
     String PARAM_POSITION = "position";
+
+    String DB_ALLAIRPORT = "allairPort";
+    String DB_SEATBYREG = "seatbyreg";
+    String DB_ALLSB = "all_sb";
+    String DB_FULELIMIT = "fulelimit";
+    String DB_SYSTEMNOTICE = "system_notice";
 }
 

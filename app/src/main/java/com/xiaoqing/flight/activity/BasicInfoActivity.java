@@ -1,25 +1,32 @@
 package com.xiaoqing.flight.activity;
 
 import android.content.Intent;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.TextView;
 import butterknife.InjectView;
 import com.xiaoqing.flight.FlightApplication;
 import com.xiaoqing.flight.R;
 import com.xiaoqing.flight.data.dao.AddFlightInfo;
 import com.xiaoqing.flight.data.dao.AllAircraft;
+import com.xiaoqing.flight.data.dao.AllAirport;
+import com.xiaoqing.flight.data.dao.AllAirportDao;
 import com.xiaoqing.flight.data.dao.AllSb;
 import com.xiaoqing.flight.data.dao.AllSbDao;
 import com.xiaoqing.flight.entity.AllSbResponse;
 import com.xiaoqing.flight.network.ResponseListner;
 import com.xiaoqing.flight.util.ApiServiceManager;
 import com.xiaoqing.flight.util.Constants;
+import com.xiaoqing.flight.util.DBManager;
 import com.xiaoqing.flight.util.FormatUtil;
 import com.xiaoqing.flight.util.ToastUtil;
 import com.xiaoqing.flight.util.UserManager;
@@ -35,11 +42,10 @@ public class BasicInfoActivity extends BaseActivity {
     @InjectView(R.id.tv_weight) EditText mWeight;
     @InjectView(R.id.tv_focus) EditText mFocus;
     @InjectView(R.id.tv_playNO) EditText mPlayNO;
-    @InjectView(R.id.tv_originating) EditText mOrigination;
-    @InjectView(R.id.tv_destination) EditText mDestination;
+    @InjectView(R.id.tv_originating) AutoCompleteTextView mOrigination;
+    @InjectView(R.id.tv_destination) AutoCompleteTextView mDestination;
     @InjectView(R.id.layout_chafenzhan) LinearLayout mPointLayout;
 
-    private String[] titles;
     private ArrayAdapter<String> adapter;
     private String aircraftReg;
     private String aircraftType;
@@ -58,6 +64,9 @@ public class BasicInfoActivity extends BaseActivity {
     }
 
     @Override protected void onloadData() {
+        mTopBarTitle.setText("飞机基本信息");
+        mTopBarRight.setText("下一步");
+
         Intent data = getIntent();
         if (data != null) {
             aircraftReg = data.getStringExtra("AircraftReg");
@@ -70,12 +79,8 @@ public class BasicInfoActivity extends BaseActivity {
             mFocus.setText(FormatUtil.formatTo2Decimal(lj / bw));
         }
 
-        mTopBarTitle.setText("飞机基本信息");
-        mTopBarLeft.setImageResource(R.drawable.common_topnav_back);
-        mTopBarRight.setText("下一步");
-        titles = new String[]{};
-        getAllSbFromDB();
-        if (titles.length == 0) {
+        List<AllSb> allSbFromDB = getAllSbFromDB();
+        if (allSbFromDB == null || allSbFromDB.size() == 0) {
             ApiServiceManager.getInstance().getAllSb(new ResponseListner<AllSbResponse>() {
                 @Override public void onResponse(AllSbResponse response) {
                     getAllSbFromDB();
@@ -86,17 +91,21 @@ public class BasicInfoActivity extends BaseActivity {
                 }
             });
         }
-        //adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, titles);
-        ////设置下拉列表的风格
-        //adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        //
-        //mSpinner.setAdapter(adapter);
-        ////添加事件Spinner事件监听
-        //mSpinner.setOnItemSelectedListener(new SpinnerSelectedListener());
-        ////设置默认值
-        //mSpinner.setVisibility(View.VISIBLE);
-        //mPlayNO.setText(aircraftReg);
-        ApiServiceManager.getInstance().getSeatInfo(aircraftReg ,null);
+
+        List<AllAirport> allAirportList = DBManager.getInstance().getAllAirPort();
+        String[] airName = null;
+        if (allAirportList != null) {
+            airName = new String[allAirportList.size()];
+            for(int i = 0; i <  allAirportList.size(); i++) {
+                airName[i] = allAirportList.get(i).getStrAirportName();
+            }
+
+        }
+        ArrayAdapter<String> stringArrayAdapter =
+                new ArrayAdapter<String>(mContext, R.layout.list_item, airName);
+        mOrigination.setAdapter(stringArrayAdapter);
+        mDestination.setAdapter(stringArrayAdapter);
+        ApiServiceManager.getInstance().getSeatInfo(aircraftReg, null);
         ApiServiceManager.getInstance().getFilghtId(new ResponseListner<String>() {
             @Override public void onResponse(String response) {
                 UserManager.getInstance().getAddFlightInfo().setFlightId(response);
@@ -108,16 +117,64 @@ public class BasicInfoActivity extends BaseActivity {
         });
     }
 
-    private void getAllSbFromDB() {
+    @Override protected void initEvents() {
+        super.initEvents();
+        mOrigination.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override public void afterTextChanged(Editable s) {
+                String airName = s.toString();
+                getAir4Code(airName, 1);
+            }
+        });
+        mDestination.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override public void afterTextChanged(Editable s) {
+                String airName = s.toString();
+                getAir4Code(airName, 1);
+            }
+        });
+    }
+
+    //获取飞机四字代码 1 起飞机场  2 降落机场
+    private void getAir4Code(String airName, int type) {
+        if (!TextUtils.isEmpty(airName)) {
+            AllAirportDao allAirportDao =
+                    FlightApplication.getDaoSession().getAllAirportDao();
+            List<AllAirport> list = allAirportDao.queryBuilder()
+                    .where(AllAirportDao.Properties.StrAirportName.eq(airName))
+                    .list();
+            if (list != null && list.size() != 0) {
+                if (type == 1) {
+                    UserManager.getInstance().getAddFlightInfo().setDep4Code(list.get(0).getStr4code());
+                } else {
+                    UserManager.getInstance().getAddFlightInfo().setArr4Code(list.get(0).getStr4code());
+                }
+            }
+        }
+    }
+    /**
+     * 差分站设备
+     */
+    private List<AllSb> getAllSbFromDB() {
         AllSbDao allSbDao = FlightApplication.getDaoSession().getAllSbDao();
         allSbList =
                 allSbDao.queryBuilder().where(AllSbDao.Properties.AcType.eq(aircraftType)).list();
-        if (allSbList != null && allSbList.size() > 0) {
-            titles = new String[allSbList.size()];
-            for (int i = 0; i < allSbList.size(); i++) {
-                titles[i] = allSbList.get(i).getSbName();
-            }
-        }
         final HashMap<Integer, Double> weightList = new HashMap<>();
         mPointLayout.removeAllViews();
         for (final AllSb allSb : allSbList) {
@@ -151,6 +208,8 @@ public class BasicInfoActivity extends BaseActivity {
             mPointLayout.addView(view);
         }
 
+        return allSbList;
+
     }
 
 
@@ -176,9 +235,9 @@ public class BasicInfoActivity extends BaseActivity {
                 addFlightInfo.setAircraftReg(aircraftReg);
                 addFlightInfo.setAircraftType(aircraftType);
                 addFlightInfo.setFlightNo(playNO);
-                addFlightInfo.setDep4Code(from);
+                //addFlightInfo.setDep4Code(from);
                 addFlightInfo.setDepAirportName(from);
-                addFlightInfo.setArr4Code(toAirport);
+                //addFlightInfo.setArr4Code(toAirport);
                 addFlightInfo.setArrAirportName(toAirport);
                 addFlightInfo.setNoFuleWeight(mWeight.getText().toString().trim());
 

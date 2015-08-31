@@ -1,15 +1,16 @@
 package com.xiaoqing.flight.entity;
 
 import com.google.gson.Gson;
-import com.xiaoqing.flight.data.dao.AllAcType;
-import com.xiaoqing.flight.data.dao.AllSb;
+import com.xiaoqing.flight.data.dao.AcGrants;
+import com.xiaoqing.flight.data.dao.AllAirport;
 import java.util.ArrayList;
 
 /**
- * Created by QingYang on 15/8/8.
- * 所有机型设备列表
+ * Created by QingYang on 15/8/30.
+ * 获取机场列表
  */
-public class AllSbResponse extends  BaseResponse{
+public class AllAirportResponse extends BaseResponse{
+
     public TResponseObject ResponseObject;
     public class TResponseObject{
         public TResponseData ResponseData;
@@ -17,15 +18,15 @@ public class AllSbResponse extends  BaseResponse{
     }
 
     public class TResponseData{
-        public ArrayList<AllSb> IAppObject;
+        public ArrayList<AllAirport> IAppObject;
     }
 
 
-    public static AllSbResponse parse(String jsonStr){
+    public static AllAirportResponse parse(String jsonStr){
         Gson gson = new Gson();
         if(jsonStr.contains("\"ResponseData\":\"\""))
             jsonStr = jsonStr.replace("\"ResponseData\":\"\"","\"ResponseData\":{}");
-        AllSbResponse fromJson = gson.fromJson(jsonStr, AllSbResponse.class);
+        AllAirportResponse fromJson = gson.fromJson(jsonStr, AllAirportResponse.class);
         return fromJson;
     }
 }

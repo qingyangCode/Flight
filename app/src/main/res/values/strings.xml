@@ -9,4 +9,5 @@
     <string name="message_read_error">当前消息已被删除，请返回上一页阅读其他消息</string>
     <string name="message_sender">发送人: %s</string>
     <string name="message_sender_time">发送时间: %s</string>
+    <string name="local_user_not_exit">当前用户不存在，请连接网络后重试</string>
 </resources>

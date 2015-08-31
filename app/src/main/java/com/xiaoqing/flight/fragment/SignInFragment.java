@@ -13,17 +13,21 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import com.xiaoqing.flight.FlightApplication;
 import com.xiaoqing.flight.R;
 import com.xiaoqing.flight.activity.MainActivity;
 import com.xiaoqing.flight.data.dao.User;
-import com.xiaoqing.flight.entity.LoginUserInfo;
+import com.xiaoqing.flight.data.dao.UserDao;
+import com.xiaoqing.flight.entity.LoginUserInfoResponse;
 import com.xiaoqing.flight.network.ResponseListner;
 import com.xiaoqing.flight.util.ApiServiceManager;
 import com.xiaoqing.flight.util.CommonProgressDialog;
-import com.xiaoqing.flight.util.DateFormatUtil;
+import com.xiaoqing.flight.util.CommonUtils;
+import com.xiaoqing.flight.util.Constants;
 import com.xiaoqing.flight.util.PreferenceUtils;
 import com.xiaoqing.flight.util.ToastUtil;
 import com.xiaoqing.flight.util.UserManager;
+import java.util.List;
 
 /**
  * Created by QingYang on 15/7/19.
@@ -76,33 +80,63 @@ public class SignInFragment extends BaseFragment {
         progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.setCancelable(true);
         progressDialog.show();
-        getMoccApi().doLogin(userName, password, new ResponseListner<LoginUserInfo>() {
-            @Override public void onResponse(LoginUserInfo userInfo) {
-                progressDialog.dismiss();
+        if (CommonUtils.isNetworkConnected(getActivity())) {
+            getMoccApi().doLogin(userName, password, new ResponseListner<LoginUserInfoResponse>() {
+                @Override public void onResponse(LoginUserInfoResponse response) {
+                    progressDialog.dismiss();
+                    mLayoutTop.setVisibility(View.GONE);
+                    //UserManager.getInstance().getSystemMessage();
+                    if (response != null && response.ResponseObject != null) {
+                        if(response.ResponseObject.ResponseData != null && response.ResponseObject.ResponseCode == Constants.RESULT_OK) {
+                            User iAppObject = response.ResponseObject.ResponseData.IAppObject;
+                            iAppObject.setCodeCheck(response.getCodeCheck());
+                            nativeToMain(iAppObject);
+                            UserManager.getInstance().onLogin();
+
+                        } else {
+                            String message = response.ResponseObject.ResponseErr;
+                            ToastUtil.showToast(getActivity(), R.drawable.toast_warning, TextUtils.isEmpty(message) ? "登录失败，请重试" : message);
+                        }
+                    }
+                    //PreferenceUtils.getInstance().saveRememberPassword(mCheckbox.isChecked());
+                    //PreferenceUtils.getInstance().saveUserName(userName);
+                    //PreferenceUtils.getInstance().savePassword(password);
+                }
+
+                @Override public void onEmptyOrError(String message) {
+                    progressDialog.dismiss();
+                    mLayoutTop.setVisibility(View.GONE);
+                    ToastUtil.showToast(getActivity(), R.drawable.toast_warning, TextUtils.isEmpty(message)? getString(R.string.get_data_error) : message);
+                }
+            });
+        } else {
+            UserDao userDao = FlightApplication.getDaoSession().getUserDao();
+            List<User> list = userDao.queryBuilder()
+                    .where(UserDao.Properties.UserCode.eq(userName),
+                            UserDao.Properties.UserPassWord.eq(password)).list();
+            progressDialog.dismiss();
+            if (list != null && list.size() > 0) {
                 mLayoutTop.setVisibility(View.GONE);
                 //UserManager.getInstance().getSystemMessage();
+                User userInfo = list.get(0);
                 if(userInfo != null) {
-                    User user = new User();
-                    user.setUserName(userName);
-                    user.setCheckCode(userInfo.getUserCodeCheck());
-                    user.setUserCode(userInfo.getUserCode());
-                    user.setUserPassWord(password);
-                    UserManager.getInstance().setUserInfo(user);
-                    startActivity(new Intent(getActivity(), MainActivity.class));
-                    ApiServiceManager.getInstance().getSystemMessage(DateFormatUtil.getTimes(DateFormatUtil.TIME_TWODAYS), null);
-                    getActivity().finish();
+                    nativeToMain(userInfo);
                 }
-                //PreferenceUtils.getInstance().saveRememberPassword(mCheckbox.isChecked());
-                //PreferenceUtils.getInstance().saveUserName(userName);
-                //PreferenceUtils.getInstance().savePassword(password);
+            } else {
+                ToastUtil.showToast(getActivity(), R.drawable.toast_warning,
+                        getString(R.string.local_user_not_exit));
             }
+        }
+    }
 
-            @Override public void onEmptyOrError(String message) {
-                progressDialog.dismiss();
-                mLayoutTop.setVisibility(View.GONE);
-                ToastUtil.showToast(getActivity(), R.drawable.toast_warning, TextUtils.isEmpty(message)? getString(R.string.get_data_error) : message);
-            }
-        });
+    /**
+     * 跳转到Home 页面
+     * @param user
+     */
+    private void nativeToMain(User user) {
+        UserManager.getInstance().setUserInfo(user);
+        startActivity(new Intent(getActivity(), MainActivity.class));
+        getActivity().finish();
     }
 
     @OnClick(R.id.layout_remember_password) public void onRememberPasswordClick() {

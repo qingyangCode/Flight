@@ -118,6 +118,7 @@ public class SystemNoticeActivity extends  BaseActivity{
                 holder.tv_content = (TextView) convertView.findViewById(R.id.tv_content);
                 holder.tv_time = (TextView) convertView.findViewById(R.id.tv_time);
                 holder.iv_redpoint = (ImageView) convertView.findViewById(R.id.iv_redpoint);
+                holder.tv_mustread = (TextView) convertView.findViewById(R.id.tv_mustread);
                 convertView.setTag(holder);
             } else {
                 holder = (ViewHolder) convertView.getTag();
@@ -129,6 +130,11 @@ public class SystemNoticeActivity extends  BaseActivity{
             holder.tv_content.setText(systemNotice.getStrMessageContent());
             holder.tv_time.setText(systemNotice.getDtSendDate());
             holder.iv_icon.setImageResource(R.drawable.systemnotice);
+            if ("Y".equalsIgnoreCase(systemNotice.getMsustRead())) {
+                holder.tv_mustread.setVisibility(View.VISIBLE);
+            } else {
+                holder.tv_mustread.setVisibility(View.GONE);
+            }
 
             int recordCount = 0;
             if (readNoticeLists != null)
@@ -174,6 +180,7 @@ public class SystemNoticeActivity extends  BaseActivity{
         TextView tv_content;
         TextView tv_time;
         ImageView iv_redpoint;
+        TextView tv_mustread;
     }
 
     @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {

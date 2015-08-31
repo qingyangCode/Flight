@@ -15,7 +15,7 @@ public class User {
     private String UserCode;
     private String DepCode;
     private String UserPassWord;
-    private String CheckCode;
+    private String CodeCheck;
     private String Grant_S_M;
     private String ActiveStart;
     private int SysVersion;
@@ -30,13 +30,13 @@ public class User {
         this.id = id;
     }
 
-    public User(Long id, String UserName, String UserCode, String DepCode, String UserPassWord, String CheckCode, String Grant_S_M, String ActiveStart, int SysVersion) {
+    public User(Long id, String UserName, String UserCode, String DepCode, String UserPassWord, String CodeCheck, String Grant_S_M, String ActiveStart, int SysVersion) {
         this.id = id;
         this.UserName = UserName;
         this.UserCode = UserCode;
         this.DepCode = DepCode;
         this.UserPassWord = UserPassWord;
-        this.CheckCode = CheckCode;
+        this.CodeCheck = CodeCheck;
         this.Grant_S_M = Grant_S_M;
         this.ActiveStart = ActiveStart;
         this.SysVersion = SysVersion;
@@ -84,12 +84,12 @@ public class User {
         this.UserPassWord = UserPassWord;
     }
 
-    public String getCheckCode() {
-        return CheckCode;
+    public String getCodeCheck() {
+        return CodeCheck;
     }
 
-    public void setCheckCode(String CheckCode) {
-        this.CheckCode = CheckCode;
+    public void setCodeCheck(String CodeCheck) {
+        this.CodeCheck = CodeCheck;
     }
 
     public String getGrant_S_M() {

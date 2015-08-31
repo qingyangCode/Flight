@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 
 
-public class AllAirCraftResponse {
+public class AllAirCraftResponse extends BaseResponse{
 	
 	public TResponseObject ResponseObject;
 	public class TResponseObject{

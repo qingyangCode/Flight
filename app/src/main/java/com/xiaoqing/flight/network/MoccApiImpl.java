@@ -6,14 +6,14 @@ import com.xiaoqing.flight.entity.AcWeightLimitByAcTypeResponse;
 import com.xiaoqing.flight.entity.AddFlightInfoResponse;
 import com.xiaoqing.flight.entity.AllAcTypeResponse;
 import com.xiaoqing.flight.entity.AllAirCraftResponse;
-import com.xiaoqing.flight.entity.AllSameTypeAirCraft;
+import com.xiaoqing.flight.entity.AllAirportResponse;
 import com.xiaoqing.flight.entity.AllSbResponse;
-import com.xiaoqing.flight.entity.AllUsers;
+import com.xiaoqing.flight.entity.AllUsersResponse;
 import com.xiaoqing.flight.entity.AllUsersNewResponse;
 import com.xiaoqing.flight.entity.FlightidResponse;
 import com.xiaoqing.flight.entity.FuleLimitByAcType;
 import com.xiaoqing.flight.entity.GrantsByUserCodeResponse;
-import com.xiaoqing.flight.entity.LoginUserInfo;
+import com.xiaoqing.flight.entity.LoginUserInfoResponse;
 import com.xiaoqing.flight.entity.MessageResponse;
 import com.xiaoqing.flight.entity.OneAirCraft;
 import com.xiaoqing.flight.entity.OneAirTypeCraft;
@@ -93,12 +93,14 @@ public class MoccApiImpl implements MoccApi{
                 String newStr = guidCode + pwd;
                 newStr = DigestUtils.md5(newStr);
                 newStr = newStr.toUpperCase();//注意必须是大写的 md5
+                final String checkCode = newStr;
                 validateUser(userName, newStr, new ResponseListner<String>() {
                     @Override public void onResponse(String response) {
                         String xml2json2 = CommonUtils.xml2JSON(response);
                         LogUtil.LOGD(TAG, "doLogin === " + xml2json2);
-                        LoginUserInfo info = LoginUserInfo.parse(xml2json2);
-                        info.setCheckCode(guidCode);
+                        LoginUserInfoResponse info = LoginUserInfoResponse.parse(xml2json2);
+                        //UserManager.getInstance().getUser().setCodeCheck(newStr);
+                        info.setCodeCheck(checkCode);
                         ll.onResponse(info);
                     }
 
@@ -121,7 +123,7 @@ public class MoccApiImpl implements MoccApi{
                 .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
                 .append("<CMD>GetAllAircraft</CMD>")
                 .append("<UserCode>"+"Test"+"</UserCode>")
-                .append("<CheckCode>"+ UserManager.getInstance().getUser().getCheckCode() +"</CheckCode>")
+                .append("<CheckCode>"+ UserManager.getInstance().getUser().getCodeCheck() +"</CheckCode>")
                 .append("RequestData/>").append("</MessageObject>");
         String xmlParam = sb.toString();
         NetBase net = new NetBase(BASE_URL, xmlParam, new ResponseListner<String>() {
@@ -146,198 +148,6 @@ public class MoccApiImpl implements MoccApi{
 
 
 
-    ///B8099  二、根据机号获取信息
-    public void getAircraftByAcReg(String userName,  String airReg,
-            final ResponseListner responseListner) {
-        //String url = "http://124.127.106.196:80/Login1.ashx";
-        StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>")
-                .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
-                .append("<CMD>GetAircraftByAcReg</CMD>")
-                .append("<UserCode>"+userName+"</UserCode>")
-                .append("<CheckCode>"+ UserManager.getInstance().getUser().getCheckCode() +"</CheckCode>")
-                .append("<RequestData>")
-                .append("<IAppObject xsi:type=\"AppAircraft\">")
-                .append("<AircraftReg>"+airReg+"</AircraftReg>")
-                .append("<Bw>0</Bw>")
-                .append("<UseWeight1>0</UseWeight1>")
-                .append("<UseWeight2>0</UseWeight2>")
-                .append("<AircraftZx1>0</AircraftZx1>")
-                .append("<AircraftZx2>0</AircraftZx2>")
-                .append("<MaxTofWeight>0</MaxTofWeight>")
-                .append("<MaxLandWeight>0</MaxLandWeight>")
-                .append("<MaxAllowFule>0</MaxAllowFule>")
-                .append("<Mzfw>0</Mzfw>")
-                .append("<OpDate>0001-01-01T00:00:00</OpDate>")
-                .append("</IAppObject>")
-                .append("</RequestData>")
-                .append("</MessageObject>");
-        String xmlParam = sb.toString();
-        NetBase net = new NetBase(BASE_URL, xmlParam, new ResponseListner<String>() {
-            @Override
-            public void onResponse(String response) {
-                String xml2json = CommonUtils.xml2JSON(response);
-                LogUtil.LOGD(TAG, "getAircraftByAcReg === " + xml2json);
-                if(!TextUtils.isEmpty(xml2json)){
-                    OneAirCraft oneAir = OneAirCraft.parse(xml2json);
-                }
-                responseListner.onResponse(response);
-            }
-
-            @Override
-            public void onEmptyOrError(String message) {
-                responseListner.onEmptyOrError(message);
-            }
-
-        });
-        net.execute();
-    }
-
-
-
-
-    //ce680
-    public void getAircraftByAcType(String userName,  String AircraftType,
-            final ResponseListner responseListner) {
-        //String url = "http://124.127.106.196:80/Login1.ashx";
-        StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>")
-                .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
-                .append("<CMD>getAircraftByAcType</CMD>")
-                .append("<UserCode>"+userName+"</UserCode>")
-                .append("<CheckCode>"
-                        + UserManager.getInstance().getUser().getCheckCode()
-                        + "</CheckCode>")
-                .append("<RequestData>")
-                .append("<IAppObject xsi:type=\"AppAircraft\">")
-                .append("<AircraftType>"+AircraftType+"</AircraftType>")
-                .append("<Bw>0</Bw>")
-                .append("<UseWeight1>0</UseWeight1>")
-                .append("<UseWeight2>0</UseWeight2>")
-                .append("<AircraftZx1>0</AircraftZx1>")
-                .append("<AircraftZx2>0</AircraftZx2>")
-                .append("<MaxTofWeight>0</MaxTofWeight>")
-                .append("<MaxLandWeight>0</MaxLandWeight>")
-                .append("<MaxAllowFule>0</MaxAllowFule>")
-                .append("<Mzfw>0</Mzfw>")
-                .append("</IAppObject>")
-                .append("</RequestData>")
-                .append("</MessageObject>");
-        String xmlParam = sb.toString();
-        NetBase net = new NetBase(BASE_URL, xmlParam, new ResponseListner<String>() {
-            @Override
-            public void onResponse(String response) {
-                String xml2json = CommonUtils.xml2JSON(response);
-                LogUtil.LOGD(TAG, "getAircraftByAcReg === " + xml2json);
-                AllSameTypeAirCraft parse = null;
-                if(!TextUtils.isEmpty(xml2json))
-                    parse = AllSameTypeAirCraft.parse(xml2json);
-
-                if(responseListner != null){
-                    responseListner.onResponse(parse);
-                }
-            }
-
-            @Override
-            public void onEmptyOrError(String message) {
-            }
-        });
-        net.execute();
-    }
-
-
-    public void addNewAircraft(String userName, final ResponseListner responseListner) {
-        //String url = "http://124.127.106.196:80/Login1.ashx";
-        StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>")
-                .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
-                .append("<CMD>AddNewAircraft</CMD>")
-                .append("<UserCode>"+userName+"</UserCode>")
-                .append("<CheckCode>"+ UserManager.getInstance().getUser().getCheckCode() +"</CheckCode>")
-                .append("<RequestData>")
-                .append("<IAppObject xsi:type=\"AppAircraft\">")
-                .append("<AircraftReg>B1111</AircraftReg>")
-                .append("<UserCode>Test</UserCode>")
-                .append("<AircraftType>A320</AircraftType>")
-                .append("<AircraftLongType>A320-300</AircraftLongType>")
-                .append("<Bw>20</Bw>")
-                .append("<UseWeight1>15</UseWeight1>")
-                .append("<UseWeight2>13</UseWeight2>")
-                .append("<AircraftZx1>2.2</AircraftZx1>")
-                .append("<AircraftZx2>2.2</AircraftZx2>")
-                .append("<MaxTofWeight>22</MaxTofWeight>")
-                .append("<MaxLandWeight>22</MaxLandWeight>")
-                .append("<MaxAllowFule>22</MaxAllowFule>")
-                .append("<Mzfw>15</Mzfw>")
-                .append("<LayoutPic>D:\\</LayoutPic>")
-                .append("<OpDate>2014-11-30T17:26:44.2543286+08:00</OpDate>")
-                .append("<SysVersion>0</SysVersion>")
-                .append("</IAppObject>")
-                .append("</RequestData>")
-                .append("</MessageObject>");
-        String xmlParam = sb.toString();
-        NetBase net = new NetBase(BASE_URL, xmlParam, new ResponseListner<String>() {
-            @Override
-            public void onResponse(String response) {
-                String xml2json = CommonUtils.xml2JSON(response);
-                if(!TextUtils.isEmpty(xml2json)){
-                    AllSameTypeAirCraft parse = AllSameTypeAirCraft.parse(xml2json);
-                    responseListner.onResponse(parse);
-                }
-
-
-            }
-            @Override
-            public void onEmptyOrError(String message) {
-                responseListner.onEmptyOrError(message);
-
-            }
-        });
-        net.execute();
-    }
-
-
-
-    public void getActypeByType(String userName,
-            final ResponseListner responseListner) {
-        //String url = "http://124.127.106.196:80/Login1.ashx";
-        StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>")
-                .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
-                .append("<CMD>GetActypeByType</CMD>")
-                .append("<UserCode>"+userName+"</UserCode>")
-                .append("<CheckCode>"+ UserManager.getInstance().getUser().getCheckCode()+"</CheckCode>")
-                .append("<RequestData>")
-                .append("<IAppObject xsi:type=\"AppAircraftType\">")
-                .append("<AircraftType>CE560</AircraftType>")
-                .append("<FuleLj>0</FuleLj>")
-                .append("<Cglimit1>0</Cglimit1>")
-                .append("<Cglimit2>0</Cglimit2>")
-                .append("<WeightLimit>0</WeightLimit>")
-                .append("<OpDate>0001-01-01T00:00:00</OpDate>")
-                .append("<LstAirTypeSeat />")
-                .append("</IAppObject>")
-                .append("</RequestData>")
-                .append("</MessageObject>");
-        String xmlParam = sb.toString();
-        NetBase net = new NetBase(BASE_URL, xmlParam, new ResponseListner<String>() {
-
-            @Override
-            public void onResponse(String response) {
-                String xml2json = CommonUtils.xml2JSON(response);
-                LogUtil.LOGD(TAG, "getActypeByType ===== " + xml2json);
-                if(!TextUtils.isEmpty(xml2json)){
-                    OneAirTypeCraft oneAirTypeCraft = OneAirTypeCraft.parse(xml2json);
-                    responseListner.onResponse(oneAirTypeCraft);
-                } else {
-                    responseListner.onResponse(null);
-                }
-            }
-
-            @Override
-            public void onEmptyOrError(String message) {
-              responseListner.onEmptyOrError(message);
-            }
-        });
-        net.execute();
-    }
-
 
 
 
@@ -346,12 +156,12 @@ public class MoccApiImpl implements MoccApi{
         StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>")
                 .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
                 .append("<CMD>GetAllUser</CMD>")
-                .append("<UserCode>"+userName+"</UserCode>")
-                .append("<CheckCode>"+UserManager.getInstance().getUser().getCheckCode()+"</CheckCode>")
+                .append("<UserCode>" + UserManager.getInstance().getUser().getUserCode() + "</UserCode>")
+                .append("<CheckCode>"+UserManager.getInstance().getUser().getCodeCheck()+"</CheckCode>")
                 .append("<RequestData>")
                 .append("<IAppObject xsi:type=\"AppUser\">")
-                .append("<UserCode>Test</UserCode>")
-                .append("<ActiveStart>0001-01-01T00:00:00</ActiveStart>")
+                .append("<UserCode>" + userName + "</UserCode>")
+                .append("<ActiveStart>" + DateFormatUtil.formatTDate() + "</ActiveStart>")
                 .append("</IAppObject>")
                 .append("</RequestData>")
                 .append("</MessageObject>");
@@ -360,9 +170,9 @@ public class MoccApiImpl implements MoccApi{
             @Override
             public void onResponse(String response) {
                 String xml2json = CommonUtils.xml2JSON(response);
-                LogUtil.LOGD(TAG,"AllUsers ==== " + xml2json);
+                LogUtil.LOGD(TAG,"AllUsersResponse ==== " + xml2json);
                 if(!TextUtils.isEmpty(xml2json)){
-                    AllUsers parse = AllUsers.parse(xml2json);
+                    AllUsersResponse parse = AllUsersResponse.parse(xml2json);
                     responseListner.onResponse(parse);
                 } else {
                     responseListner.onResponse(null);
@@ -377,93 +187,12 @@ public class MoccApiImpl implements MoccApi{
         net.execute();
     }
 
-    //一、按用户代码获取
-    public void getUserByCode(String userName,
-            final ResponseListner responseListner) {
-        //String url = "http://124.127.106.196:80/Login1.ashx";
-        StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>")
-                .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
-                .append("<CMD>GetUserByCode</CMD>")
-                .append("<UserCode>"+userName+"</UserCode>")
-                .append("<CheckCode>"+UserManager.getInstance().getUser().getCheckCode()+"</CheckCode>")
-                .append("<RequestData>")
-                .append("<IAppObject xsi:type=\"AppUser\">")
-                .append("<UserCode>Test</UserCode>")
-                .append("<ActiveStart>0001-01-01T00:00:00</ActiveStart>")
-                .append("</IAppObject>")
-                .append("</RequestData>")
-                .append("</MessageObject>");
-        String xmlParam = sb.toString();
-        NetBase net = new NetBase(BASE_URL, xmlParam, new ResponseListner<String>() {
-
-            @Override
-            public void onResponse(String response) {
-                if(responseListner != null){
-                    responseListner.onResponse(response);
-                }
-                String xml2json = CommonUtils.xml2JSON(response);
-                if(!TextUtils.isEmpty(xml2json)){
-                    OneUsers oneUser = OneUsers.parse(xml2json);
-                }
-            }
-
-            @Override
-            public void onEmptyOrError(String message) {
-                // TODO Auto-generated method stub
-
-            }
-        });
-        net.execute();
-    }
-
-
-
-
-    public void getAllUserNew(String userName,
-            final ResponseListner responseListner) {
-        //String url = "http://124.127.106.196:80/Login1.ashx";
-        StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>")
-                .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
-                .append("<CMD>GetAllUserNew</CMD>")
-                .append("<UserCode>"+userName+"</UserCode>")
-                .append("<CheckCode>"+UserManager.getInstance().getUser().getCheckCode()+"</CheckCode>")
-                .append("<RequestData>")
-                .append("<IAppObject xsi:type=\"AppUser\">")
-                .append("<UserCode>Test</UserCode>")
-                .append("<ActiveStart>0001-01-01T00:00:00</ActiveStart>")
-                .append("</IAppObject>")
-                .append("</RequestData>")
-                .append("</MessageObject>");
-        String xmlParam = sb.toString();
-        NetBase net = new NetBase(BASE_URL, xmlParam, new ResponseListner<String>() {
-
-            @Override
-            public void onResponse(String response) {
-                if(responseListner != null){
-                    responseListner.onResponse(response);
-                }
-                String xml2json = CommonUtils.xml2JSON(response);
-                if(!TextUtils.isEmpty(xml2json)){
-                    AllUsersNewResponse usersNew = AllUsersNewResponse.parse(xml2json);
-                }
-            }
-
-            @Override
-            public void onEmptyOrError(String message) {
-                // TODO Auto-generated method stub
-
-            }
-        });
-        net.execute();
-    }
-
-
     public void getSeatByAcReg(String aircraftReg, String bw, String lj, String opDate, String SysVersion, final ResponseListner<SeatByAcRegResponse> responseListner){
         StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>")
                 .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
                 .append("<CMD>GetSeatByAcReg</CMD>")
                 .append("<UserCode>"+ UserManager.getInstance().getUser().getUserCode()+"</UserCode>")
-                .append("<CheckCode>"+UserManager.getInstance().getUser().getCheckCode()+"</CheckCode>")
+                .append("<CheckCode>"+UserManager.getInstance().getUser().getCodeCheck()+"</CheckCode>")
                 .append("<RequestData>")
                 .append("<IAppObject xsi:type=\"AppAircraft\">")
                 .append("<AircraftReg>" + aircraftReg + "</AircraftReg>")
@@ -498,7 +227,7 @@ public class MoccApiImpl implements MoccApi{
                 .append("<UserCode>"
                         + UserManager.getInstance().getUser().getUserCode()
                         + "</UserCode>")
-                .append("<CheckCode>"+ UserManager.getInstance().getUser().getCheckCode()+"</CheckCode>")
+                .append("<CheckCode>"+ UserManager.getInstance().getUser().getCodeCheck()+"</CheckCode>")
                 .append("<RequestData>")
                 .append("<IAppObject xsi:type=\"AppAircraft\">")
                 .append("<AircraftType>" + AircraftType + "</AircraftType>")
@@ -534,7 +263,7 @@ public class MoccApiImpl implements MoccApi{
                 .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
                 .append("<CMD>GetAcWeightLimitByAcType</CMD>")
                 .append("<UserCode>" + UserManager.getInstance().getUser().getUserCode()+ "</UserCode>")
-                .append("<CheckCode>" + UserManager.getInstance().getUser().getCheckCode() + "</CheckCode>")
+                .append("<CheckCode>" + UserManager.getInstance().getUser().getCodeCheck() + "</CheckCode>")
                 .append("<RequestData>")
                 .append("<IAppObject xsi:type=\"AppAircraftType\">")
                 .append("<AircraftType>" +AircraftType+ "</AircraftType>")
@@ -567,7 +296,7 @@ public class MoccApiImpl implements MoccApi{
                 .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
                 .append("<CMD>GetAllAcType</CMD>")
                 .append("<UserCode>"+ UserManager.getInstance().getUser().getUserCode()+"</UserCode>")
-                .append("<CheckCode>"+ UserManager.getInstance().getUser().getCheckCode()+"</CheckCode>")
+                .append("<CheckCode>"+ UserManager.getInstance().getUser().getCodeCheck()+"</CheckCode>")
                 .append("<RequestData/>")
                 .append("</MessageObject>")
                 ;
@@ -592,7 +321,7 @@ public class MoccApiImpl implements MoccApi{
                 .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
                 .append("<CMD>GetAllSb</CMD>")
                 .append("<UserCode>"+ UserManager.getInstance().getUser().getUserCode()+"</UserCode>")
-                .append("<CheckCode>"+ UserManager.getInstance().getUser().getCheckCode()+"</CheckCode>")
+                .append("<CheckCode>"+ UserManager.getInstance().getUser().getCodeCheck()+"</CheckCode>")
                 .append("<RequestData/>")
                 .append("</MessageObject>")
                 ;
@@ -648,7 +377,7 @@ public class MoccApiImpl implements MoccApi{
                         + UserManager.getInstance().getUser().getUserCode()
                         + "</UserCode>")
                 .append("<CheckCode>"
-                        + UserManager.getInstance().getUser().getCheckCode()
+                        + UserManager.getInstance().getUser().getCodeCheck()
                         + "</CheckCode>")
                 .append("<RequestData>")
                 .append("<IAppObject xsi:type=\"AircraftCd\">")
@@ -700,7 +429,7 @@ public class MoccApiImpl implements MoccApi{
                         + UserManager.getInstance().getUser().getUserCode()
                         + "</UserCode>")
                 .append("<CheckCode>"
-                        + UserManager.getInstance().getUser().getCheckCode()
+                        + UserManager.getInstance().getUser().getCodeCheck()
                         + "</CheckCode>")
                 .append("<RequestData>")
                 .append("<IAppObject xsi:type=\"FlightInfo\">")
@@ -750,7 +479,7 @@ public class MoccApiImpl implements MoccApi{
                 .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
                 .append("<CMD>GetFlightId</CMD>")
                 .append("<UserCode>"+ UserManager.getInstance().getUser().getUserCode()+"</UserCode>")
-                .append("<CheckCode>"+ UserManager.getInstance().getUser().getCheckCode()+"</CheckCode>")
+                .append("<CheckCode>"+ UserManager.getInstance().getUser().getCodeCheck()+"</CheckCode>")
                 .append("<RequestData/>")
                 .append("</MessageObject>")
                 ;
@@ -770,13 +499,12 @@ public class MoccApiImpl implements MoccApi{
         net.execute();
     }
 
-    @Override
     public void getGrantsByUserCode(final ResponseListner<AllAirCraftResponse> responseListner) {
         StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>")
                 .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
                 .append("<CMD>GetGrantsByUserCode</CMD>")
                 .append("<UserCode>"+ UserManager.getInstance().getUser().getUserCode() +"</UserCode>")
-                .append("<CheckCode>"+ UserManager.getInstance().getUser().getCheckCode() +"</CheckCode>")
+                .append("<CheckCode>"+ UserManager.getInstance().getUser().getCodeCheck() +"</CheckCode>")
                 .append("<RequestData>")
                 .append("<IAppObject xsi:type=\"AppUser\">")
                 .append("<UserCode>" + UserManager.getInstance().getUser().getUserCode() + "</UserCode>")
@@ -810,13 +538,13 @@ public class MoccApiImpl implements MoccApi{
         StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>")
                 .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
                 .append("<CMD>ValidCaption</CMD>")
-                .append("<UserCode>"+ UserManager.getInstance().getUser().getUserCode() +"</UserCode>")
-                .append("<CheckCode>"+ UserManager.getInstance().getUser().getCheckCode() +"</CheckCode>")
+                .append("<UserCode> " + UserManager.getInstance().getUser().getUserCode() + " </UserCode>")
+                .append("<CheckCode> " + UserManager.getInstance().getUser().getCodeCheck() + " </CheckCode>")
                 .append("<RequestData>")
                 .append("<IAppObject xsi:type=\"AppCapEntiry\">")
-                .append("<UserCode>" + StrUserCode + "</UserCode>")
-                .append("<StrAcType>" + StrAcType + "</StrAcType>")
-                .append("<StrUserPass>" + StrUserPass + "</StrUserPass>")
+                .append("<StrUserCode> " + StrUserCode + " </StrUserCode>")
+                .append("<StrAcType> " + StrAcType + " </StrAcType>")
+                .append("<StrUserPass> " + StrUserPass + " </StrUserPass>")
                 .append("</IAppObject>")
                 .append("</RequestData>")
                 .append("</MessageObject>");
@@ -842,7 +570,7 @@ public class MoccApiImpl implements MoccApi{
                 .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
                 .append("<CMD>GetMessageByDate</CMD>")
                 .append("<UserCode>"+ UserManager.getInstance().getUser().getUserCode() +"</UserCode>")
-                .append("<CheckCode>"+ UserManager.getInstance().getUser().getCheckCode() +"</CheckCode>")
+                .append("<CheckCode>"+ UserManager.getInstance().getUser().getCodeCheck() +"</CheckCode>")
                 .append("<RequestData>")
                 .append("<IAppObject xsi:type=\"MsgQDate\">")
                 .append("<DtStart>" + startDate + "</DtStart>")
@@ -874,7 +602,7 @@ public class MoccApiImpl implements MoccApi{
                 .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
                 .append("<CMD>GetAcGrants</CMD>")
                 .append("<UserCode>"+ UserManager.getInstance().getUser().getUserCode()+"</UserCode>")
-                .append("<CheckCode>"+ UserManager.getInstance().getUser().getCheckCode()+"</CheckCode>")
+                .append("<CheckCode>"+ UserManager.getInstance().getUser().getCodeCheck()+"</CheckCode>")
                 .append("<RequestData/>")
                 .append("</MessageObject>")
                 ;
@@ -884,6 +612,31 @@ public class MoccApiImpl implements MoccApi{
                 String xmlStr = CommonUtils.xml2JSON(response);
                 LogUtil.LOGD(TAG, "GetAllSb ===== " + xmlStr);
                 AcGrantsResponse allAcType = AcGrantsResponse.parse(xmlStr);
+                responseListner.onResponse(allAcType);
+            }
+
+            @Override public void onEmptyOrError(String message) {
+                responseListner.onEmptyOrError(message);
+            }
+        }; NetBase net = new NetBase(BASE_URL, xmlParam, responseListner1);
+        net.execute();
+    }
+
+    @Override public void getAllAirPort(final ResponseListner<AllAirportResponse> responseListner) {
+        StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>")
+                .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
+                .append("<CMD>GetAllAirport</CMD>")
+                .append("<UserCode>"+ UserManager.getInstance().getUser().getUserCode()+"</UserCode>")
+                .append("<CheckCode>"+ UserManager.getInstance().getUser().getCodeCheck()+"</CheckCode>")
+                .append("<RequestData/>")
+                .append("</MessageObject>")
+                ;
+        final String xmlParam = sb.toString();
+        ResponseListner<String> responseListner1 = new ResponseListner<String>() {
+            @Override public void onResponse(String response) {
+                String xmlStr = CommonUtils.xml2JSON(response);
+                LogUtil.LOGD(TAG, "GetAllSb ===== " + xmlStr);
+                AllAirportResponse allAcType = AllAirportResponse.parse(xmlStr);
                 responseListner.onResponse(allAcType);
             }
 

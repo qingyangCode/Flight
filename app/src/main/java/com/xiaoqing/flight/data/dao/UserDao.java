@@ -28,7 +28,7 @@ public class UserDao extends AbstractDao<User, Long> {
         public final static Property UserCode = new Property(2, String.class, "UserCode", false, "USER_CODE");
         public final static Property DepCode = new Property(3, String.class, "DepCode", false, "DEP_CODE");
         public final static Property UserPassWord = new Property(4, String.class, "UserPassWord", false, "USER_PASS_WORD");
-        public final static Property CheckCode = new Property(5, String.class, "CheckCode", false, "CHECK_CODE");
+        public final static Property CodeCheck = new Property(5, String.class, "CodeCheck", false, "CODE_CHECK");
         public final static Property Grant_S_M = new Property(6, String.class, "Grant_S_M", false, "GRANT__S__M");
         public final static Property ActiveStart = new Property(7, String.class, "ActiveStart", false, "ACTIVE_START");
         public final static Property SysVersion = new Property(8, int.class, "SysVersion", false, "SYS_VERSION");
@@ -52,7 +52,7 @@ public class UserDao extends AbstractDao<User, Long> {
                 "'USER_CODE' TEXT," + // 2: UserCode
                 "'DEP_CODE' TEXT," + // 3: DepCode
                 "'USER_PASS_WORD' TEXT," + // 4: UserPassWord
-                "'CHECK_CODE' TEXT," + // 5: CheckCode
+                "'CODE_CHECK' TEXT," + // 5: CodeCheck
                 "'GRANT__S__M' TEXT," + // 6: Grant_S_M
                 "'ACTIVE_START' TEXT," + // 7: ActiveStart
                 "'SYS_VERSION' INTEGER NOT NULL );"); // 8: SysVersion
@@ -90,9 +90,9 @@ public class UserDao extends AbstractDao<User, Long> {
             stmt.bindString(5, UserPassWord);
         }
  
-        String CheckCode = entity.getCheckCode();
-        if (CheckCode != null) {
-            stmt.bindString(6, CheckCode);
+        String CodeCheck = entity.getCodeCheck();
+        if (CodeCheck != null) {
+            stmt.bindString(6, CodeCheck);
         }
  
         String Grant_S_M = entity.getGrant_S_M();
@@ -122,7 +122,7 @@ public class UserDao extends AbstractDao<User, Long> {
             cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // UserCode
             cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // DepCode
             cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // UserPassWord
-            cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // CheckCode
+            cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // CodeCheck
             cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6), // Grant_S_M
             cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7), // ActiveStart
             cursor.getInt(offset + 8) // SysVersion
@@ -138,7 +138,7 @@ public class UserDao extends AbstractDao<User, Long> {
         entity.setUserCode(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
         entity.setDepCode(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
         entity.setUserPassWord(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
-        entity.setCheckCode(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
+        entity.setCodeCheck(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
         entity.setGrant_S_M(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
         entity.setActiveStart(cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7));
         entity.setSysVersion(cursor.getInt(offset + 8));

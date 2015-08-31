@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import com.google.gson.Gson;
 
 
-public class AllUsersNewResponse {
+public class AllUsersNewResponse extends BaseResponse{
 	
 	public TResponseObject ResponseObject;
 	class TResponseObject{
