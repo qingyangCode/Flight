@@ -25,12 +25,12 @@ public class AllAcTypeDao extends AbstractDao<AllAcType, Long> {
     public static class Properties {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
         public final static Property AircraftType = new Property(1, String.class, "AircraftType", false, "AIRCRAFT_TYPE");
-        public final static Property PortLimit = new Property(2, int.class, "PortLimit", false, "PORT_LIMIT");
+        public final static Property PortLimit = new Property(2, float.class, "PortLimit", false, "PORT_LIMIT");
         public final static Property LimitType = new Property(3, String.class, "LimitType", false, "LIMIT_TYPE");
         public final static Property AircraftTypeChName = new Property(4, String.class, "AircraftTypeChName", false, "AIRCRAFT_TYPE_CH_NAME");
-        public final static Property TofWeightLimit = new Property(5, String.class, "TofWeightLimit", false, "TOF_WEIGHT_LIMIT");
-        public final static Property LandWeightLimit = new Property(6, int.class, "LandWeightLimit", false, "LAND_WEIGHT_LIMIT");
-        public final static Property Mzfw = new Property(7, int.class, "Mzfw", false, "MZFW");
+        public final static Property TofWeightLimit = new Property(5, float.class, "TofWeightLimit", false, "TOF_WEIGHT_LIMIT");
+        public final static Property LandWeightLimit = new Property(6, float.class, "LandWeightLimit", false, "LAND_WEIGHT_LIMIT");
+        public final static Property Mzfw = new Property(7, float.class, "Mzfw", false, "MZFW");
         public final static Property Mac = new Property(8, String.class, "Mac", false, "MAC");
         public final static Property Mac2 = new Property(9, String.class, "Mac2", false, "MAC2");
         public final static Property OpDate = new Property(10, String.class, "OpDate", false, "OP_DATE");
@@ -54,12 +54,12 @@ public class AllAcTypeDao extends AbstractDao<AllAcType, Long> {
         db.execSQL("CREATE TABLE " + constraint + "'ALL_AC_TYPE' (" + //
                 "'_id' INTEGER PRIMARY KEY AUTOINCREMENT ," + // 0: id
                 "'AIRCRAFT_TYPE' TEXT NOT NULL ," + // 1: AircraftType
-                "'PORT_LIMIT' INTEGER NOT NULL ," + // 2: PortLimit
+                "'PORT_LIMIT' REAL NOT NULL ," + // 2: PortLimit
                 "'LIMIT_TYPE' TEXT," + // 3: LimitType
                 "'AIRCRAFT_TYPE_CH_NAME' TEXT," + // 4: AircraftTypeChName
-                "'TOF_WEIGHT_LIMIT' TEXT," + // 5: TofWeightLimit
-                "'LAND_WEIGHT_LIMIT' INTEGER NOT NULL ," + // 6: LandWeightLimit
-                "'MZFW' INTEGER NOT NULL ," + // 7: Mzfw
+                "'TOF_WEIGHT_LIMIT' REAL NOT NULL ," + // 5: TofWeightLimit
+                "'LAND_WEIGHT_LIMIT' REAL NOT NULL ," + // 6: LandWeightLimit
+                "'MZFW' REAL NOT NULL ," + // 7: Mzfw
                 "'MAC' TEXT," + // 8: Mac
                 "'MAC2' TEXT," + // 9: Mac2
                 "'OP_DATE' TEXT," + // 10: OpDate
@@ -84,7 +84,7 @@ public class AllAcTypeDao extends AbstractDao<AllAcType, Long> {
             stmt.bindLong(1, id);
         }
         stmt.bindString(2, entity.getAircraftType());
-        stmt.bindLong(3, entity.getPortLimit());
+        stmt.bindDouble(3, entity.getPortLimit());
  
         String LimitType = entity.getLimitType();
         if (LimitType != null) {
@@ -95,13 +95,9 @@ public class AllAcTypeDao extends AbstractDao<AllAcType, Long> {
         if (AircraftTypeChName != null) {
             stmt.bindString(5, AircraftTypeChName);
         }
- 
-        String TofWeightLimit = entity.getTofWeightLimit();
-        if (TofWeightLimit != null) {
-            stmt.bindString(6, TofWeightLimit);
-        }
-        stmt.bindLong(7, entity.getLandWeightLimit());
-        stmt.bindLong(8, entity.getMzfw());
+        stmt.bindDouble(6, entity.getTofWeightLimit());
+        stmt.bindDouble(7, entity.getLandWeightLimit());
+        stmt.bindDouble(8, entity.getMzfw());
  
         String Mac = entity.getMac();
         if (Mac != null) {
@@ -142,12 +138,12 @@ public class AllAcTypeDao extends AbstractDao<AllAcType, Long> {
         AllAcType entity = new AllAcType( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
             cursor.getString(offset + 1), // AircraftType
-            cursor.getInt(offset + 2), // PortLimit
+            cursor.getFloat(offset + 2), // PortLimit
             cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // LimitType
             cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // AircraftTypeChName
-            cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // TofWeightLimit
-            cursor.getInt(offset + 6), // LandWeightLimit
-            cursor.getInt(offset + 7), // Mzfw
+            cursor.getFloat(offset + 5), // TofWeightLimit
+            cursor.getFloat(offset + 6), // LandWeightLimit
+            cursor.getFloat(offset + 7), // Mzfw
             cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8), // Mac
             cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9), // Mac2
             cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10), // OpDate
@@ -163,12 +159,12 @@ public class AllAcTypeDao extends AbstractDao<AllAcType, Long> {
     public void readEntity(Cursor cursor, AllAcType entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
         entity.setAircraftType(cursor.getString(offset + 1));
-        entity.setPortLimit(cursor.getInt(offset + 2));
+        entity.setPortLimit(cursor.getFloat(offset + 2));
         entity.setLimitType(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
         entity.setAircraftTypeChName(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
-        entity.setTofWeightLimit(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
-        entity.setLandWeightLimit(cursor.getInt(offset + 6));
-        entity.setMzfw(cursor.getInt(offset + 7));
+        entity.setTofWeightLimit(cursor.getFloat(offset + 5));
+        entity.setLandWeightLimit(cursor.getFloat(offset + 6));
+        entity.setMzfw(cursor.getFloat(offset + 7));
         entity.setMac(cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8));
         entity.setMac2(cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9));
         entity.setOpDate(cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10));

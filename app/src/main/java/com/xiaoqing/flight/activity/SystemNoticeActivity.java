@@ -196,7 +196,7 @@ public class SystemNoticeActivity extends  BaseActivity{
     }
 
     private void backPress() {
-        if (readNoticeLists.size() == noticeList.size()) {
+        if (readNoticeLists != null && noticeList != null && readNoticeLists.size() == noticeList.size()) {
             sendBroadcast(new Intent(Constants.BROADCAST_SYSTEMNOTICE).putExtra(Constants.PARAM_NOTICEID, false));
         }
         finish();

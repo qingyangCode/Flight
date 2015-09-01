@@ -33,6 +33,28 @@ public class TablesMain {
 
         getSyncDB();//同步数据
         getAllAirport();//获取所有机场信息(四字代码)
+        getUploadAirPerson();//添加机上成员
+    }
+
+
+    private void getUploadAirPerson() {
+        Entity uploadAirPerson = mSchema.addEntity("UploadAirPerson");
+        uploadAirPerson.addIdProperty().autoincrement();
+
+        uploadAirPerson.addStringProperty("AircraftReg");//机号
+        uploadAirPerson.addStringProperty("FlightId");//航班编号
+        uploadAirPerson.addIntProperty("SeatId");//座椅编号
+        uploadAirPerson.addStringProperty("SeatCode");// 座椅代码
+        uploadAirPerson.addStringProperty("SeatType");//座椅类型 S座椅 C货物
+        uploadAirPerson.addFloatProperty("AcTypeSeatLimit");//机型座椅限重
+        uploadAirPerson.addFloatProperty("AcTypeLb");//机型座椅力臂
+        uploadAirPerson.addFloatProperty("AcRegCargWeight");//飞机额外物品重量
+        uploadAirPerson.addFloatProperty("AcRegCagLj");//座椅力臂
+        uploadAirPerson.addFloatProperty("SeatLastLimit");//机型限重减去飞机额外物品后的最大重量限制
+        uploadAirPerson.addStringProperty("PassagerName");//乘客姓名
+        uploadAirPerson.addFloatProperty("RealWeight");//乘客/货 实际重量
+        uploadAirPerson.addStringProperty("OpUser");
+        uploadAirPerson.addStringProperty("OpDate");
     }
 
     private void getAllAirport() {
@@ -189,12 +211,12 @@ public class TablesMain {
         Entity allAcType = mSchema.addEntity("AllAcType");
         allAcType.addIdProperty().autoincrement();
         allAcType.addStringProperty("AircraftType").notNull();
-        allAcType.addIntProperty("PortLimit").notNull();
+        allAcType.addFloatProperty("PortLimit").notNull();
         allAcType.addStringProperty("LimitType");
         allAcType.addStringProperty("AircraftTypeChName");
-        allAcType.addStringProperty("TofWeightLimit");
-        allAcType.addIntProperty("LandWeightLimit").notNull();
-        allAcType.addIntProperty("Mzfw").notNull();
+        allAcType.addFloatProperty("TofWeightLimit").notNull();
+        allAcType.addFloatProperty("LandWeightLimit").notNull();
+        allAcType.addFloatProperty("Mzfw").notNull();
         allAcType.addStringProperty("Mac");
         allAcType.addStringProperty("Mac2");
         allAcType.addStringProperty("OpDate");

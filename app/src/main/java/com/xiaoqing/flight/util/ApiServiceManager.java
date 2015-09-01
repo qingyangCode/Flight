@@ -5,6 +5,7 @@ import android.content.Intent;
 import com.xiaoqing.flight.FlightApplication;
 import com.xiaoqing.flight.data.dao.AcGrants;
 import com.xiaoqing.flight.data.dao.ActionFeed;
+import com.xiaoqing.flight.data.dao.ActionFeedDao;
 import com.xiaoqing.flight.data.dao.AddFlightInfo;
 import com.xiaoqing.flight.data.dao.AllAircraft;
 import com.xiaoqing.flight.data.dao.AllAircraftDao;
@@ -19,6 +20,8 @@ import com.xiaoqing.flight.data.dao.SeatByAcReg;
 import com.xiaoqing.flight.data.dao.SeatByAcRegDao;
 import com.xiaoqing.flight.data.dao.SystemNotice;
 import com.xiaoqing.flight.data.dao.SystemNoticeDao;
+import com.xiaoqing.flight.data.dao.UploadAirPerson;
+import com.xiaoqing.flight.data.dao.UploadAirPersonDao;
 import com.xiaoqing.flight.data.dao.User;
 import com.xiaoqing.flight.entity.AcGrantsResponse;
 import com.xiaoqing.flight.entity.AddFlightInfoResponse;
@@ -29,6 +32,7 @@ import com.xiaoqing.flight.entity.AllSbResponse;
 import com.xiaoqing.flight.entity.AllUsersResponse;
 import com.xiaoqing.flight.entity.FlightidResponse;
 import com.xiaoqing.flight.entity.FuleLimitByAcType;
+import com.xiaoqing.flight.entity.GrantsByUserCodeResponse;
 import com.xiaoqing.flight.entity.MessageResponse;
 import com.xiaoqing.flight.entity.SeatByAcRegResponse;
 import com.xiaoqing.flight.network.MoccApi;
@@ -96,15 +100,14 @@ public class ApiServiceManager {
                 if (response != null
                         && response.ResponseObject != null
                         && response.ResponseObject.ResponseCode == Constants.RESULT_OK) {
-                    DBManager.getInstance().insertAllAcType(response.ResponseObject.ResponseData.IAppObject);
+                    DBManager.getInstance()
+                            .insertAllAcType(response.ResponseObject.ResponseData.IAppObject);
                 }
-                if (responseListner != null)
-                    responseListner.onResponse(response);
+                if (responseListner != null) responseListner.onResponse(response);
             }
 
             @Override public void onEmptyOrError(String message) {
-                if (responseListner != null)
-                    responseListner.onEmptyOrError(message);
+                if (responseListner != null) responseListner.onEmptyOrError(message);
                 LogUtil.LOGD(TAG, "response Message ==== " + message);
             }
         });
@@ -210,7 +213,9 @@ public class ApiServiceManager {
                         if (response != null
                                 && response.ResponseObject != null
                                 && response.ResponseObject.ResponseCode == Constants.RESULT_OK) {
-                            DBManager.getInstance().insertFuleLimit(AircraftType, response.ResponseObject.ResponseData.IAppObject);
+                            DBManager.getInstance()
+                                    .insertFuleLimit(AircraftType,
+                                            response.ResponseObject.ResponseData.IAppObject);
                         }
                         if (responseListner != null) responseListner.onResponse(response);
                     }
@@ -359,8 +364,12 @@ public class ApiServiceManager {
 
                     @Override public void onResponse(AllAirCraftResponse response) {
                         //dialog.dismiss();
-                        if (response != null && response.ResponseObject != null && response.ResponseObject.ResponseCode == Constants.RESULT_OK) {
-                            DBManager.getInstance().insertAllAircrart(response.ResponseObject.ResponseData.IAppObject);
+                        if (response != null
+                                && response.ResponseObject != null
+                                && response.ResponseObject.ResponseCode == Constants.RESULT_OK) {
+                            DBManager.getInstance()
+                                    .insertAllAircrart(
+                                            response.ResponseObject.ResponseData.IAppObject);
                         }
                     }
 
@@ -374,20 +383,79 @@ public class ApiServiceManager {
         getMoccApi().getAllAirPort(new ResponseListner<AllAirportResponse>() {
 
             @Override public void onResponse(AllAirportResponse response) {
-                if (response != null && response.ResponseObject != null && response.ResponseObject.ResponseData != null && response.ResponseObject.ResponseCode == Constants.RESULT_OK) {
+                if (response != null
+                        && response.ResponseObject != null
+                        && response.ResponseObject.ResponseData != null
+                        && response.ResponseObject.ResponseCode == Constants.RESULT_OK) {
                     ArrayList<AllAirport> iAppObject =
                             response.ResponseObject.ResponseData.IAppObject;
                     DBManager.getInstance().insertAllAirPort(iAppObject);
                 }
-                if (responseListner != null)
-                    responseListner.onResponse(response);
+                if (responseListner != null) responseListner.onResponse(response);
             }
 
             @Override public void onEmptyOrError(String message) {
-                if (responseListner != null)
-                    responseListner.onEmptyOrError(message);
+                if (responseListner != null) responseListner.onEmptyOrError(message);
             }
         });
     }
 
+    //上传飞机上成员信息
+    public void uploadAirPersonInfo() {
+        if (UserManager.getInstance().getUser() == null)
+            return;
+        final UploadAirPersonDao uploadAirPersonDao =
+                FlightApplication.getDaoSession().getUploadAirPersonDao();
+        ActionFeedDao actionFeedDao = FlightApplication.getDaoSession().getActionFeedDao();
+        List<ActionFeed> list = actionFeedDao.queryBuilder()
+                .where(ActionFeedDao.Properties.Feed_type.eq(
+                        FeedType.toInt(FeedType.ADD_FLIGHTPERSON)))
+                .list();
+        //所有待同步数据
+        if (list != null && list.size() > 0) {
+            for (ActionFeed actionFeed : list) {
+                List<UploadAirPerson> uploadList = uploadAirPersonDao.queryBuilder()
+                        .where(UploadAirPersonDao.Properties.Id.eq(actionFeed.getFeed_id()))
+                        .list();
+                final UploadAirPerson uploadAirPerson = uploadList.get(0);
+                getMoccApi().addFlightCd(uploadAirPerson.getAircraftReg(), uploadAirPerson.getSeatId() + "",
+                        UserManager.getInstance().getAddFlightInfo().getFlightId(),
+                        uploadAirPerson.getSeatCode(), uploadAirPerson.getSeatType(),
+                        uploadAirPerson.getAcTypeSeatLimit() + "", uploadAirPerson.getAcTypeLb()+"",
+                        uploadAirPerson.getAcRegCargWeight()+"", uploadAirPerson.getAcTypeLb()+"",
+                        (uploadAirPerson.getAcTypeSeatLimit() - uploadAirPerson.getRealWeight()) + "",
+                        uploadAirPerson.getPassagerName(), uploadAirPerson.getRealWeight()+"",
+                        UserManager.getInstance().getUser().getUserCode(),
+                        DateFormatUtil.formatZDate(),
+                        new ResponseListner<GrantsByUserCodeResponse>() {
+                            @Override
+                            public void onResponse(GrantsByUserCodeResponse response) {
+                                if (response != null
+                                        && response.ResponseObject != null
+                                        && response.ResponseObject.ResponseCode
+                                        == Constants.RESULT_OK) {
+                                    deleteFlightPersonFeed();
+                                    uploadAirPersonDao.deleteByKey(uploadAirPerson.getId());
+                                }
+                            }
+
+                            private void deleteFlightPersonFeed() {
+                                ActionFeed actionFeed = new ActionFeed();
+                                actionFeed.setUserCode(
+                                        UserManager.getInstance().getUser().getUserCode());
+                                actionFeed.setFeed_id(String.valueOf(uploadAirPerson.getId()));
+                                actionFeed.setFeed_type(FeedType.toInt(FeedType.ADD_FLIGHTPERSON));
+                                DBManager.getInstance().deleteActionFeed(actionFeed);
+                            }
+
+                            @Override public void onEmptyOrError(String message) {
+                                LogUtil.LOGD(TAG, "上传飞机成员错误： " + message);
+                            }
+                        });
+            }
+        }
+
+
+
+    }
 }

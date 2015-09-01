@@ -32,5 +32,6 @@ public interface Constants {
     String DB_ALLSB = "all_sb";
     String DB_FULELIMIT = "fulelimit";
     String DB_SYSTEMNOTICE = "system_notice";
+    String ACTION_ADDUSERNAME = "addusername";
 }
 

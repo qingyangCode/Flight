@@ -24,6 +24,8 @@ import com.xiaoqing.flight.data.dao.SystemNotice;
 import com.xiaoqing.flight.data.dao.SystemNoticeDao;
 import com.xiaoqing.flight.data.dao.SystemVersion;
 import com.xiaoqing.flight.data.dao.SystemVersionDao;
+import com.xiaoqing.flight.data.dao.UploadAirPerson;
+import com.xiaoqing.flight.data.dao.UploadAirPersonDao;
 import com.xiaoqing.flight.data.dao.User;
 import com.xiaoqing.flight.data.dao.UserDao;
 import com.xiaoqing.flight.network.synchronous.FeedType;
@@ -236,11 +238,87 @@ public class DBManager {
         }
     }
 
+    //差分站
+    public void insertAllSb(ArrayList<AllSb> iAppObject) {
+        List<SystemVersion> queryBuilderByVersionName =
+                getQueryBuilderByVersionName(Constants.DB_ALLSB);
+        if (queryBuilderByVersionName == null || queryBuilderByVersionName.size() == 0) {
+            AllSbDao allSbDao = daoSession.getAllSbDao();
+            List<AllSb> list = allSbDao.queryBuilder().list();
+            if (list != null && list.size() > 0) {
+                allSbDao.deleteInTx(list);
+            }
+            allSbDao.insertInTx(iAppObject);
+            insertSystemVersion(Constants.DB_ALLSB, 0);
+        }
+    }
+
+    // 获取机场信息
+    public List<AllAirport> getAllAirPort() {
+        AllAirportDao allAirportDao = daoSession.getAllAirportDao();
+        return allAirportDao.queryBuilder().list();
+    }
+
+    //更新座椅修改时间
+    public void updateSeatByAcRegOpDate(List<SeatByAcReg> showList) {
+        String s = DateFormatUtil.formatTDate();
+        for (SeatByAcReg seatByAcReg : showList) {
+            seatByAcReg.setOpDate(s);
+            SeatByAcRegDao seatByAcRegDao = daoSession.getSeatByAcRegDao();
+            seatByAcRegDao.update(seatByAcReg);
+        }
+    }
+
+    //要上传的人员信息
+    public long insertUploadPerson(SeatByAcReg seatByAcReg) {
+        UploadAirPersonDao uploadAirPersonDao = daoSession.getUploadAirPersonDao();
+        List<UploadAirPerson> list = null;
+        if (UserManager.getInstance().getAddFlightInfo() != null) {
+         list = uploadAirPersonDao.queryBuilder()
+                .where(UploadAirPersonDao.Properties.FlightId.eq(UserManager.getInstance().getAddFlightInfo().getFlightId()), UploadAirPersonDao.Properties.SeatId.eq(seatByAcReg.getSeatId()))
+                .list();
+
+        }
+        if (list != null && list.size() > 0) {
+            uploadAirPersonDao.deleteInTx(list);
+            for (UploadAirPerson uploadAirPerson : list) {
+                ActionFeed actionFeed = new ActionFeed();
+                actionFeed.setFeed_type(FeedType.toInt(FeedType.ADD_FLIGHTPERSON));
+                actionFeed.setFeed_id(String.valueOf(uploadAirPerson.getId()));
+                if (UserManager.getInstance().getUser() != null)
+                    actionFeed.setUserCode(UserManager.getInstance().getUser().getUserCode());
+                deleteActionFeed(actionFeed);
+            }
+        }
+
+        UploadAirPerson uploadAirPerson = new UploadAirPerson();
+        uploadAirPerson.setAircraftReg(seatByAcReg.getAcReg());
+        if (UserManager.getInstance().getAddFlightInfo() != null)
+            uploadAirPerson.setFlightId(UserManager.getInstance().getAddFlightInfo().getFlightId());
+        uploadAirPerson.setSeatId(seatByAcReg.getSeatId());
+        uploadAirPerson.setSeatCode(seatByAcReg.getSeatCode());
+        uploadAirPerson.setSeatType(seatByAcReg.getSeatType());
+        uploadAirPerson.setAcTypeSeatLimit(seatByAcReg.getAcTypeSeatLimit());
+        uploadAirPerson.setAcTypeLb(seatByAcReg.getAcTypeLb());
+        uploadAirPerson.setAcRegCargWeight(seatByAcReg.getAcRegCargWeight());
+        uploadAirPerson.setAcRegCagLj(seatByAcReg.getAcTypeLb());
+        uploadAirPerson.setSeatLastLimit(seatByAcReg.getSeatLastLimit());
+        uploadAirPerson.setPassagerName(seatByAcReg.getUserName());
+        uploadAirPerson.setRealWeight(seatByAcReg.getSeatWeight());
+        if (UserManager.getInstance().getUser() != null)
+            uploadAirPerson.setOpUser(UserManager.getInstance().getUser().getUserCode());
+        uploadAirPerson.setOpDate(seatByAcReg.getOpDate());
+        return uploadAirPersonDao.insert(uploadAirPerson);
+    }
+
+
+
     //数据同步
     public void insertActionFeed( FeedType feedType, String dataId) {
         ActionFeedDao actionFeedDao = FlightApplication.getDaoSession().getActionFeedDao();
         ActionFeed actionFeed = new ActionFeed();
-        actionFeed.setUserCode(UserManager.getInstance().getUser().getUserCode());
+        if (UserManager.getInstance().getUser() != null)
+            actionFeed.setUserCode(UserManager.getInstance().getUser().getUserCode());
         actionFeed.setFeed_type(FeedType.toInt(feedType));
         actionFeed.setFeed_id(dataId);
         actionFeedDao.insert(actionFeed);
@@ -276,24 +354,4 @@ public class DBManager {
         }
     }
 
-    //差分站
-    public void insertAllSb(ArrayList<AllSb> iAppObject) {
-        List<SystemVersion> queryBuilderByVersionName =
-                getQueryBuilderByVersionName(Constants.DB_ALLSB);
-        if (queryBuilderByVersionName == null || queryBuilderByVersionName.size() == 0) {
-            AllSbDao allSbDao = daoSession.getAllSbDao();
-            List<AllSb> list = allSbDao.queryBuilder().list();
-            if (list != null && list.size() > 0) {
-                allSbDao.deleteInTx(list);
-            }
-            allSbDao.insertInTx(iAppObject);
-            insertSystemVersion(Constants.DB_ALLSB, 0);
-        }
-    }
-
-    // 获取机场信息
-    public List<AllAirport> getAllAirPort() {
-        AllAirportDao allAirportDao = daoSession.getAllAirportDao();
-        return allAirportDao.queryBuilder().list();
-    }
 }

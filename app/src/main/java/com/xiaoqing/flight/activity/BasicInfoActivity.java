@@ -240,6 +240,9 @@ public class BasicInfoActivity extends BaseActivity {
                 //addFlightInfo.setArr4Code(toAirport);
                 addFlightInfo.setArrAirportName(toAirport);
                 addFlightInfo.setNoFuleWeight(mWeight.getText().toString().trim());
+                addFlightInfo.setWeightCg(mFocus.getText().toString().trim());
+
+                UserManager.getInstance().clearUserNameMaps();
 
                 Intent intent = new Intent(BasicInfoActivity.this, EngineRoomActivity.class);
                 //intent.putExtra("Lj", lj);

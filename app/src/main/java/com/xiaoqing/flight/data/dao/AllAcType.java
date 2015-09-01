@@ -12,12 +12,12 @@ public class AllAcType {
     private Long id;
     /** Not-null value. */
     private String AircraftType;
-    private int PortLimit;
+    private float PortLimit;
     private String LimitType;
     private String AircraftTypeChName;
-    private String TofWeightLimit;
-    private int LandWeightLimit;
-    private int Mzfw;
+    private float TofWeightLimit;
+    private float LandWeightLimit;
+    private float Mzfw;
     private String Mac;
     private String Mac2;
     private String OpDate;
@@ -35,7 +35,7 @@ public class AllAcType {
         this.id = id;
     }
 
-    public AllAcType(Long id, String AircraftType, int PortLimit, String LimitType, String AircraftTypeChName, String TofWeightLimit, int LandWeightLimit, int Mzfw, String Mac, String Mac2, String OpDate, int SysVersion, String UserCode, String MacFlg) {
+    public AllAcType(Long id, String AircraftType, float PortLimit, String LimitType, String AircraftTypeChName, float TofWeightLimit, float LandWeightLimit, float Mzfw, String Mac, String Mac2, String OpDate, int SysVersion, String UserCode, String MacFlg) {
         this.id = id;
         this.AircraftType = AircraftType;
         this.PortLimit = PortLimit;
@@ -70,11 +70,11 @@ public class AllAcType {
         this.AircraftType = AircraftType;
     }
 
-    public int getPortLimit() {
+    public float getPortLimit() {
         return PortLimit;
     }
 
-    public void setPortLimit(int PortLimit) {
+    public void setPortLimit(float PortLimit) {
         this.PortLimit = PortLimit;
     }
 
@@ -94,27 +94,27 @@ public class AllAcType {
         this.AircraftTypeChName = AircraftTypeChName;
     }
 
-    public String getTofWeightLimit() {
+    public float getTofWeightLimit() {
         return TofWeightLimit;
     }
 
-    public void setTofWeightLimit(String TofWeightLimit) {
+    public void setTofWeightLimit(float TofWeightLimit) {
         this.TofWeightLimit = TofWeightLimit;
     }
 
-    public int getLandWeightLimit() {
+    public float getLandWeightLimit() {
         return LandWeightLimit;
     }
 
-    public void setLandWeightLimit(int LandWeightLimit) {
+    public void setLandWeightLimit(float LandWeightLimit) {
         this.LandWeightLimit = LandWeightLimit;
     }
 
-    public int getMzfw() {
+    public float getMzfw() {
         return Mzfw;
     }
 
-    public void setMzfw(int Mzfw) {
+    public void setMzfw(float Mzfw) {
         this.Mzfw = Mzfw;
     }
 

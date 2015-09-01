@@ -242,6 +242,8 @@ public class MoccApiImpl implements MoccApi{
         final String xmlParam = sb.toString();
         ResponseListner<String> responseListner1 = new ResponseListner<String>() {
             @Override public void onResponse(String response) {
+                if (response.contains("</ResponseData>"))
+                    response = response.replace("</ResponseData>", "<IAppObject xsi:type=\"AppMessage\"> </IAppObject></ResponseData>");
                 String xmlStr = CommonUtils.xml2JSON(response);
                 LogUtil.LOGD(TAG, "getFuleLimitByAcType ===== " + xmlStr);
                 FuleLimitByAcType fuleLimitByAcType = FuleLimitByAcType.parse(xmlStr);

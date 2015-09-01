@@ -11,27 +11,27 @@ public class GrantsByUserCodeResponse {
 	
 	public TResponseObject ResponseObject;
 	public class TResponseObject{
-		public TResponseData ResponseData;
+		//public TResponseData ResponseData;
 		public int ResponseCode;
 	}
 	
-	public class TResponseData{
-		public ArrayList<TIAppObject> IAppObject;
-	}
-
-	@Deprecated
-	public class TIAppObject{
-		public String GrantsId;
-		public String AircraftReg;
-		public String UserCode;
-		public String AcType;
-		public String AcLongType;
-		public String Caption;
-		public String OpUser;
-		public String OpDate;
-		public String SysVersion;
-
-	}
+	//public class TResponseData{
+	//	public ArrayList<TIAppObject> IAppObject;
+	//}
+    //
+	//@Deprecated
+	//public class TIAppObject{
+	//	public String GrantsId;
+	//	public String AircraftReg;
+	//	public String UserCode;
+	//	public String AcType;
+	//	public String AcLongType;
+	//	public String Caption;
+	//	public String OpUser;
+	//	public String OpDate;
+	//	public String SysVersion;
+    //
+	//}
 	
 	public static GrantsByUserCodeResponse parse(String jsonStr){
 		Gson gson = new Gson();

@@ -3,6 +3,7 @@ package com.xiaoqing.flight.activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Pair;
 import android.view.Gravity;
@@ -12,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -36,6 +38,7 @@ import com.xiaoqing.flight.util.DateFormatUtil;
 import com.xiaoqing.flight.util.ToastUtil;
 import com.xiaoqing.flight.util.UserManager;
 import com.xiaoqing.flight.util.WindowUtil;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -82,6 +85,7 @@ public class AircraftPersonnelActivity extends BaseActivity {
         if (data != null) {
             aircraftReg = data.getStringExtra(Constants.ACTION_AIRCRAFTREG);
             aircraftType = data.getStringExtra(Constants.ACTION_AIRCRAFTTYPE);
+            Bundle extras = data.getExtras();
         }
 
         //final UserDao userDao = FlightApplication.getDaoSession().getUserDao();
@@ -182,6 +186,7 @@ public class AircraftPersonnelActivity extends BaseActivity {
                 LinearLayout.LayoutParams.WRAP_CONTENT));
         TextView title = (TextView) view.findViewById(R.id.title);
         final TextView tv_password = (TextView) view.findViewById(R.id.tv_password);
+        tv_password.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
 
         if (!TextUtils.isEmpty(titleText)) title.setText(titleText);
         final TextView tv_userName = (TextView) view.findViewById(R.id.tv_userName);

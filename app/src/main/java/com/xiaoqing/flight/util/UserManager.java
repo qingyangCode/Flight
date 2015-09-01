@@ -1,9 +1,11 @@
 package com.xiaoqing.flight.util;
 
+import android.util.Pair;
 import com.xiaoqing.flight.FlightApplication;
 import com.xiaoqing.flight.data.dao.AddFlightInfo;
 import com.xiaoqing.flight.data.dao.User;
 import com.xiaoqing.flight.data.dao.UserDao;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -75,5 +77,15 @@ public class UserManager {
         return isAddFilghtSuccess;
     }
 
+    private HashMap<Integer, Pair<String, String>> mUserNameMaps;
+    public HashMap<Integer, Pair<String, String>> getInputNames() {
+        if (mUserNameMaps == null)
+            mUserNameMaps = new HashMap<>();
+        return mUserNameMaps;
+    }
 
+    public void clearUserNameMaps() {
+        if (mUserNameMaps != null)
+            mUserNameMaps.clear();;
+    }
 }

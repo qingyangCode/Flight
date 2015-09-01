@@ -1,9 +1,11 @@
 package com.xiaoqing.flight.activity;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Pair;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +20,7 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 import com.xiaoqing.flight.FlightApplication;
 import com.xiaoqing.flight.R;
+import com.xiaoqing.flight.data.dao.ActionFeed;
 import com.xiaoqing.flight.data.dao.Passenger;
 import com.xiaoqing.flight.data.dao.PassengerDao;
 import com.xiaoqing.flight.data.dao.SeatByAcReg;
@@ -28,10 +31,12 @@ import com.xiaoqing.flight.entity.EngineRoom;
 import com.xiaoqing.flight.entity.GrantsByUserCodeResponse;
 import com.xiaoqing.flight.entity.SeatByAcRegResponse;
 import com.xiaoqing.flight.network.ResponseListner;
+import com.xiaoqing.flight.network.synchronous.FeedType;
 import com.xiaoqing.flight.util.ApiServiceManager;
 import com.xiaoqing.flight.util.CommonProgressDialog;
 import com.xiaoqing.flight.util.CommonUtils;
 import com.xiaoqing.flight.util.Constants;
+import com.xiaoqing.flight.util.DBManager;
 import com.xiaoqing.flight.util.DateFormatUtil;
 import com.xiaoqing.flight.util.LogUtil;
 import com.xiaoqing.flight.util.ToastUtil;
@@ -39,7 +44,9 @@ import com.xiaoqing.flight.util.UserManager;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by QingYang on 15/7/23.
@@ -86,7 +93,7 @@ public class EngineRoomActivity extends BaseActivity{
     TextView topTitle;
     TextView centerTitle;
     TextView bottomTitle;
-    private List<SeatByAcReg> showList;
+    private ArrayList<SeatByAcReg> showList;
 
     @Override protected void onResume() {
         super.onResume();
@@ -104,6 +111,7 @@ public class EngineRoomActivity extends BaseActivity{
         if (data != null) {
             aircraftReg = data.getStringExtra(Constants.ACTION_AIRCRAFTREG);
             aircraftType = data.getStringExtra(Constants.ACTION_AIRCRAFTTYPE);
+            Bundle extras = data.getExtras();
         }
 
         mTopBarTitle.setText("机舱信息");
@@ -288,9 +296,11 @@ public class EngineRoomActivity extends BaseActivity{
         showSeatDetail();
     }
 
+    // 座椅列表，可以维护乘客信息
     private void showSeatDetail() {
        final  PassengerDao passengerDao = FlightApplication.getDaoSession().getPassengerDao();
         for ( int index = 0; index < showList.size() ; index ++) {
+
             final SeatByAcReg seatByAcReg = showList.get(index);
             LogUtil.LOGD(TAG, "排序后结果： "
                     + seatByAcReg.getXPos()
@@ -314,7 +324,7 @@ public class EngineRoomActivity extends BaseActivity{
                 et_passenger.setAdapter(new ArrayAdapter<String>(EngineRoomActivity.this, R.layout.list_item, names));
                 TextView tv_arm = (TextView) convertView.findViewById(R.id.tv_Arm);
                 final TextView et_weight = (EditText) convertView.findViewById(R.id.tv_weight);
-
+                showList.get(position).setSeatWeight(0f);
 
                 tv_seat.setText(seatByAcReg.getSeatCode());
                 if ("C".equalsIgnoreCase(seatByAcReg.getSeatType())) {
@@ -327,13 +337,18 @@ public class EngineRoomActivity extends BaseActivity{
                 }
                 tv_arm.setText(seatByAcReg.getAcTypeLb()+"");
                 et_weight.setText("0");
-                if (180 > seatByAcReg.getAcTypeSeatLimit()) {
-                    et_weight.setBackgroundColor(getResources().getColor(R.color.red));
-                } else {
-                    et_weight.setBackgroundResource(R.drawable.engineeroom_name_bg);
+
+                final Pair<String, String> stringStringPair =
+                        UserManager.getInstance().getInputNames().get(position);
+                if (stringStringPair != null) {
+                    et_passenger.setText(stringStringPair.first);
+                    et_weight.setText(stringStringPair.second);
+                    float wei = Float.parseFloat(
+                            stringStringPair.second);
+                    showList.get(position).setSeatWeight(wei);
+                    showList.get(position).setUserName(stringStringPair.first);
                 }
 
-                LogUtil.LOGD(TAG, "position ===== " + position);
                 et_passenger.addTextChangedListener(new TextWatcher() {
                     @Override
                     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -347,12 +362,18 @@ public class EngineRoomActivity extends BaseActivity{
 
                     @Override public void afterTextChanged(Editable s) {
                         if (!TextUtils.isEmpty(s.toString())) {
+                            String weight = "";
+                            if (UserManager.getInstance().getInputNames().get(position) != null)
+                                weight = UserManager.getInstance().getInputNames().get(position).second;
+                            UserManager.getInstance().getInputNames().put(position, new Pair<String, String>(s.toString(), weight));
                             showList.get(position).setUserName(s.toString());
                             List<Passenger> list = passengerDao.queryBuilder()
                                     .where(PassengerDao.Properties.UserName.eq(s.toString()))
                                     .list();
                             if (list != null && list.size() > 0) {
                                 et_weight.setText(list.get(0).getUserWeight()+"");
+                            } else {
+                                et_weight.setText("0");
                             }
                         }
                     }
@@ -370,6 +391,10 @@ public class EngineRoomActivity extends BaseActivity{
 
                     @Override public void afterTextChanged(Editable s) {
                         if (!TextUtils.isEmpty(s.toString())) {
+                            String name = "";
+                            if (UserManager.getInstance().getInputNames().get(position) != null)
+                                name = UserManager.getInstance().getInputNames().get(position).first;
+                            UserManager.getInstance().getInputNames().put(position, new Pair<String, String>(name, s.toString()));
                             float weight = 0;
                             try {
                                 weight = Float.parseFloat(s.toString());
@@ -387,7 +412,7 @@ public class EngineRoomActivity extends BaseActivity{
                 });
                 mSeatLinearLayout.addView(convertView);
             }
-            showList.get(position).setSeatWeight(180f);
+
 
         }
     }
@@ -461,23 +486,29 @@ public class EngineRoomActivity extends BaseActivity{
     }
 
 
+    int totalCount = 0;
     @Override public View.OnClickListener getRightOnClickListener() {
         return new View.OnClickListener() {
 
             @Override public void onClick(View v) {
-
-                for(SeatByAcReg seatByAcReg : seatList) {
+                for(SeatByAcReg seatByAcReg : showList) {
                     if (TextUtils.isEmpty(seatByAcReg.getUserName()) && ("机长".equals(seatByAcReg.getSeatCode()) || "副驾驶".equals(seatByAcReg.getSeatCode()))) {
                         ToastUtil.showToast(EngineRoomActivity.this, R.drawable.toast_warning, "座位 " + seatByAcReg.getSeatCode() + "不能为空 ！");
                         return;
                     } else if (seatByAcReg.getXPos() != 0) {
-                        if (seatByAcReg.getAcTypeSeatLimit() - seatByAcReg.getAcRegCargWeight()  - seatByAcReg.getSeatWeight() < 0) {
-                            ToastUtil.showToast(EngineRoomActivity.this, R.drawable.toast_warning, "第" + seatByAcReg.getSeatCode() + "座椅超过最后所允许的重量！");
+                        float weight = seatByAcReg.getAcTypeSeatLimit()
+                                - seatByAcReg.getAcRegCargWeight()
+                                - seatByAcReg.getAcRegSbWeight()
+                                - seatByAcReg.getSeatWeight();
+                        if (weight < 0 && totalCount < 4) {
+                            totalCount ++;
+                            ToastUtil.showToast(EngineRoomActivity.this, R.drawable.toast_warning,  seatByAcReg.getSeatCode() + "座椅超重量 : " + Math.abs(weight) + "kg");
                             return;
                         }
                     }
                 }
 
+                totalCount = 0;
                 /**
                  * 请求增加机上人员信息
                  * @param AircraftReg //机号
@@ -497,50 +528,27 @@ public class EngineRoomActivity extends BaseActivity{
                  * @param responseListner
                  */
 
-                final ArrayList<Integer> failSeatInfo  = new ArrayList<Integer>();
                 for (final SeatByAcReg seatByAcReg : showList) {
-                    if (seatByAcReg.getXPos() == 0) {
-                        continue;
-                    }
-                    if (UserManager.getInstance().getUser() == null)
-                        return;
-                    if (!TextUtils.isEmpty(seatByAcReg.getUserName())) {
-                        getMoccApi().addFlightCd(aircraftReg, seatByAcReg.getSeatId() + "",
-                                UserManager.getInstance().getAddFlightInfo().getFlightId(),
-                                seatByAcReg.getSeatCode(), seatByAcReg.getSeatType(),
-                                seatByAcReg.getAcTypeSeatLimit() + "", seatByAcReg.getAcTypeLb()+"",
-                                seatByAcReg.getAcRegCargWeight()+"", seatByAcReg.getAcTypeLb()+"",
-                                (seatByAcReg.getAcTypeSeatLimit() - seatByAcReg.getSeatWeight()) + "",
-                                seatByAcReg.getUserName(), seatByAcReg.getSeatWeight()+"",
-                                UserManager.getInstance().getUser().getUserCode(),
-                                DateFormatUtil.formatZDate(),
-                                new ResponseListner<GrantsByUserCodeResponse>() {
-                                    @Override
-                                    public void onResponse(GrantsByUserCodeResponse response) {
-                                        if (response != null
-                                                && response.ResponseObject != null
-                                                && response.ResponseObject.ResponseCode
-                                                == Constants.RESULT_OK) {
-
-                                        } else {
-                                            //上传飞机成员失败
-                                            failSeatInfo.add(seatByAcReg.getSeatId());
-                                        }
-                                    }
-
-                                    @Override public void onEmptyOrError(String message) {
-                                        LogUtil.LOGD(TAG, "上传飞机成员错误： " + message);
-                                        failSeatInfo.add(seatByAcReg.getSeatId());}
-                                });
+                    if (seatByAcReg.getXPos() != 0) {
+                        //货物 或 有人
+                        if (("C".equalsIgnoreCase(seatByAcReg.getSeatType()) && seatByAcReg.getSeatWeight() != 0) || !TextUtils.isEmpty(
+                                seatByAcReg.getUserName())) {
+                            long insert = DBManager.getInstance().insertUploadPerson(seatByAcReg);
+                            if (insert != 0)
+                                DBManager.getInstance().insertActionFeed(FeedType.ADD_FLIGHTPERSON,String.valueOf(insert));
+                        }
                     }
                 }
+                //更新座椅的操作时间
+                DBManager.getInstance().updateSeatByAcRegOpDate(showList);
 
                 Intent intent =
                             new Intent(EngineRoomActivity.this, RestrictionMapActivity.class);
                 intent.putExtra(Constants.ACTION_AIRCRAFTTYPE, aircraftType);
                 intent.putExtra(Constants.ACTION_AIRCRAFTREG, aircraftReg);
-                //intent.putExtra(Constants.ACTION_SEATLIST, seatList);
-                intent.putExtra(Constants.ACTION_FAILSEATINFOLIST, failSeatInfo);
+                intent.putExtra(Constants.ACTION_SEATLIST, showList);
+                Bundle bundle = new Bundle();
+                intent.putExtras(bundle);
                 startActivity(intent);
             }
         };
