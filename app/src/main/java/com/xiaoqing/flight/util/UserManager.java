@@ -58,6 +58,11 @@ public class UserManager {
         ApiServiceManager.getInstance().getAllAircraft();
         ApiServiceManager.getInstance().getSystemMessage(
                 DateFormatUtil.getTimes(DateFormatUtil.TIME_TWODAYS), null);
+        ApiServiceManager.getInstance().getAllSeat(null);
+        ApiServiceManager.getInstance().getAllFuleLimit(null);
+        ApiServiceManager.getInstance().getAllAcWeightLimit(null);
+        ApiServiceManager.getInstance().getAllAcSb(null);
+
     }
 
     private AddFlightInfo mAddFilghtInfo;

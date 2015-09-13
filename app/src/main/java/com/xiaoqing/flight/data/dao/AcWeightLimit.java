@@ -15,6 +15,7 @@ public class AcWeightLimit {
     private String WeightCg1;
     private String WeightCg2;
     private String OpUser;
+    private int SysVersion;
     private String OpDate;
 
     // KEEP FIELDS - put your custom fields here
@@ -27,13 +28,14 @@ public class AcWeightLimit {
         this.id = id;
     }
 
-    public AcWeightLimit(Long id, String AcType, String Weight, String WeightCg1, String WeightCg2, String OpUser, String OpDate) {
+    public AcWeightLimit(Long id, String AcType, String Weight, String WeightCg1, String WeightCg2, String OpUser, int SysVersion, String OpDate) {
         this.id = id;
         this.AcType = AcType;
         this.Weight = Weight;
         this.WeightCg1 = WeightCg1;
         this.WeightCg2 = WeightCg2;
         this.OpUser = OpUser;
+        this.SysVersion = SysVersion;
         this.OpDate = OpDate;
     }
 
@@ -83,6 +85,14 @@ public class AcWeightLimit {
 
     public void setOpUser(String OpUser) {
         this.OpUser = OpUser;
+    }
+
+    public int getSysVersion() {
+        return SysVersion;
+    }
+
+    public void setSysVersion(int SysVersion) {
+        this.SysVersion = SysVersion;
     }
 
     public String getOpDate() {

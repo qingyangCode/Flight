@@ -7,7 +7,7 @@ import java.util.ArrayList;
 /**
  * Created by QingYang on 15/8/8.
  */
-public class FuleLimitByAcType {
+public class FuleLimitResponse {
 
     public TResponseObject ResponseObject;
     public class TResponseObject{
@@ -27,11 +27,11 @@ public class FuleLimitByAcType {
     //    public String OpDate; //操作日期
     //}
 
-    public static FuleLimitByAcType parse(String jsonStr){
+    public static FuleLimitResponse parse(String jsonStr){
         Gson gson = new Gson();
         if(jsonStr.contains("\"ResponseData\":\"\""))
             jsonStr = jsonStr.replace("\"ResponseData\":\"\"","\"ResponseData\":{}");
-        FuleLimitByAcType fromJson = gson.fromJson(jsonStr, FuleLimitByAcType.class);
+        FuleLimitResponse fromJson = gson.fromJson(jsonStr, FuleLimitResponse.class);
         return fromJson;
     }
 

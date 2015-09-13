@@ -15,6 +15,7 @@ public class SystemNotice implements java.io.Serializable {
     private String StrSendUser;
     private String DtSendDate;
     private String MsustRead;
+    private int SysVersion;
 
     // KEEP FIELDS - put your custom fields here
     // KEEP FIELDS END
@@ -26,13 +27,14 @@ public class SystemNotice implements java.io.Serializable {
         this.id = id;
     }
 
-    public SystemNotice(Long id, String LMsgId, String StrMessageContent, String StrSendUser, String DtSendDate, String MsustRead) {
+    public SystemNotice(Long id, String LMsgId, String StrMessageContent, String StrSendUser, String DtSendDate, String MsustRead, int SysVersion) {
         this.id = id;
         this.LMsgId = LMsgId;
         this.StrMessageContent = StrMessageContent;
         this.StrSendUser = StrSendUser;
         this.DtSendDate = DtSendDate;
         this.MsustRead = MsustRead;
+        this.SysVersion = SysVersion;
     }
 
     public Long getId() {
@@ -81,6 +83,14 @@ public class SystemNotice implements java.io.Serializable {
 
     public void setMsustRead(String MsustRead) {
         this.MsustRead = MsustRead;
+    }
+
+    public int getSysVersion() {
+        return SysVersion;
+    }
+
+    public void setSysVersion(int SysVersion) {
+        this.SysVersion = SysVersion;
     }
 
     // KEEP METHODS - put your custom methods here

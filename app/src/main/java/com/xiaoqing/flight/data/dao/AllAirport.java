@@ -12,7 +12,7 @@ public class AllAirport {
     private Long id;
     private String Str4code;
     private String StrAirportName;
-    private Integer SysVersion;
+    private int SysVersion;
 
     // KEEP FIELDS - put your custom fields here
     // KEEP FIELDS END
@@ -24,7 +24,7 @@ public class AllAirport {
         this.id = id;
     }
 
-    public AllAirport(Long id, String Str4code, String StrAirportName, Integer SysVersion) {
+    public AllAirport(Long id, String Str4code, String StrAirportName, int SysVersion) {
         this.id = id;
         this.Str4code = Str4code;
         this.StrAirportName = StrAirportName;
@@ -55,11 +55,11 @@ public class AllAirport {
         this.StrAirportName = StrAirportName;
     }
 
-    public Integer getSysVersion() {
+    public int getSysVersion() {
         return SysVersion;
     }
 
-    public void setSysVersion(Integer SysVersion) {
+    public void setSysVersion(int SysVersion) {
         this.SysVersion = SysVersion;
     }
 

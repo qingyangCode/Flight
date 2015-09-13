@@ -249,7 +249,7 @@ public class AircraftPersonnelActivity extends BaseActivity {
                 passenger.setAircraftReg(aircraftReg);
                 passenger.setIsChecked(false);
                 passenger.setUserName(userName);
-                passenger.setUserWeight(Double.parseDouble(password));
+                passenger.setUserWeight(Float.parseFloat(password));
                 passengerList.add(passenger);
                 passengerDao.insert(passenger);
                 listViewAdapter.notifyDataSetChanged();

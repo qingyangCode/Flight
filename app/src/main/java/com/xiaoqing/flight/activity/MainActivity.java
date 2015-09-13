@@ -32,6 +32,7 @@ import com.xiaoqing.flight.network.ResponseListner;
 import com.xiaoqing.flight.network.synchronous.FeedType;
 import com.xiaoqing.flight.util.ApiServiceManager;
 import com.xiaoqing.flight.util.CommonProgressDialog;
+import com.xiaoqing.flight.util.CommonUtils;
 import com.xiaoqing.flight.util.Constants;
 import com.xiaoqing.flight.util.ToastUtil;
 import com.xiaoqing.flight.util.UserManager;
@@ -69,25 +70,8 @@ public class MainActivity extends BaseActivity {
 
     @Override protected void onResume() {
         super.onResume();
-
+        ApiServiceManager.getInstance().checkUpdate(MainActivity.this);
         UserManager.getInstance().setAddFlightSuccess(false);
-        //同步无网络下航班信息
-        ActionFeedDao actionFeedDao = FlightApplication.getDaoSession().getActionFeedDao();
-        List<ActionFeed> list = actionFeedDao.queryBuilder()
-                .where(ActionFeedDao.Properties.UserCode.eq(
-                        UserManager.getInstance().getUser().getUserCode()), ActionFeedDao.Properties.Feed_type.eq(
-                        FeedType.toInt(FeedType.ADD_PLAYINFO)))
-                .list();
-        if (list != null && list.size() > 0) {
-            ActionFeed actionFeed = list.get(0);
-            AddFlightInfoDao addFlightInfoDao = FlightApplication.getDaoSession().getAddFlightInfoDao();
-            List<AddFlightInfo> flightInfoList = addFlightInfoDao.queryBuilder()
-                    .where(AddFlightInfoDao.Properties.FlightId.eq(actionFeed.getFeed_id()))
-                    .list();
-            if (flightInfoList != null && flightInfoList.size() > 0) {
-                ApiServiceManager.getInstance().addFlightInfo(flightInfoList.get(0),null);
-            }
-        }
     }
 
     @Override public int getContentView() {

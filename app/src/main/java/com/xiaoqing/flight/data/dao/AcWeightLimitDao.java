@@ -29,7 +29,8 @@ public class AcWeightLimitDao extends AbstractDao<AcWeightLimit, Long> {
         public final static Property WeightCg1 = new Property(3, String.class, "WeightCg1", false, "WEIGHT_CG1");
         public final static Property WeightCg2 = new Property(4, String.class, "WeightCg2", false, "WEIGHT_CG2");
         public final static Property OpUser = new Property(5, String.class, "OpUser", false, "OP_USER");
-        public final static Property OpDate = new Property(6, String.class, "OpDate", false, "OP_DATE");
+        public final static Property SysVersion = new Property(6, int.class, "SysVersion", false, "SYS_VERSION");
+        public final static Property OpDate = new Property(7, String.class, "OpDate", false, "OP_DATE");
     };
 
 
@@ -51,7 +52,8 @@ public class AcWeightLimitDao extends AbstractDao<AcWeightLimit, Long> {
                 "'WEIGHT_CG1' TEXT," + // 3: WeightCg1
                 "'WEIGHT_CG2' TEXT," + // 4: WeightCg2
                 "'OP_USER' TEXT," + // 5: OpUser
-                "'OP_DATE' TEXT);"); // 6: OpDate
+                "'SYS_VERSION' INTEGER NOT NULL ," + // 6: SysVersion
+                "'OP_DATE' TEXT);"); // 7: OpDate
     }
 
     /** Drops the underlying database table. */
@@ -94,10 +96,11 @@ public class AcWeightLimitDao extends AbstractDao<AcWeightLimit, Long> {
         if (OpUser != null) {
             stmt.bindString(6, OpUser);
         }
+        stmt.bindLong(7, entity.getSysVersion());
  
         String OpDate = entity.getOpDate();
         if (OpDate != null) {
-            stmt.bindString(7, OpDate);
+            stmt.bindString(8, OpDate);
         }
     }
 
@@ -117,7 +120,8 @@ public class AcWeightLimitDao extends AbstractDao<AcWeightLimit, Long> {
             cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // WeightCg1
             cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // WeightCg2
             cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // OpUser
-            cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6) // OpDate
+            cursor.getInt(offset + 6), // SysVersion
+            cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7) // OpDate
         );
         return entity;
     }
@@ -131,7 +135,8 @@ public class AcWeightLimitDao extends AbstractDao<AcWeightLimit, Long> {
         entity.setWeightCg1(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
         entity.setWeightCg2(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
         entity.setOpUser(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
-        entity.setOpDate(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
+        entity.setSysVersion(cursor.getInt(offset + 6));
+        entity.setOpDate(cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7));
      }
     
     /** @inheritdoc */

@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import com.xiaoqing.flight.R;
+import com.xiaoqing.flight.util.ApiServiceManager;
+import com.xiaoqing.flight.util.CommonUtils;
 
 public class LauncherActivity extends Activity {
 

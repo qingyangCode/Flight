@@ -1,17 +1,18 @@
 package com.xiaoqing.flight.network;
 
 import com.xiaoqing.flight.entity.AcGrantsResponse;
-import com.xiaoqing.flight.entity.AcWeightLimitByAcTypeResponse;
+import com.xiaoqing.flight.entity.AcWeightLimitResponse;
 import com.xiaoqing.flight.entity.AddFlightInfoResponse;
+import com.xiaoqing.flight.entity.AllAcSbResponse;
 import com.xiaoqing.flight.entity.AllAcTypeResponse;
-import com.xiaoqing.flight.entity.AllAirCraftResponse;
 import com.xiaoqing.flight.entity.AllAirportResponse;
 import com.xiaoqing.flight.entity.AllSbResponse;
 import com.xiaoqing.flight.entity.FlightidResponse;
-import com.xiaoqing.flight.entity.FuleLimitByAcType;
+import com.xiaoqing.flight.entity.FuleLimitResponse;
 import com.xiaoqing.flight.entity.GrantsByUserCodeResponse;
 import com.xiaoqing.flight.entity.MessageResponse;
 import com.xiaoqing.flight.entity.SeatByAcRegResponse;
+import com.xiaoqing.flight.entity.UpdateInfoResponse;
 import com.xiaoqing.flight.entity.ValidCaptionResponse;
 
 /**
@@ -68,7 +69,7 @@ public interface MoccApi {
      * @param SysVersion 版本信息
      */
     public void getFuleLimitByAcType(String AircraftType, String PortLimit, String TofWeightLimit,
-            String LandWeightLimit, String Mzfw, String OpDate, String SysVersion, ResponseListner<FuleLimitByAcType> responseListner);
+            String LandWeightLimit, String Mzfw, String OpDate, String SysVersion, ResponseListner<FuleLimitResponse> responseListner);
 
     /**
      * 获取机型重心限制信息表
@@ -82,7 +83,7 @@ public interface MoccApi {
      * @param SysVersion 版本信息
      */
     public void getAcWeightLimitByAcType(String AircraftType, String PortLimit, String TofWeightLimit, String LandWeightLimit, String Mzfw, String OpDate,
-            String SysVersion, ResponseListner<AcWeightLimitByAcTypeResponse> responseListner);
+            String SysVersion, ResponseListner<AcWeightLimitResponse> responseListner);
 
     /**
      * 获取所有机型信息
@@ -183,4 +184,35 @@ public interface MoccApi {
      * @param responseListner
      */
     void getAllAirPort(ResponseListner<AllAirportResponse> responseListner);
+
+    /**
+     * 获取所有飞机座椅信息
+     * @param responseListner
+     */
+    void getAllSeat(ResponseListner<SeatByAcRegResponse> responseListner);
+
+    /**
+     * 获取所有机型燃油力矩
+     * @param responseListner
+     */
+    void getAllFuleLimit(ResponseListner<FuleLimitResponse> responseListner);
+
+    /**
+     * 所有飞机重心限制信息
+     * @param responseListner
+     */
+    void getAllAcWeightLimit(ResponseListner<AcWeightLimitResponse> responseListner);
+
+    /**
+     * 检查版本更新
+     * @param versionCode
+     * @param responseListner
+     */
+    void checkUpdate(String versionCode, ResponseListner<UpdateInfoResponse> responseListner);
+
+    /**
+     * 获取所有飞机上的设备信息
+     * @param responseListner
+     */
+    void getAllAcSb(ResponseListner<AllAcSbResponse> responseListner);
 }

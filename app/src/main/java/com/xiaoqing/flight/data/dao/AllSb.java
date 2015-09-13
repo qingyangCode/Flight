@@ -12,9 +12,10 @@ public class AllSb {
     private Long id;
     private Integer SbId;
     private String SbName;
-    private Double SbWeight;
+    private Float SbWeight;
     private String AcType;
     private Integer SeatId;
+    private int SysVersion;
 
     // KEEP FIELDS - put your custom fields here
     // KEEP FIELDS END
@@ -26,13 +27,14 @@ public class AllSb {
         this.id = id;
     }
 
-    public AllSb(Long id, Integer SbId, String SbName, Double SbWeight, String AcType, Integer SeatId) {
+    public AllSb(Long id, Integer SbId, String SbName, Float SbWeight, String AcType, Integer SeatId, int SysVersion) {
         this.id = id;
         this.SbId = SbId;
         this.SbName = SbName;
         this.SbWeight = SbWeight;
         this.AcType = AcType;
         this.SeatId = SeatId;
+        this.SysVersion = SysVersion;
     }
 
     public Long getId() {
@@ -59,11 +61,11 @@ public class AllSb {
         this.SbName = SbName;
     }
 
-    public Double getSbWeight() {
+    public Float getSbWeight() {
         return SbWeight;
     }
 
-    public void setSbWeight(Double SbWeight) {
+    public void setSbWeight(Float SbWeight) {
         this.SbWeight = SbWeight;
     }
 
@@ -81,6 +83,14 @@ public class AllSb {
 
     public void setSeatId(Integer SeatId) {
         this.SeatId = SeatId;
+    }
+
+    public int getSysVersion() {
+        return SysVersion;
+    }
+
+    public void setSysVersion(int SysVersion) {
+        this.SysVersion = SysVersion;
     }
 
     // KEEP METHODS - put your custom methods here

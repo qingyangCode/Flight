@@ -27,10 +27,10 @@ public class AcGrantsDao extends AbstractDao<AcGrants, Long> {
         public final static Property UserCode = new Property(1, String.class, "UserCode", false, "USER_CODE");
         public final static Property AcReg = new Property(2, String.class, "AcReg", false, "AC_REG");
         public final static Property AcType = new Property(3, String.class, "AcType", false, "AC_TYPE");
-        public final static Property AcRegBw = new Property(4, Double.class, "AcRegBw", false, "AC_REG_BW");
-        public final static Property AcLj = new Property(5, Double.class, "AcLj", false, "AC_LJ");
+        public final static Property AcRegBw = new Property(4, Float.class, "AcRegBw", false, "AC_REG_BW");
+        public final static Property AcLj = new Property(5, Float.class, "AcLj", false, "AC_LJ");
         public final static Property IsCaption = new Property(6, String.class, "IsCaption", false, "IS_CAPTION");
-        public final static Property SysVersion = new Property(7, Integer.class, "SysVersion", false, "SYS_VERSION");
+        public final static Property SysVersion = new Property(7, int.class, "SysVersion", false, "SYS_VERSION");
     };
 
 
@@ -53,7 +53,7 @@ public class AcGrantsDao extends AbstractDao<AcGrants, Long> {
                 "'AC_REG_BW' REAL," + // 4: AcRegBw
                 "'AC_LJ' REAL," + // 5: AcLj
                 "'IS_CAPTION' TEXT," + // 6: IsCaption
-                "'SYS_VERSION' INTEGER);"); // 7: SysVersion
+                "'SYS_VERSION' INTEGER NOT NULL );"); // 7: SysVersion
     }
 
     /** Drops the underlying database table. */
@@ -87,12 +87,12 @@ public class AcGrantsDao extends AbstractDao<AcGrants, Long> {
             stmt.bindString(4, AcType);
         }
  
-        Double AcRegBw = entity.getAcRegBw();
+        Float AcRegBw = entity.getAcRegBw();
         if (AcRegBw != null) {
             stmt.bindDouble(5, AcRegBw);
         }
  
-        Double AcLj = entity.getAcLj();
+        Float AcLj = entity.getAcLj();
         if (AcLj != null) {
             stmt.bindDouble(6, AcLj);
         }
@@ -101,11 +101,7 @@ public class AcGrantsDao extends AbstractDao<AcGrants, Long> {
         if (IsCaption != null) {
             stmt.bindString(7, IsCaption);
         }
- 
-        Integer SysVersion = entity.getSysVersion();
-        if (SysVersion != null) {
-            stmt.bindLong(8, SysVersion);
-        }
+        stmt.bindLong(8, entity.getSysVersion());
     }
 
     /** @inheritdoc */
@@ -122,10 +118,10 @@ public class AcGrantsDao extends AbstractDao<AcGrants, Long> {
             cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // UserCode
             cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // AcReg
             cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // AcType
-            cursor.isNull(offset + 4) ? null : cursor.getDouble(offset + 4), // AcRegBw
-            cursor.isNull(offset + 5) ? null : cursor.getDouble(offset + 5), // AcLj
+            cursor.isNull(offset + 4) ? null : cursor.getFloat(offset + 4), // AcRegBw
+            cursor.isNull(offset + 5) ? null : cursor.getFloat(offset + 5), // AcLj
             cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6), // IsCaption
-            cursor.isNull(offset + 7) ? null : cursor.getInt(offset + 7) // SysVersion
+            cursor.getInt(offset + 7) // SysVersion
         );
         return entity;
     }
@@ -137,10 +133,10 @@ public class AcGrantsDao extends AbstractDao<AcGrants, Long> {
         entity.setUserCode(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
         entity.setAcReg(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
         entity.setAcType(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
-        entity.setAcRegBw(cursor.isNull(offset + 4) ? null : cursor.getDouble(offset + 4));
-        entity.setAcLj(cursor.isNull(offset + 5) ? null : cursor.getDouble(offset + 5));
+        entity.setAcRegBw(cursor.isNull(offset + 4) ? null : cursor.getFloat(offset + 4));
+        entity.setAcLj(cursor.isNull(offset + 5) ? null : cursor.getFloat(offset + 5));
         entity.setIsCaption(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
-        entity.setSysVersion(cursor.isNull(offset + 7) ? null : cursor.getInt(offset + 7));
+        entity.setSysVersion(cursor.getInt(offset + 7));
      }
     
     /** @inheritdoc */

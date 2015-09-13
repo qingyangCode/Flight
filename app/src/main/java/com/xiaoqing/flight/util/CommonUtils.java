@@ -1,8 +1,11 @@
 package com.xiaoqing.flight.util;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import com.xiaoqing.flight.entity.BaseResponse;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,4 +42,29 @@ public class CommonUtils {
 		}
 	}
 
+
+	public static String getVersionName(Context context) {
+		try {
+			return context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
+		} catch (PackageManager.NameNotFoundException e) {
+			e.printStackTrace();
+		}
+		return "1";
+	}
+
+	public static int getVersionCode(Context context) {
+		try {
+			return context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionCode;
+		} catch (PackageManager.NameNotFoundException e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
+
+	public static void startWebView(Context context, String url) {
+		Intent intent = new Intent(Intent.ACTION_VIEW);
+		intent.setData(Uri.parse(url));
+		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		context.startActivity(intent);
+	}
 }

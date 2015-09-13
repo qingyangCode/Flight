@@ -13,10 +13,10 @@ public class AcGrants {
     private String UserCode;
     private String AcReg;
     private String AcType;
-    private Double AcRegBw;
-    private Double AcLj;
+    private Float AcRegBw;
+    private Float AcLj;
     private String IsCaption;
-    private Integer SysVersion;
+    private int SysVersion;
 
     // KEEP FIELDS - put your custom fields here
     // KEEP FIELDS END
@@ -28,7 +28,7 @@ public class AcGrants {
         this.id = id;
     }
 
-    public AcGrants(Long id, String UserCode, String AcReg, String AcType, Double AcRegBw, Double AcLj, String IsCaption, Integer SysVersion) {
+    public AcGrants(Long id, String UserCode, String AcReg, String AcType, Float AcRegBw, Float AcLj, String IsCaption, int SysVersion) {
         this.id = id;
         this.UserCode = UserCode;
         this.AcReg = AcReg;
@@ -71,19 +71,19 @@ public class AcGrants {
         this.AcType = AcType;
     }
 
-    public Double getAcRegBw() {
+    public Float getAcRegBw() {
         return AcRegBw;
     }
 
-    public void setAcRegBw(Double AcRegBw) {
+    public void setAcRegBw(Float AcRegBw) {
         this.AcRegBw = AcRegBw;
     }
 
-    public Double getAcLj() {
+    public Float getAcLj() {
         return AcLj;
     }
 
-    public void setAcLj(Double AcLj) {
+    public void setAcLj(Float AcLj) {
         this.AcLj = AcLj;
     }
 
@@ -95,11 +95,11 @@ public class AcGrants {
         this.IsCaption = IsCaption;
     }
 
-    public Integer getSysVersion() {
+    public int getSysVersion() {
         return SysVersion;
     }
 
-    public void setSysVersion(Integer SysVersion) {
+    public void setSysVersion(int SysVersion) {
         this.SysVersion = SysVersion;
     }
 

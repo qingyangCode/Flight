@@ -64,7 +64,7 @@
                     android:gravity="center"
                     android:paddingLeft="5dp"
                     android:paddingRight="5dp"
-                    android:background="@drawable/engineeroom_name_bg"
+                    android:background="@null"
                     android:text=""
                     android:inputType="number"
                     />
@@ -223,6 +223,25 @@
                     <!--android:textSize="18dp"-->
                     <!--android:gravity="center"-->
                     <!--/>-->
+            </LinearLayout>
+            <View style="@style/common_line_1_style"/>
+            <LinearLayout style="@style/horization_layout">
+
+                <TextView
+                    style="@style/item_key"
+                    android:text="起飞重心"
+                    android:layout_weight="0.3"
+                    />
+
+                <TextView
+                    android:id="@+id/tv_flightCg"
+                    style="@style/item_value"
+                    android:layout_weight="0.5"
+                    android:gravity="center"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:text="--"
+                    />
             </LinearLayout>
             <View style="@style/common_line_1_style"/>
             <LinearLayout style="@style/horization_layout">

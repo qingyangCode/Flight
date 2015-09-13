@@ -1,40 +1,41 @@
 package com.xiaoqing.flight.util;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import com.xiaoqing.flight.FlightApplication;
 import com.xiaoqing.flight.data.dao.AcGrants;
 import com.xiaoqing.flight.data.dao.ActionFeed;
 import com.xiaoqing.flight.data.dao.ActionFeedDao;
 import com.xiaoqing.flight.data.dao.AddFlightInfo;
+import com.xiaoqing.flight.data.dao.AllAcSb;
 import com.xiaoqing.flight.data.dao.AllAircraft;
 import com.xiaoqing.flight.data.dao.AllAircraftDao;
 import com.xiaoqing.flight.data.dao.AllAirport;
-import com.xiaoqing.flight.data.dao.AllSb;
-import com.xiaoqing.flight.data.dao.AllSbDao;
-import com.xiaoqing.flight.data.dao.FuleLimit;
-import com.xiaoqing.flight.data.dao.FuleLimitDao;
 import com.xiaoqing.flight.data.dao.ReadSystemNotice;
 import com.xiaoqing.flight.data.dao.ReadSystemNoticeDao;
-import com.xiaoqing.flight.data.dao.SeatByAcReg;
-import com.xiaoqing.flight.data.dao.SeatByAcRegDao;
 import com.xiaoqing.flight.data.dao.SystemNotice;
 import com.xiaoqing.flight.data.dao.SystemNoticeDao;
 import com.xiaoqing.flight.data.dao.UploadAirPerson;
 import com.xiaoqing.flight.data.dao.UploadAirPersonDao;
 import com.xiaoqing.flight.data.dao.User;
 import com.xiaoqing.flight.entity.AcGrantsResponse;
+import com.xiaoqing.flight.entity.AcWeightLimitResponse;
 import com.xiaoqing.flight.entity.AddFlightInfoResponse;
+import com.xiaoqing.flight.entity.AllAcSbResponse;
 import com.xiaoqing.flight.entity.AllAcTypeResponse;
 import com.xiaoqing.flight.entity.AllAirCraftResponse;
 import com.xiaoqing.flight.entity.AllAirportResponse;
 import com.xiaoqing.flight.entity.AllSbResponse;
 import com.xiaoqing.flight.entity.AllUsersResponse;
 import com.xiaoqing.flight.entity.FlightidResponse;
-import com.xiaoqing.flight.entity.FuleLimitByAcType;
+import com.xiaoqing.flight.entity.FuleLimitResponse;
 import com.xiaoqing.flight.entity.GrantsByUserCodeResponse;
 import com.xiaoqing.flight.entity.MessageResponse;
 import com.xiaoqing.flight.entity.SeatByAcRegResponse;
+import com.xiaoqing.flight.entity.UpdateInfoResponse;
 import com.xiaoqing.flight.network.MoccApi;
 import com.xiaoqing.flight.network.ResponseListner;
 import com.xiaoqing.flight.network.synchronous.FeedType;
@@ -132,7 +133,7 @@ public class ApiServiceManager {
                             if (response != null
                                     && response.ResponseObject.ResponseCode == Constants.RESULT_OK) {
 
-                                DBManager.getInstance().insertSeatByAcReg(aircraftReg, response.ResponseObject.ResponseData.IAppObject);
+                                DBManager.getInstance().insertSeatByAcReg(response.ResponseObject.ResponseData.IAppObject);
                                 if (responseResponseListner != null)
                                     responseResponseListner.onResponse(response);
                             }
@@ -204,17 +205,17 @@ public class ApiServiceManager {
      * @param responseListner
      */
     public void getFuleLimitByAcType(final String AircraftType, String PortLimit, String TofWeightLimit,
-            String LandWeightLimit, String Mzfw, String OpDate, String SysVersion, final ResponseListner<FuleLimitByAcType> responseListner) {
+            String LandWeightLimit, String Mzfw, String OpDate, String SysVersion, final ResponseListner<FuleLimitResponse> responseListner) {
 
         FlightApplication.getMoccApi().getFuleLimitByAcType(AircraftType, PortLimit, TofWeightLimit,
                 LandWeightLimit, Mzfw, OpDate, SysVersion,
-                new ResponseListner<FuleLimitByAcType>() {
-                    @Override public void onResponse(FuleLimitByAcType response) {
+                new ResponseListner<FuleLimitResponse>() {
+                    @Override public void onResponse(FuleLimitResponse response) {
                         if (response != null
                                 && response.ResponseObject != null
                                 && response.ResponseObject.ResponseCode == Constants.RESULT_OK) {
                             DBManager.getInstance()
-                                    .insertFuleLimit(AircraftType,
+                                    .insertFuleLimit(
                                             response.ResponseObject.ResponseData.IAppObject);
                         }
                         if (responseListner != null) responseListner.onResponse(response);
@@ -408,8 +409,7 @@ public class ApiServiceManager {
                 FlightApplication.getDaoSession().getUploadAirPersonDao();
         ActionFeedDao actionFeedDao = FlightApplication.getDaoSession().getActionFeedDao();
         List<ActionFeed> list = actionFeedDao.queryBuilder()
-                .where(ActionFeedDao.Properties.Feed_type.eq(
-                        FeedType.toInt(FeedType.ADD_FLIGHTPERSON)))
+                .where(ActionFeedDao.Properties.Feed_type.eq(FeedType.toInt(FeedType.ADD_FLIGHTPERSON)))
                 .list();
         //所有待同步数据
         if (list != null && list.size() > 0) {
@@ -423,7 +423,7 @@ public class ApiServiceManager {
                         uploadAirPerson.getSeatCode(), uploadAirPerson.getSeatType(),
                         uploadAirPerson.getAcTypeSeatLimit() + "", uploadAirPerson.getAcTypeLb()+"",
                         uploadAirPerson.getAcRegCargWeight()+"", uploadAirPerson.getAcTypeLb()+"",
-                        (uploadAirPerson.getAcTypeSeatLimit() - uploadAirPerson.getRealWeight()) + "",
+                        uploadAirPerson.getSeatLastLimit() + "",
                         uploadAirPerson.getPassagerName(), uploadAirPerson.getRealWeight()+"",
                         UserManager.getInstance().getUser().getUserCode(),
                         DateFormatUtil.formatZDate(),
@@ -454,8 +454,140 @@ public class ApiServiceManager {
                         });
             }
         }
-
-
-
     }
+
+    /**
+     * 获取所有机型座椅
+     * @param responseListner
+     */
+    public void getAllSeat(final ResponseListner<SeatByAcRegResponse> responseListner) {
+        getMoccApi().getAllSeat(new ResponseListner<SeatByAcRegResponse>() {
+            @Override public void onResponse(SeatByAcRegResponse response) {
+                if (responseListner != null)
+                    responseListner.onResponse(response);
+                if (response != null && response.ResponseObject != null && response.ResponseObject.ResponseData != null
+                        && response.ResponseObject.ResponseData.IAppObject != null) {
+                        DBManager.getInstance().insertSeatByAcReg(response.ResponseObject.ResponseData.IAppObject);
+                }
+            }
+
+            @Override public void onEmptyOrError(String message) {
+                if(responseListner != null) responseListner.onEmptyOrError(message);
+            }
+        });
+    }
+
+    /**
+     * 获取所有机型燃油力矩表
+     * @param responseListner
+     */
+    public void getAllFuleLimit(final ResponseListner<FuleLimitResponse> responseListner) {
+        getMoccApi().getAllFuleLimit(new ResponseListner<FuleLimitResponse>() {
+            @Override public void onResponse(FuleLimitResponse response) {
+                if (responseListner != null) responseListner.onResponse(response);
+                if (response != null
+                        && response.ResponseObject != null
+                        && response.ResponseObject.ResponseData != null
+                        && response.ResponseObject.ResponseData.IAppObject != null) {
+                    DBManager.getInstance()
+                            .insertFuleLimit(response.ResponseObject.ResponseData.IAppObject);
+                }
+            }
+
+            @Override public void onEmptyOrError(String message) {
+                if (responseListner != null) responseListner.onEmptyOrError(message);
+            }
+        });
+    }
+
+    public void getAllAcWeightLimit(final ResponseListner<AcWeightLimitResponse> responseListner) {
+        getMoccApi().getAllAcWeightLimit(new ResponseListner<AcWeightLimitResponse>() {
+            @Override public void onResponse(AcWeightLimitResponse response) {
+                if (response != null
+                        && response.ResponseObject != null
+                        && response.ResponseObject.ResponseData != null
+                        && response.ResponseObject.ResponseData.IAppObject != null) {
+                    DBManager.getInstance()
+                            .insertAllAcWeightLimit(
+                                    response.ResponseObject.ResponseData.IAppObject);
+                }
+            }
+
+            @Override public void onEmptyOrError(String message) {
+                if (responseListner != null) responseListner.onEmptyOrError(message);
+            }
+        });
+    }
+
+    public void checkUpdate(final Context context) {
+        getMoccApi().checkUpdate(CommonUtils.getVersionName(context),
+                new ResponseListner<UpdateInfoResponse>() {
+
+                    @Override public void onResponse(UpdateInfoResponse response) {
+                        if (response == null
+                                || response.ResponseObject == null
+                                || response.ResponseObject.ResponseCode != Constants.RESULT_OK
+                                || response.ResponseObject.ResponseData == null) {
+                            return;
+                        }
+                        final UpdateInfoResponse.UpdateInfo t =
+                                response.ResponseObject.ResponseData.IAppObject;
+                        if (null != t) {
+                            switch (String.valueOf(CommonUtils.getVersionCode(context))
+                                    .compareTo(t.getVersion())) {
+                                case 0: // 版本一致,不更新
+                                case 1: // 当前版本更大,不更新
+                                    //    Toast.makeText(activity, "当前版本为最新版本", Toast.LENGTH_SHORT).show();
+                                    break;
+                                default: // 低版本，更新
+                                    // 加入红点提示
+                                    new AlertDialog.Builder((Activity) context).setTitle("版本升级")
+                                            .setMessage(t.getContent())
+                                            .setNegativeButton("立即更新",
+                                                    new DialogInterface.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(DialogInterface dialog,
+                                                                int which) {
+                                                            CommonUtils.startWebView(context,
+                                                                    t.getUrl());
+                                                        }
+                                                    })
+                                            .setPositiveButton("忽略本次",
+                                                    new DialogInterface.OnClickListener() {
+
+                                                        @Override
+                                                        public void onClick(DialogInterface dialog,
+                                                                int which) {
+
+                                                        }
+                                                    })
+                                            .create()
+                                            .show();
+                                    break;
+                            }
+                        }
+                    }
+
+                    @Override public void onEmptyOrError(String message) {
+                    }
+                });
+    }
+
+
+    public void getAllAcSb(ResponseListner<AllAcSb> responseListner) {
+        getMoccApi().getAllAcSb(new ResponseListner<AllAcSbResponse>() {
+            @Override public void onResponse(AllAcSbResponse response) {
+                if (response != null && response.ResponseObject != null && response.ResponseObject.ResponseCode == Constants.RESULT_OK && response.ResponseObject.ResponseData != null) {
+                    DBManager.getInstance().insertAllAcSb(response.ResponseObject.ResponseData.IAppObject);
+                }
+            }
+
+            @Override public void onEmptyOrError(String message) {
+
+            }
+        });
+    }
+
+
 }
+

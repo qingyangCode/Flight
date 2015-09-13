@@ -26,9 +26,10 @@ public class AllSbDao extends AbstractDao<AllSb, Long> {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
         public final static Property SbId = new Property(1, Integer.class, "SbId", false, "SB_ID");
         public final static Property SbName = new Property(2, String.class, "SbName", false, "SB_NAME");
-        public final static Property SbWeight = new Property(3, Double.class, "SbWeight", false, "SB_WEIGHT");
+        public final static Property SbWeight = new Property(3, Float.class, "SbWeight", false, "SB_WEIGHT");
         public final static Property AcType = new Property(4, String.class, "AcType", false, "AC_TYPE");
         public final static Property SeatId = new Property(5, Integer.class, "SeatId", false, "SEAT_ID");
+        public final static Property SysVersion = new Property(6, int.class, "SysVersion", false, "SYS_VERSION");
     };
 
 
@@ -49,7 +50,8 @@ public class AllSbDao extends AbstractDao<AllSb, Long> {
                 "'SB_NAME' TEXT," + // 2: SbName
                 "'SB_WEIGHT' REAL," + // 3: SbWeight
                 "'AC_TYPE' TEXT," + // 4: AcType
-                "'SEAT_ID' INTEGER);"); // 5: SeatId
+                "'SEAT_ID' INTEGER," + // 5: SeatId
+                "'SYS_VERSION' INTEGER NOT NULL );"); // 6: SysVersion
     }
 
     /** Drops the underlying database table. */
@@ -78,7 +80,7 @@ public class AllSbDao extends AbstractDao<AllSb, Long> {
             stmt.bindString(3, SbName);
         }
  
-        Double SbWeight = entity.getSbWeight();
+        Float SbWeight = entity.getSbWeight();
         if (SbWeight != null) {
             stmt.bindDouble(4, SbWeight);
         }
@@ -92,6 +94,7 @@ public class AllSbDao extends AbstractDao<AllSb, Long> {
         if (SeatId != null) {
             stmt.bindLong(6, SeatId);
         }
+        stmt.bindLong(7, entity.getSysVersion());
     }
 
     /** @inheritdoc */
@@ -107,9 +110,10 @@ public class AllSbDao extends AbstractDao<AllSb, Long> {
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
             cursor.isNull(offset + 1) ? null : cursor.getInt(offset + 1), // SbId
             cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // SbName
-            cursor.isNull(offset + 3) ? null : cursor.getDouble(offset + 3), // SbWeight
+            cursor.isNull(offset + 3) ? null : cursor.getFloat(offset + 3), // SbWeight
             cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // AcType
-            cursor.isNull(offset + 5) ? null : cursor.getInt(offset + 5) // SeatId
+            cursor.isNull(offset + 5) ? null : cursor.getInt(offset + 5), // SeatId
+            cursor.getInt(offset + 6) // SysVersion
         );
         return entity;
     }
@@ -120,9 +124,10 @@ public class AllSbDao extends AbstractDao<AllSb, Long> {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
         entity.setSbId(cursor.isNull(offset + 1) ? null : cursor.getInt(offset + 1));
         entity.setSbName(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
-        entity.setSbWeight(cursor.isNull(offset + 3) ? null : cursor.getDouble(offset + 3));
+        entity.setSbWeight(cursor.isNull(offset + 3) ? null : cursor.getFloat(offset + 3));
         entity.setAcType(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
         entity.setSeatId(cursor.isNull(offset + 5) ? null : cursor.getInt(offset + 5));
+        entity.setSysVersion(cursor.getInt(offset + 6));
      }
     
     /** @inheritdoc */

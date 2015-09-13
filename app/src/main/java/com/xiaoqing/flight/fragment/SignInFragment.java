@@ -11,6 +11,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import com.xiaoqing.flight.FlightApplication;
@@ -89,9 +90,13 @@ public class SignInFragment extends BaseFragment {
                     if (response != null && response.ResponseObject != null) {
                         if(response.ResponseObject.ResponseData != null && response.ResponseObject.ResponseCode == Constants.RESULT_OK) {
                             User iAppObject = response.ResponseObject.ResponseData.IAppObject;
-                            iAppObject.setCodeCheck(response.getCodeCheck());
-                            nativeToMain(iAppObject);
-                            UserManager.getInstance().onLogin();
+                            if ("S".equalsIgnoreCase(iAppObject.getGrant_S_M())) {
+                                ToastUtil.showToast(getActivity(), R.drawable.toast_warning, "当前用户权限不足，请联系管理员");
+                            } else {
+                                iAppObject.setCodeCheck(response.getCodeCheck());
+                                nativeToMain(iAppObject);
+                                UserManager.getInstance().onLogin();
+                            }
 
                         } else {
                             String message = response.ResponseObject.ResponseErr;
@@ -106,26 +111,34 @@ public class SignInFragment extends BaseFragment {
                 @Override public void onEmptyOrError(String message) {
                     progressDialog.dismiss();
                     mLayoutTop.setVisibility(View.GONE);
+                    //siginInByDB(userName, password, progressDialog);
                     ToastUtil.showToast(getActivity(), R.drawable.toast_warning, TextUtils.isEmpty(message)? getString(R.string.get_data_error) : message);
                 }
             });
         } else {
-            UserDao userDao = FlightApplication.getDaoSession().getUserDao();
-            List<User> list = userDao.queryBuilder()
-                    .where(UserDao.Properties.UserCode.eq(userName),
-                            UserDao.Properties.UserPassWord.eq(password)).list();
-            progressDialog.dismiss();
-            if (list != null && list.size() > 0) {
-                mLayoutTop.setVisibility(View.GONE);
-                //UserManager.getInstance().getSystemMessage();
-                User userInfo = list.get(0);
-                if(userInfo != null) {
-                    nativeToMain(userInfo);
-                }
+            siginInByDB(userName, password, progressDialog);
+        }
+    }
+
+    private void siginInByDB(String userName, String password,
+            CommonProgressDialog progressDialog) {
+        UserDao userDao = FlightApplication.getDaoSession().getUserDao();
+        List<User> list = userDao.queryBuilder()
+                .where(UserDao.Properties.UserCode.eq(userName),
+                        UserDao.Properties.UserPassWord.eq(password)).list();
+        progressDialog.dismiss();
+        if (list != null && list.size() > 0) {
+            mLayoutTop.setVisibility(View.GONE);
+            //UserManager.getInstance().getSystemMessage();
+            User userInfo = list.get(0);
+            if(userInfo != null && "M".equalsIgnoreCase(userInfo.getGrant_S_M())) {
+                nativeToMain(userInfo);
             } else {
-                ToastUtil.showToast(getActivity(), R.drawable.toast_warning,
-                        getString(R.string.local_user_not_exit));
+                ToastUtil.showToast(getActivity(), R.drawable.toast_warning, "当前用户权限不足，请联系管理员");
             }
+        } else {
+            ToastUtil.showToast(getActivity(), R.drawable.toast_warning,
+                    getString(R.string.local_user_not_exit));
         }
     }
 

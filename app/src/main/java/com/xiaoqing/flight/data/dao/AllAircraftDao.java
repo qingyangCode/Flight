@@ -28,7 +28,7 @@ public class AllAircraftDao extends AbstractDao<AllAircraft, Long> {
         public final static Property UserCode = new Property(2, String.class, "UserCode", false, "USER_CODE");
         public final static Property AircraftType = new Property(3, String.class, "AircraftType", false, "AIRCRAFT_TYPE");
         public final static Property Bw = new Property(4, Integer.class, "Bw", false, "BW");
-        public final static Property Lj = new Property(5, Double.class, "Lj", false, "LJ");
+        public final static Property Lj = new Property(5, Float.class, "Lj", false, "LJ");
         public final static Property LayoutPic = new Property(6, String.class, "LayoutPic", false, "LAYOUT_PIC");
         public final static Property OpDate = new Property(7, String.class, "OpDate", false, "OP_DATE");
         public final static Property SysVersion = new Property(8, Integer.class, "SysVersion", false, "SYS_VERSION");
@@ -96,7 +96,7 @@ public class AllAircraftDao extends AbstractDao<AllAircraft, Long> {
             stmt.bindLong(5, Bw);
         }
  
-        Double Lj = entity.getLj();
+        Float Lj = entity.getLj();
         if (Lj != null) {
             stmt.bindDouble(6, Lj);
         }
@@ -137,7 +137,7 @@ public class AllAircraftDao extends AbstractDao<AllAircraft, Long> {
             cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // UserCode
             cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // AircraftType
             cursor.isNull(offset + 4) ? null : cursor.getInt(offset + 4), // Bw
-            cursor.isNull(offset + 5) ? null : cursor.getDouble(offset + 5), // Lj
+            cursor.isNull(offset + 5) ? null : cursor.getFloat(offset + 5), // Lj
             cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6), // LayoutPic
             cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7), // OpDate
             cursor.isNull(offset + 8) ? null : cursor.getInt(offset + 8), // SysVersion
@@ -154,7 +154,7 @@ public class AllAircraftDao extends AbstractDao<AllAircraft, Long> {
         entity.setUserCode(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
         entity.setAircraftType(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
         entity.setBw(cursor.isNull(offset + 4) ? null : cursor.getInt(offset + 4));
-        entity.setLj(cursor.isNull(offset + 5) ? null : cursor.getDouble(offset + 5));
+        entity.setLj(cursor.isNull(offset + 5) ? null : cursor.getFloat(offset + 5));
         entity.setLayoutPic(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
         entity.setOpDate(cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7));
         entity.setSysVersion(cursor.isNull(offset + 8) ? null : cursor.getInt(offset + 8));

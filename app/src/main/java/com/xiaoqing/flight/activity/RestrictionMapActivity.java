@@ -3,10 +3,12 @@ package com.xiaoqing.flight.activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
+import android.os.Handler;
+import android.os.Message;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.text.method.PasswordTransformationMethod;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -25,6 +27,8 @@ import com.xiaoqing.flight.data.dao.AcGrants;
 import com.xiaoqing.flight.data.dao.AcGrantsDao;
 import com.xiaoqing.flight.data.dao.AcWeightLimit;
 import com.xiaoqing.flight.data.dao.AddFlightInfo;
+import com.xiaoqing.flight.data.dao.AllAcSb;
+import com.xiaoqing.flight.data.dao.AllAcSbDao;
 import com.xiaoqing.flight.data.dao.AllAcType;
 import com.xiaoqing.flight.data.dao.AllAcTypeDao;
 import com.xiaoqing.flight.data.dao.AllAircraft;
@@ -32,12 +36,8 @@ import com.xiaoqing.flight.data.dao.AllAircraftDao;
 import com.xiaoqing.flight.data.dao.FuleLimit;
 import com.xiaoqing.flight.data.dao.FuleLimitDao;
 import com.xiaoqing.flight.data.dao.SeatByAcReg;
-import com.xiaoqing.flight.data.dao.User;
-import com.xiaoqing.flight.data.dao.UserDao;
-import com.xiaoqing.flight.entity.AcWeightLimitByAcTypeResponse;
 import com.xiaoqing.flight.entity.AddFlightInfoResponse;
-import com.xiaoqing.flight.entity.FuleLimitByAcType;
-import com.xiaoqing.flight.entity.LineData;
+import com.xiaoqing.flight.entity.FuleLimitResponse;
 import com.xiaoqing.flight.entity.ValidCaptionResponse;
 import com.xiaoqing.flight.network.ResponseListner;
 import com.xiaoqing.flight.network.synchronous.FeedType;
@@ -47,17 +47,14 @@ import com.xiaoqing.flight.util.Constants;
 import com.xiaoqing.flight.util.DBManager;
 import com.xiaoqing.flight.util.DateFormatUtil;
 import com.xiaoqing.flight.util.FormatUtil;
+import com.xiaoqing.flight.util.LogUtil;
 import com.xiaoqing.flight.util.MACUtil;
 import com.xiaoqing.flight.util.ToastUtil;
 import com.xiaoqing.flight.util.UserManager;
 import com.xiaoqing.flight.util.WindowUtil;
-import com.xiaoqing.flight.widget.MyLineDegreeView;
 import com.xiaoqing.flight.widget.MyView;
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import org.w3c.dom.Text;
 
 /**
  * Created by QingYang on 15/7/24.
@@ -65,6 +62,8 @@ import org.w3c.dom.Text;
  */
 public class RestrictionMapActivity extends BaseActivity{
     private String TAG = RestrictionMapActivity.class.getSimpleName();
+
+    private final int ACTION_ADDFILGHT = 1;
 
     @InjectView(R.id.tv_maxoil)
     TextView mMaxOil;
@@ -82,6 +81,8 @@ public class RestrictionMapActivity extends BaseActivity{
     TextView mMac;
     @InjectView(R.id.line_charview)
     MyView  mLineCharView;
+    @InjectView(R.id.tv_flightCg)
+    TextView mFlightCg;
     //@InjectView(R.id.tv_reality_focus)
     //TextView mRealityFocus;
     //@InjectView(R.id.tv_slide_focus)
@@ -97,12 +98,23 @@ public class RestrictionMapActivity extends BaseActivity{
 
     private ArrayList<SeatByAcReg> seatList;
     private String aircraftType;
-    private double airLj = 0;
+    private float airLj = 0;
     List<AllAcType> allAcTypeList;
     private float allWeight;
     private String aircraftReg;
     private Context mContext;
     private CommonProgressDialog progressDialog;
+
+    private Handler handler = new Handler() {
+        @Override public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case ACTION_ADDFILGHT://添加航班信息
+                    addFlightInfo();
+                    break;
+            }
+        }
+    };
 
 
     @Override public int getContentView() {
@@ -158,27 +170,26 @@ public class RestrictionMapActivity extends BaseActivity{
                 .list();
         if (allAcTypeList != null && allAcTypeList.size() > 0) {
             AllAcType allAcType = allAcTypeList.get(0);
-            mMaxOil.setText(allAcType.getMzfw()+"");
+            mMaxOil.setText(allAcType.getMaxFule() + "");
+
+            getFuleLimitFromDB();
 
 
-
-
-
-            getMoccApi().getAcWeightLimitByAcType(allAcType.getAircraftType(), String.valueOf(allAcType.getPortLimit()),
-                mBeforeWeight.getText().toString(), mDownWight.getText().toString(), String.valueOf(allAcType.getMzfw()),
-                    DateFormatUtil.formatTDate(), String.valueOf(allAcType.getSysVersion()), new ResponseListner<AcWeightLimitByAcTypeResponse>() {
-                    @Override public void onResponse(AcWeightLimitByAcTypeResponse response) {
-                        if (response != null && response.ResponseObject != null && response.ResponseObject.ResponseCode == Constants.RESULT_OK) {
-                            showCharView(response.ResponseObject.ResponseData.IAppObject);
-                        } else {
-                            ToastUtil.showToast(RestrictionMapActivity.this, R.drawable.toast_warning, getString(R.string.get_data_error));
-                        }
-                    }
-
-                    @Override public void onEmptyOrError(String message) {
-                        ToastUtil.showToast(RestrictionMapActivity.this, R.drawable.toast_warning, getString(R.string.get_data_error));
-                    }
-                });
+            //getMoccApi().getAcWeightLimitByAcType(allAcType.getAircraftType(), String.valueOf(allAcType.getPortLimit()),
+            //    mBeforeWeight.getText().toString(), mDownWight.getText().toString(), String.valueOf(allAcType.getMzfw()),
+            //        DateFormatUtil.formatTDate(), String.valueOf(allAcType.getSysVersion()), new ResponseListner<AcWeightLimitResponse>() {
+            //        @Override public void onResponse(AcWeightLimitResponse response) {
+            //            if (response != null && response.ResponseObject != null && response.ResponseObject.ResponseCode == Constants.RESULT_OK) {
+            //                showCharView(response.ResponseObject.ResponseData.IAppObject);
+            //            } else {
+            //                ToastUtil.showToast(RestrictionMapActivity.this, R.drawable.toast_warning, getString(R.string.get_data_error));
+            //            }
+            //        }
+            //
+            //        @Override public void onEmptyOrError(String message) {
+            //            ToastUtil.showToast(RestrictionMapActivity.this, R.drawable.toast_warning, getString(R.string.get_data_error));
+            //        }
+            //    });
         }
 
         mMaxOil.addTextChangedListener(mTextWatcher);
@@ -190,6 +201,18 @@ public class RestrictionMapActivity extends BaseActivity{
 
     }
 
+    private List<FuleLimit> getFuleLimitFromDB() {
+        FuleLimitDao fuleLimitDao = FlightApplication.getDaoSession().getFuleLimitDao();
+        List<FuleLimit> list = fuleLimitDao.queryBuilder()
+                .where(FuleLimitDao.Properties.AcType.eq(aircraftType))
+                .list();
+
+        if (list != null && list.size() > 0) {
+            //showCharView(list);
+        }
+
+        return list;
+    }
 
     private TextWatcher mTextWatcher = new TextWatcher() {
         @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -201,12 +224,11 @@ public class RestrictionMapActivity extends BaseActivity{
         }
 
         @Override public void afterTextChanged(Editable s) {
-            if (!TextUtils.isEmpty(s.toString())) {
-                updateWeightInfos();
-            }
+            updateWeightInfos();
         }
     };
 
+    //飞机重量
     private void updateWeightInfos() {
         AllAcTypeDao allAcTypeDao = FlightApplication.getDaoSession().getAllAcTypeDao();
         List<AllAcType> allAcTypeList = allAcTypeDao.queryBuilder()
@@ -214,10 +236,19 @@ public class RestrictionMapActivity extends BaseActivity{
                 .list();
         if (allAcTypeList != null && allAcTypeList.size() > 0) {
             AllAcType allAcType = allAcTypeList.get(0);
-            int gooodsWeights = 0;
+            float gooodsWeights = 0;
+            float totalPassengerLj = 0;
             if (seatList != null && seatList.size() > 0)
-                for(SeatByAcReg seatByAcReg : seatList)
-                    gooodsWeights += seatByAcReg.getAcRegSbWeight() + seatByAcReg.getAcRegCargWeight();
+                for(SeatByAcReg seatByAcReg : seatList) {
+                    //已有的货物重量 ＋ 座椅上人 或 物品重量
+                    gooodsWeights += seatByAcReg.getAcRegCargWeight() + seatByAcReg.getSeatWeight();
+                    if ("C".equalsIgnoreCase(seatByAcReg.getSeatType())) {//货物 ＋ 额外物品重量
+                        totalPassengerLj = totalPassengerLj + (seatByAcReg.getSeatWeight() + seatByAcReg.getAcRegCargWeight()) * seatByAcReg.getAcTypeLb();
+                    } else {
+                        totalPassengerLj += seatByAcReg.getAcTypeLb() * seatByAcReg.getSeatWeight();
+                    }
+                }
+
 
             String realOil = mRealityouil.getText().toString().trim();
             String slideOil = mSlideOil.getText().toString().trim();
@@ -227,6 +258,8 @@ public class RestrictionMapActivity extends BaseActivity{
             float flyOilFloat = 0;
             float beforeWeightFloat = 0;
             float downWeightFloat = 0;
+            String noFuleWeight = UserManager.getInstance().getAddFlightInfo().getNoFuleWeight();
+            float noFuleweight = 0;
             try {
                 if (!TextUtils.isEmpty(realOil))
                     realOilFloat = Float.parseFloat(realOil);
@@ -234,21 +267,80 @@ public class RestrictionMapActivity extends BaseActivity{
                     slideOilFloat = Float.parseFloat(slideOil);
                 if (!TextUtils.isEmpty(flyOil))
                     flyOilFloat = Float.parseFloat(flyOil);
+                if (!TextUtils.isEmpty(noFuleWeight))
+                    noFuleweight = Float.parseFloat(noFuleWeight);
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
             float upWeight =
-                    allAcType.getMzfw() + realOilFloat + gooodsWeights - slideOilFloat;
+                    noFuleweight + realOilFloat + gooodsWeights - slideOilFloat;//TODO 加设备重量 ＋ 额外重量  // 基本空重 ＋ 设备
+            LogUtil.LOGD(TAG, "noFuleweight : " + noFuleweight +" realOilFloat : " + realOilFloat + " gooodsWeights : " + gooodsWeights + " slideOilFloat : " + slideOilFloat);
             mBeforeWeight.setText(FormatUtil.formatTo2Decimal(upWeight));
 
             float downWeight =
-                    allAcType.getMzfw() + realOilFloat + gooodsWeights
+                    noFuleweight + realOilFloat + gooodsWeights
                             - slideOilFloat  - flyOilFloat;
 
             mDownWight.setText(FormatUtil.formatTo2Decimal(downWeight));
             allWeight = allAcType.getMzfw() + realOilFloat + gooodsWeights;
 
+            //起飞重心： 力矩／重量 （基本空重力矩 ＋ 乘客 + 货物 ＋ 额外重量 ＋ 设备 ＋ 起飞油量）/（实际油量 － 滑行油量）// 油量力矩
+
+            //所有设备的lj
+            float totalSbLj = 0;
+            List<Integer> sbList = UserManager.getInstance().getAddFlightInfo().getSbList();
+            if (sbList != null && sbList.size() > 0) {
+                for (Integer sbInfo : sbList) {
+                    AllAcSbDao allAcSbDao = FlightApplication.getDaoSession().getAllAcSbDao();
+                    List<AllAcSb> list = allAcSbDao.queryBuilder()
+                            .where(AllAcSbDao.Properties.SbId.eq(sbInfo),
+                                    AllAcSbDao.Properties.AcReg.eq(aircraftReg))
+                            .list();
+                    if (list != null && list.size() > 0) {
+                        totalSbLj += list.get(0).getSbWeight() * list.get(0).getSbLb();
+                    }
+                }
+            }
+
+            //起飞油量力矩
+            float beforeLj = 0;
+            float beforeFlightOil = realOilFloat - slideOilFloat;
+            FuleLimitDao fuleLimitDao = FlightApplication.getDaoSession().getFuleLimitDao();
+            List<FuleLimit> fuleLimits = fuleLimitDao.queryBuilder().list();
+            int temp = 0;
+
+            for (int i = 0; i < fuleLimits.size(); i++) {// 二分法计算输入油量最近的取值
+                if (beforeFlightOil == fuleLimits.get(i).getFuleWeight()) {
+                    beforeLj = fuleLimits.get(i).getFuleLj();
+                    break;
+                }
+
+                int left = 0;
+                int right = fuleLimits.size() - 1;
+                while (left < right) {
+                    int middle = (left + right) / 2;
+                    if (beforeFlightOil < fuleLimits.get(middle).getFuleWeight()) {
+                        right = middle - 1;
+                    } else {
+                        left = middle + 1;
+                    }
+                    temp = middle;
+                }
+                if (beforeFlightOil < fuleLimits.get(temp).getFuleWeight()) {
+                    beforeLj = fuleLimits.get(temp).getFuleLj()
+                            - (fuleLimits.get(temp).getFuleWeight() - fuleLimits.get(temp - 1)
+                            .getFuleWeight()) * (fuleLimits.get(temp).getFuleLj() - beforeFlightOil)
+                            / (fuleLimits.get(temp).getFuleWeight() - fuleLimits.get(temp - 1)
+                            .getFuleWeight());
+                }
+            }
+
+
+
+            float flightCg = 0;
+            flightCg = (airLj + totalPassengerLj + totalSbLj + beforeLj) / (realOilFloat - slideOilFloat);
+            mFlightCg.setText(FormatUtil.formatTo2Decimal(flightCg));
 
             getFuleLimit();
 
@@ -264,10 +356,18 @@ public class RestrictionMapActivity extends BaseActivity{
         List<FuleLimit> fullLimitList = fuleLimitDao.queryBuilder()
                 .where(FuleLimitDao.Properties.AcType.eq(aircraftType))
                 .list();
+        String realOilInput = mRealityouil.getText().toString().trim();
+        float realOil = 0;
+        try{
+            if (!TextUtils.isEmpty(realOilInput))
+                realOil = Float.parseFloat(realOilInput);
+        }catch (Exception e){
+
+        }
         if (fullLimitList != null && fullLimitList.size() > 0) {
             for (FuleLimit fuleLimit : fullLimitList) {
-                if (Math.abs(fuleLimit.getFuleWeight() - Float.parseFloat(
-                        mRealityouil.getText().toString().trim())) < 80) {
+
+                if (Math.abs(fuleLimit.getFuleWeight() - realOil) < 80) {
                     oilLj = fuleLimit.getFuleLj();
                 }
             }
@@ -299,9 +399,9 @@ public class RestrictionMapActivity extends BaseActivity{
                 ApiServiceManager.getInstance().getFuleLimitByAcType(allAcType.getAircraftType(),
                         allAcType.getPortLimit()+"", mBeforeWeight.getText().toString(),
                         mDownWight.getText().toString(), allAcType.getMzfw()+"", DateFormatUtil.formatTDate(),
-                        UserManager.getInstance().getUser().getSysVersion()+"", new ResponseListner<FuleLimitByAcType>() {
+                        UserManager.getInstance().getUser().getSysVersion()+"", new ResponseListner<FuleLimitResponse>() {
 
-                            @Override public void onResponse(FuleLimitByAcType response) {
+                            @Override public void onResponse(FuleLimitResponse response) {
                                 if (response != null && response.ResponseObject != null && response.ResponseObject.ResponseCode == Constants.RESULT_OK) {
                                     getFuleLimit();
                                 }
@@ -427,7 +527,9 @@ public class RestrictionMapActivity extends BaseActivity{
         view.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT));
         TextView title = (TextView) view.findViewById(R.id.title);
-        final TextView tv_password = (TextView) view.findViewById(R.id.tv_password);
+        final EditText tv_password = (EditText) view.findViewById(R.id.tv_password);
+        tv_password.setTransformationMethod(PasswordTransformationMethod.getInstance());
+
 
         if (!TextUtils.isEmpty(titleText)) title.setText(titleText);
         final TextView tv_userName = (TextView) view.findViewById(R.id.tv_userName);
@@ -544,7 +646,7 @@ public class RestrictionMapActivity extends BaseActivity{
         for (SeatByAcReg seatByAcReg : seatList) {
             if (seatByAcReg.getXPos() != 0) {
                 if (!TextUtils.isEmpty(seatByAcReg.getUserName()) || ("C".equalsIgnoreCase(seatByAcReg.getSeatType()) && seatByAcReg.getSeatWeight() != 0)) {
-                    totalSeatWeight = totalSeatWeight + seatByAcReg.getSeatWeight() + seatByAcReg.getAcRegCargWeight() + seatByAcReg.getAcRegSbWeight();
+                    totalSeatWeight = totalSeatWeight + seatByAcReg.getSeatWeight() + seatByAcReg.getAcRegCargWeight();
                 }
             }
         }
@@ -587,24 +689,25 @@ public class RestrictionMapActivity extends BaseActivity{
             //最大起飞重量
             if (allAcType.getMzfw() -  (nofuWeightFloat + totalSeatWeight) < 0) {
                 ToastUtil.showToast(mContext, R.drawable.toast_warning, "无燃油重量超过了最大无燃油重量限制, 超重 : " + Math.abs(
-                        (nofuWeightFloat + totalSeatWeight) - allAcType.getMzfw()) +"kg");
+                        (nofuWeightFloat + totalSeatWeight) - allAcType.getMzfw()) +" lb");
                 return;
             } else if (allAcType.getPortLimit() - (nofuWeightFloat + realOilFloat + totalSeatWeight) < 0) {
                 ToastUtil.showToast(mContext, R.drawable.toast_warning, "滑行重量超过了机坪重量限制, 超重 : " + Math.abs((nofuWeightFloat + realOilFloat + totalSeatWeight) - allAcType.getPortLimit())+"kg");
                 return;
             } else if(allAcType.getTofWeightLimit() < qifeiweight) {
                 ToastUtil.showToast(mContext, R.drawable.toast_warning, "起飞重量超过了最大起飞重量限制, 超重 : "
-                        + Math.abs(qifeiweight - allAcType.getTofWeightLimit()) + "kg");
+                        + Math.abs(qifeiweight - allAcType.getTofWeightLimit()) + " lb");
                 return;
             } else if (allAcType.getLandWeightLimit() - zhouluweight < 0) {
                 ToastUtil.showToast(mContext, R.drawable.toast_warning, "着陆重量超过了着陆重量限制, 超重 : "
-                        + Math.abs(zhouluweight- allAcType.getLandWeightLimit()) + "kg");
+                        + Math.abs(zhouluweight- allAcType.getLandWeightLimit()) + " lb");
                 return;
             } else {
                //TODO 重心前限和后限
+
             }
         }
-        addFlightInfo();
+        checkFlightId();
     }
 
     /**
@@ -631,11 +734,9 @@ public class RestrictionMapActivity extends BaseActivity{
      */
     private void addFlightInfo() {
         showProgressDialog();
-        ApiServiceManager.getInstance().uploadAirPersonInfo();
-        DBManager.getInstance().insertActionFeed(FeedType.ADD_PLAYINFO, UserManager.getInstance().getAddFlightInfo().getFlightId());
-        DBManager.getInstance().insertFlightInfo();
+        //TODO 查询  飞行ID
         ApiServiceManager.getInstance().addFlightInfo(UserManager.getInstance().getAddFlightInfo(), new ResponseListner<AddFlightInfoResponse>() {
-            @Override public void onResponse(AddFlightInfoResponse response) {
+                @Override public void onResponse(AddFlightInfoResponse response) {
                 hiddenDialog();
                 if (response != null
                         && response.ResponseObject != null
@@ -645,20 +746,65 @@ public class RestrictionMapActivity extends BaseActivity{
                     Toast.makeText(mContext, "航班信息添加成功", Toast.LENGTH_LONG).show();
                     UserManager.getInstance().setAddFlightSuccess(true);
                     mTopBarRight.setVisibility(View.GONE);
+                    //上传机上成员信息
+                    ApiServiceManager.getInstance().uploadAirPersonInfo();
                 } else {
+                    addFlightInfoToDB();
                     ToastUtil.showToast(mContext,
-                            R.drawable.toast_warning, "服务器繁忙，请稍后再试！");
+                            R.drawable.toast_warning, !TextUtils.isEmpty(response.ResponseObject.ResponseErr) ? response.ResponseObject.ResponseErr : "服务器繁忙，请稍后再试" );
                 }
             }
 
             @Override public void onEmptyOrError(String message) {
                 hiddenDialog();
-                ToastUtil.showToast(mContext,
-                        R.drawable.toast_warning, message);
+                addFlightInfoToDB();
+                //ToastUtil.showToast(mContext,
+                //        R.drawable.toast_warning, message);
+
             }
         });
     }
 
+    //校验航班主键ID是否存在
+    private void checkFlightId() {
+        String flightId = UserManager.getInstance().getAddFlightInfo().getFlightId();
+        int flightID = 0;
+        try {
+            flightID = Integer.parseInt(flightId);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if (flightID == 0) {
+            ApiServiceManager.getInstance().getFilghtId(new ResponseListner<String>() {
+                @Override public void onResponse(String response) {
+                    if (!TextUtils.isEmpty(response)) {
+                        UserManager.getInstance().getAddFlightInfo().setFlightId(response);
+                        handler.sendEmptyMessage(ACTION_ADDFILGHT);
+                    } else {
+                        hiddenDialog();
+                        addFlightInfoToDB();
+                    }
+
+                }
+
+                @Override public void onEmptyOrError(String message) {
+                    hiddenDialog();
+                    addFlightInfoToDB();
+                }
+            });
+        } else {
+
+        }
+    }
+
+    private void addFlightInfoToDB() {
+        DBManager.getInstance().insertActionFeed(FeedType.ADD_PLAYINFO,
+                UserManager.getInstance().getAddFlightInfo().getFlightId());
+        DBManager.getInstance().insertFlightInfo();
+        UserManager.getInstance().setAddFlightSuccess(true);
+        mTopBarRight.setVisibility(View.GONE);
+    }
     private void showProgressDialog() {
         if (progressDialog == null) {
             progressDialog = new CommonProgressDialog(this);

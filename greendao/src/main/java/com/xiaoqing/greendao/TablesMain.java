@@ -34,8 +34,21 @@ public class TablesMain {
         getSyncDB();//同步数据
         getAllAirport();//获取所有机场信息(四字代码)
         getUploadAirPerson();//添加机上成员
+        getAllAcSb();//获取所有飞机上设备信息
     }
 
+    private void getAllAcSb() {
+        Entity allAcSb = mSchema.addEntity("AllAcSb");
+        allAcSb.addIdProperty().autoincrement();
+        allAcSb.addStringProperty("AcReg");
+        allAcSb.addIntProperty("SbId");
+        allAcSb.addFloatProperty("SbWeight");
+        allAcSb.addFloatProperty("SbLb");
+        allAcSb.addStringProperty("OpUser");
+        allAcSb.addStringProperty("OpDate");
+        allAcSb.addIntProperty("Sysversion");
+
+    }
 
     private void getUploadAirPerson() {
         Entity uploadAirPerson = mSchema.addEntity("UploadAirPerson");
@@ -62,7 +75,7 @@ public class TablesMain {
         allAirport.addIdProperty().autoincrement();
         allAirport.addStringProperty("Str4code");//机场四字代码
         allAirport.addStringProperty("StrAirportName");//机场名字
-        allAirport.addIntProperty("SysVersion");//版本号
+        allAirport.addIntProperty("SysVersion").notNull();//版本号
     }
 
     private void getSyncDB() {
@@ -82,17 +95,17 @@ public class TablesMain {
         acGrants.addStringProperty("UserCode");
         acGrants.addStringProperty("AcReg");//授权机号
         acGrants.addStringProperty("AcType");//授权机型
-        acGrants.addDoubleProperty("AcRegBw");//机型基本空重
-        acGrants.addDoubleProperty("AcLj"); //机型基本力矩
+        acGrants.addFloatProperty("AcRegBw");//机型基本空重
+        acGrants.addFloatProperty("AcLj"); //机型基本力矩
         acGrants.addStringProperty("IsCaption");//是否是机长
-        acGrants.addIntProperty("SysVersion");
+        acGrants.addIntProperty("SysVersion").notNull();
     }
 
     private void getAircraftPerson() {
         Entity passenger = mSchema.addEntity("Passenger");
         passenger.addIdProperty().autoincrement();
         passenger.addStringProperty("userName");
-        passenger.addDoubleProperty("userWeight");
+        passenger.addFloatProperty("userWeight");
         passenger.addStringProperty("AircraftReg");
         passenger.addBooleanProperty("isChecked");
     }
@@ -131,7 +144,6 @@ public class TablesMain {
         flightInfo.addStringProperty("BalancePicName");
         flightInfo.addStringProperty("OpUser");
         flightInfo.addStringProperty("OpDate");
-
         flightInfo.addStringProperty("weightCg");
 
 
@@ -167,9 +179,10 @@ public class TablesMain {
         allSb.addIdProperty().autoincrement();
         allSb.addIntProperty("SbId");
         allSb.addStringProperty("SbName");
-        allSb.addDoubleProperty("SbWeight");
+        allSb.addFloatProperty("SbWeight");
         allSb.addStringProperty("AcType");
         allSb.addIntProperty("SeatId");
+        allSb.addIntProperty("SysVersion").notNull();
     }
 
     private void addAllAircraft() {
@@ -179,7 +192,7 @@ public class TablesMain {
         allAircraft.addStringProperty("UserCode");//机型
         allAircraft.addStringProperty("AircraftType");//机型
         allAircraft.addIntProperty("Bw");//飞机基本空重
-        allAircraft.addDoubleProperty("Lj");//飞机力矩
+        allAircraft.addFloatProperty("Lj");//飞机力矩
         allAircraft.addStringProperty("LayoutPic");//未标注，无数据
         allAircraft.addStringProperty("OpDate");// 操作日期
         allAircraft.addIntProperty("SysVersion");//当前版本
@@ -194,6 +207,7 @@ public class TablesMain {
         fuleLimit.addFloatProperty("FuleLj");
         fuleLimit.addStringProperty("OpUser");
         fuleLimit.addStringProperty("OpDate");
+        fuleLimit.addIntProperty("SysVersion").notNull();
     }
 
     private void addAcWeightLimit() {
@@ -204,6 +218,7 @@ public class TablesMain {
         acWeoghtLimit.addStringProperty("WeightCg1");
         acWeoghtLimit.addStringProperty("WeightCg2");
         acWeoghtLimit.addStringProperty("OpUser");
+        acWeoghtLimit.addIntProperty("SysVersion").notNull();
         acWeoghtLimit.addStringProperty("OpDate");
     }
 
@@ -223,6 +238,7 @@ public class TablesMain {
         allAcType.addIntProperty("SysVersion").notNull();
         allAcType.addStringProperty("UserCode");
         allAcType.addStringProperty("MacFlg");
+        allAcType.addFloatProperty("MaxFule");
     }
 
     private void addSystemVersion() {
@@ -258,6 +274,7 @@ public class TablesMain {
         systemNotice.addStringProperty("StrSendUser"); //发送消息的人
         systemNotice.addStringProperty("DtSendDate"); //消息发送日期
         systemNotice.addStringProperty("MsustRead"); //是否必读 Y必读 N否
+        systemNotice.addIntProperty("SysVersion").notNull();
 
     }
 

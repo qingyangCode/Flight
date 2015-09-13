@@ -29,6 +29,7 @@ public class SystemNoticeDao extends AbstractDao<SystemNotice, Long> {
         public final static Property StrSendUser = new Property(3, String.class, "StrSendUser", false, "STR_SEND_USER");
         public final static Property DtSendDate = new Property(4, String.class, "DtSendDate", false, "DT_SEND_DATE");
         public final static Property MsustRead = new Property(5, String.class, "MsustRead", false, "MSUST_READ");
+        public final static Property SysVersion = new Property(6, int.class, "SysVersion", false, "SYS_VERSION");
     };
 
 
@@ -49,7 +50,8 @@ public class SystemNoticeDao extends AbstractDao<SystemNotice, Long> {
                 "'STR_MESSAGE_CONTENT' TEXT," + // 2: StrMessageContent
                 "'STR_SEND_USER' TEXT," + // 3: StrSendUser
                 "'DT_SEND_DATE' TEXT," + // 4: DtSendDate
-                "'MSUST_READ' TEXT);"); // 5: MsustRead
+                "'MSUST_READ' TEXT," + // 5: MsustRead
+                "'SYS_VERSION' INTEGER NOT NULL );"); // 6: SysVersion
     }
 
     /** Drops the underlying database table. */
@@ -92,6 +94,7 @@ public class SystemNoticeDao extends AbstractDao<SystemNotice, Long> {
         if (MsustRead != null) {
             stmt.bindString(6, MsustRead);
         }
+        stmt.bindLong(7, entity.getSysVersion());
     }
 
     /** @inheritdoc */
@@ -109,7 +112,8 @@ public class SystemNoticeDao extends AbstractDao<SystemNotice, Long> {
             cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // StrMessageContent
             cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // StrSendUser
             cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // DtSendDate
-            cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5) // MsustRead
+            cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // MsustRead
+            cursor.getInt(offset + 6) // SysVersion
         );
         return entity;
     }
@@ -123,6 +127,7 @@ public class SystemNoticeDao extends AbstractDao<SystemNotice, Long> {
         entity.setStrSendUser(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
         entity.setDtSendDate(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
         entity.setMsustRead(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
+        entity.setSysVersion(cursor.getInt(offset + 6));
      }
     
     /** @inheritdoc */

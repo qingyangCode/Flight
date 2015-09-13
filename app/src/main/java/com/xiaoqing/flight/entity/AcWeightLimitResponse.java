@@ -7,7 +7,7 @@ import java.util.ArrayList;
 /**
  * Created by QingYang on 15/8/8.
  */
-public class AcWeightLimitByAcTypeResponse extends BaseResponse{
+public class AcWeightLimitResponse extends BaseResponse{
 
     public TResponseObject ResponseObject;
     public class TResponseObject{
@@ -28,12 +28,12 @@ public class AcWeightLimitByAcTypeResponse extends BaseResponse{
         public String OpDate; //操作日期
     }
 
-    public static AcWeightLimitByAcTypeResponse parse(String jsonStr){
+    public static AcWeightLimitResponse parse(String jsonStr){
         Gson gson = new Gson();
         if(jsonStr.contains("\"ResponseData\":\"\""))
             jsonStr = jsonStr.replace("\"ResponseData\":\"\"","\"ResponseData\":{}");
-        AcWeightLimitByAcTypeResponse
-                fromJson = gson.fromJson(jsonStr, AcWeightLimitByAcTypeResponse.class);
+        AcWeightLimitResponse
+                fromJson = gson.fromJson(jsonStr, AcWeightLimitResponse.class);
         return fromJson;
     }
 

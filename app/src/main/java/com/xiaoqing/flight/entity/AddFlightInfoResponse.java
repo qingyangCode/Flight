@@ -12,6 +12,7 @@ public class AddFlightInfoResponse extends BaseResponse{
     public class TResponseObject{
         public TResponseData ResponseData;
         public int ResponseCode;
+        public String ResponseErr;
     }
     public class TResponseData{
         public TIAppObject IAppObject;

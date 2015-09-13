@@ -11,13 +11,11 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.TextView;
 import butterknife.InjectView;
 import com.xiaoqing.flight.FlightApplication;
 import com.xiaoqing.flight.R;
 import com.xiaoqing.flight.data.dao.AddFlightInfo;
-import com.xiaoqing.flight.data.dao.AllAircraft;
 import com.xiaoqing.flight.data.dao.AllAirport;
 import com.xiaoqing.flight.data.dao.AllAirportDao;
 import com.xiaoqing.flight.data.dao.AllSb;
@@ -27,11 +25,15 @@ import com.xiaoqing.flight.network.ResponseListner;
 import com.xiaoqing.flight.util.ApiServiceManager;
 import com.xiaoqing.flight.util.Constants;
 import com.xiaoqing.flight.util.DBManager;
+import com.xiaoqing.flight.util.DateFormatUtil;
 import com.xiaoqing.flight.util.FormatUtil;
 import com.xiaoqing.flight.util.ToastUtil;
 import com.xiaoqing.flight.util.UserManager;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by QingYang on 15/7/23.
@@ -49,9 +51,12 @@ public class BasicInfoActivity extends BaseActivity {
     private ArrayAdapter<String> adapter;
     private String aircraftReg;
     private String aircraftType;
-    private double lj;
-    private double bw;
+    private float lj;
+    private float bw;
     private List<AllSb> allSbList;
+
+    private int AIR_DEP = 1;//起飞机场
+    private int AIR_ARR = 2;//到达机场
 
     @Override protected void onResume() {
         super.onResume();
@@ -71,8 +76,8 @@ public class BasicInfoActivity extends BaseActivity {
         if (data != null) {
             aircraftReg = data.getStringExtra("AircraftReg");
             aircraftType = data.getStringExtra("AircraftType");
-            lj = data.getDoubleExtra("Lj", 0);
-            bw = data.getDoubleExtra("Bw", 0);
+            lj = data.getFloatExtra("Lj", 0);
+            bw = data.getFloatExtra("Bw", 0);
             mWeight.setEnabled(false);
             mWeight.setText(FormatUtil.formatTo2Decimal(bw));
             mFocus.setEnabled(false);
@@ -92,14 +97,18 @@ public class BasicInfoActivity extends BaseActivity {
             });
         }
 
+        //机场代码
         List<AllAirport> allAirportList = DBManager.getInstance().getAllAirPort();
         String[] airName = null;
         if (allAirportList != null) {
-            airName = new String[allAirportList.size()];
+            airName = new String[allAirportList.size() * 2];
             for(int i = 0; i <  allAirportList.size(); i++) {
                 airName[i] = allAirportList.get(i).getStrAirportName();
             }
 
+            for (int j = 0; j < allAirportList.size(); j++) {
+                airName[j + allAirportList.size()] = allAirportList.get(j).getStr4code();
+            }
         }
         ArrayAdapter<String> stringArrayAdapter =
                 new ArrayAdapter<String>(mContext, R.layout.list_item, airName);
@@ -112,6 +121,7 @@ public class BasicInfoActivity extends BaseActivity {
             }
 
             @Override public void onEmptyOrError(String message) {
+                UserManager.getInstance().getAddFlightInfo().setFlightId(DateFormatUtil.formatTDate());
 
             }
         });
@@ -131,7 +141,13 @@ public class BasicInfoActivity extends BaseActivity {
 
             @Override public void afterTextChanged(Editable s) {
                 String airName = s.toString();
-                getAir4Code(airName, 1);
+                if (checkChinese(airName)) {
+                    getAir4Code(airName, AIR_DEP);
+                    UserManager.getInstance().getAddFlightInfo().setDepAirportName(airName);
+                } else {
+                    getAirName(airName, AIR_DEP);
+                    UserManager.getInstance().getAddFlightInfo().setDep4Code(airName);
+                }
             }
         });
         mDestination.addTextChangedListener(new TextWatcher() {
@@ -146,12 +162,38 @@ public class BasicInfoActivity extends BaseActivity {
 
             @Override public void afterTextChanged(Editable s) {
                 String airName = s.toString();
-                getAir4Code(airName, 1);
+                if (checkChinese(airName)) {
+                    getAir4Code(airName, AIR_ARR);
+                    UserManager.getInstance().getAddFlightInfo().setArrAirportName(airName);
+                } else {
+                    getAirName(airName, AIR_ARR);
+                    UserManager.getInstance().getAddFlightInfo().setArr4Code(airName);
+                }
             }
         });
     }
 
     //获取飞机四字代码 1 起飞机场  2 降落机场
+    private void getAirName(String airName, int type) {
+        if (!TextUtils.isEmpty(airName)) {
+            AllAirportDao allAirportDao =
+                    FlightApplication.getDaoSession().getAllAirportDao();
+            List<AllAirport> list = allAirportDao.queryBuilder()
+                    .where(AllAirportDao.Properties.Str4code.eq(airName))
+                    .list();
+            if (list != null && list.size() != 0) {
+                String strAirportName = list.get(0).getStrAirportName();
+                if (type == AIR_DEP) {
+                    mOrigination.setText(strAirportName);
+                    UserManager.getInstance().getAddFlightInfo().setDepAirportName(strAirportName);
+                } else {
+                    mDestination.setText(strAirportName);
+                    UserManager.getInstance().getAddFlightInfo().setArrAirportName(strAirportName);
+                }
+            }
+        }
+    }
+
     private void getAir4Code(String airName, int type) {
         if (!TextUtils.isEmpty(airName)) {
             AllAirportDao allAirportDao =
@@ -160,14 +202,28 @@ public class BasicInfoActivity extends BaseActivity {
                     .where(AllAirportDao.Properties.StrAirportName.eq(airName))
                     .list();
             if (list != null && list.size() != 0) {
-                if (type == 1) {
-                    UserManager.getInstance().getAddFlightInfo().setDep4Code(list.get(0).getStr4code());
+                if (type == AIR_DEP) {
+                    UserManager.getInstance().getAddFlightInfo().setDep4Code(list.get(0)
+                            .getStr4code());
                 } else {
-                    UserManager.getInstance().getAddFlightInfo().setArr4Code(list.get(0).getStr4code());
+                    UserManager.getInstance().getAddFlightInfo().setArr4Code(list.get(0)
+                            .getStr4code());
                 }
             }
         }
     }
+
+
+    public static boolean checkChinese(String sequence) {
+        final String format = "[\\u4E00-\\u9FA5\\uF900-\\uFA2D]";
+        boolean result = false;
+        Pattern pattern = Pattern.compile(format);
+        Matcher matcher = pattern.matcher(sequence);
+        result = matcher.find();
+        return result;
+    }
+
+
     /**
      * 差分站设备
      */
@@ -175,7 +231,7 @@ public class BasicInfoActivity extends BaseActivity {
         AllSbDao allSbDao = FlightApplication.getDaoSession().getAllSbDao();
         allSbList =
                 allSbDao.queryBuilder().where(AllSbDao.Properties.AcType.eq(aircraftType)).list();
-        final HashMap<Integer, Double> weightList = new HashMap<>();
+        final HashMap<Integer, Float> weightList = new HashMap<>();
         mPointLayout.removeAllViews();
         for (final AllSb allSb : allSbList) {
             View view = View.inflate(BasicInfoActivity.this, R.layout.layout_chafenzhan, null);
@@ -186,23 +242,30 @@ public class BasicInfoActivity extends BaseActivity {
             checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    Double aDouble = weightList.get(allSb.getSbId());
+                    Float aFloat = weightList.get(allSb.getSbId());
                     if (isChecked) {
-                        if (aDouble == null) {
+                        if (aFloat == null) {
                             weightList.put(allSb.getSbId(), allSb.getSbWeight());
                         }
+                        ArrayList<Integer> sbList = new ArrayList<>();
+                        sbList.add(allSb.getSbId());
+                        UserManager.getInstance().getAddFlightInfo().setSbList(sbList);
                     } else {
-                        if (aDouble != null) {
+                        if (aFloat != null) {
                             weightList.remove(allSb.getSbId());
                         }
+                        List<Integer> sbList =
+                                UserManager.getInstance().getAddFlightInfo().getSbList();
+                        if (sbList != null && sbList.size() > 0 && sbList.contains(allSb.getSbId())) {
+                            sbList.remove(allSb.getSbId());
+                        }
                     }
-                    double weightCount = 0;
+                    float weightCount = 0;
                     for (Integer sbID : weightList.keySet()) {
                         weightCount += weightList.get(sbID);
                     }
-                    mWeight.setText((bw + weightCount)+"");
+                    mWeight.setText((bw + weightCount) + "");
                     mFocus.setText(FormatUtil.formatTo2Decimal(lj / (bw + weightCount)));
-
                 }
             });
             mPointLayout.addView(view);
@@ -236,7 +299,7 @@ public class BasicInfoActivity extends BaseActivity {
                 addFlightInfo.setAircraftType(aircraftType);
                 addFlightInfo.setFlightNo(playNO);
                 //addFlightInfo.setDep4Code(from);
-                addFlightInfo.setDepAirportName(from);
+                //addFlightInfo.setDepAirportName(from);
                 //addFlightInfo.setArr4Code(toAirport);
                 addFlightInfo.setArrAirportName(toAirport);
                 addFlightInfo.setNoFuleWeight(mWeight.getText().toString().trim());

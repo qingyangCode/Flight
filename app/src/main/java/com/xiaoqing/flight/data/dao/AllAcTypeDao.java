@@ -37,6 +37,7 @@ public class AllAcTypeDao extends AbstractDao<AllAcType, Long> {
         public final static Property SysVersion = new Property(11, int.class, "SysVersion", false, "SYS_VERSION");
         public final static Property UserCode = new Property(12, String.class, "UserCode", false, "USER_CODE");
         public final static Property MacFlg = new Property(13, String.class, "MacFlg", false, "MAC_FLG");
+        public final static Property MaxFule = new Property(14, Float.class, "MaxFule", false, "MAX_FULE");
     };
 
 
@@ -65,7 +66,8 @@ public class AllAcTypeDao extends AbstractDao<AllAcType, Long> {
                 "'OP_DATE' TEXT," + // 10: OpDate
                 "'SYS_VERSION' INTEGER NOT NULL ," + // 11: SysVersion
                 "'USER_CODE' TEXT," + // 12: UserCode
-                "'MAC_FLG' TEXT);"); // 13: MacFlg
+                "'MAC_FLG' TEXT," + // 13: MacFlg
+                "'MAX_FULE' REAL);"); // 14: MaxFule
     }
 
     /** Drops the underlying database table. */
@@ -124,6 +126,11 @@ public class AllAcTypeDao extends AbstractDao<AllAcType, Long> {
         if (MacFlg != null) {
             stmt.bindString(14, MacFlg);
         }
+ 
+        Float MaxFule = entity.getMaxFule();
+        if (MaxFule != null) {
+            stmt.bindDouble(15, MaxFule);
+        }
     }
 
     /** @inheritdoc */
@@ -149,7 +156,8 @@ public class AllAcTypeDao extends AbstractDao<AllAcType, Long> {
             cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10), // OpDate
             cursor.getInt(offset + 11), // SysVersion
             cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12), // UserCode
-            cursor.isNull(offset + 13) ? null : cursor.getString(offset + 13) // MacFlg
+            cursor.isNull(offset + 13) ? null : cursor.getString(offset + 13), // MacFlg
+            cursor.isNull(offset + 14) ? null : cursor.getFloat(offset + 14) // MaxFule
         );
         return entity;
     }
@@ -171,6 +179,7 @@ public class AllAcTypeDao extends AbstractDao<AllAcType, Long> {
         entity.setSysVersion(cursor.getInt(offset + 11));
         entity.setUserCode(cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12));
         entity.setMacFlg(cursor.isNull(offset + 13) ? null : cursor.getString(offset + 13));
+        entity.setMaxFule(cursor.isNull(offset + 14) ? null : cursor.getFloat(offset + 14));
      }
     
     /** @inheritdoc */

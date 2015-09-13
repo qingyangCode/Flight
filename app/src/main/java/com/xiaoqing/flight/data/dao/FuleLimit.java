@@ -15,6 +15,7 @@ public class FuleLimit {
     private Float FuleLj;
     private String OpUser;
     private String OpDate;
+    private int SysVersion;
 
     // KEEP FIELDS - put your custom fields here
     // KEEP FIELDS END
@@ -26,13 +27,14 @@ public class FuleLimit {
         this.id = id;
     }
 
-    public FuleLimit(Long id, String AcType, Float FuleWeight, Float FuleLj, String OpUser, String OpDate) {
+    public FuleLimit(Long id, String AcType, Float FuleWeight, Float FuleLj, String OpUser, String OpDate, int SysVersion) {
         this.id = id;
         this.AcType = AcType;
         this.FuleWeight = FuleWeight;
         this.FuleLj = FuleLj;
         this.OpUser = OpUser;
         this.OpDate = OpDate;
+        this.SysVersion = SysVersion;
     }
 
     public Long getId() {
@@ -81,6 +83,14 @@ public class FuleLimit {
 
     public void setOpDate(String OpDate) {
         this.OpDate = OpDate;
+    }
+
+    public int getSysVersion() {
+        return SysVersion;
+    }
+
+    public void setSysVersion(int SysVersion) {
+        this.SysVersion = SysVersion;
     }
 
     // KEEP METHODS - put your custom methods here

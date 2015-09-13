@@ -59,6 +59,11 @@
             android:name=".activity.SystemNoticeDetailActivity"
             android:screenOrientation="portrait"
             />
+        <receiver android:name=".reveiver.MyReveiver">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

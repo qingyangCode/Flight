@@ -29,6 +29,7 @@ public class FuleLimitDao extends AbstractDao<FuleLimit, Long> {
         public final static Property FuleLj = new Property(3, Float.class, "FuleLj", false, "FULE_LJ");
         public final static Property OpUser = new Property(4, String.class, "OpUser", false, "OP_USER");
         public final static Property OpDate = new Property(5, String.class, "OpDate", false, "OP_DATE");
+        public final static Property SysVersion = new Property(6, int.class, "SysVersion", false, "SYS_VERSION");
     };
 
 
@@ -49,7 +50,8 @@ public class FuleLimitDao extends AbstractDao<FuleLimit, Long> {
                 "'FULE_WEIGHT' REAL," + // 2: FuleWeight
                 "'FULE_LJ' REAL," + // 3: FuleLj
                 "'OP_USER' TEXT," + // 4: OpUser
-                "'OP_DATE' TEXT);"); // 5: OpDate
+                "'OP_DATE' TEXT," + // 5: OpDate
+                "'SYS_VERSION' INTEGER NOT NULL );"); // 6: SysVersion
     }
 
     /** Drops the underlying database table. */
@@ -92,6 +94,7 @@ public class FuleLimitDao extends AbstractDao<FuleLimit, Long> {
         if (OpDate != null) {
             stmt.bindString(6, OpDate);
         }
+        stmt.bindLong(7, entity.getSysVersion());
     }
 
     /** @inheritdoc */
@@ -109,7 +112,8 @@ public class FuleLimitDao extends AbstractDao<FuleLimit, Long> {
             cursor.isNull(offset + 2) ? null : cursor.getFloat(offset + 2), // FuleWeight
             cursor.isNull(offset + 3) ? null : cursor.getFloat(offset + 3), // FuleLj
             cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // OpUser
-            cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5) // OpDate
+            cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // OpDate
+            cursor.getInt(offset + 6) // SysVersion
         );
         return entity;
     }
@@ -123,6 +127,7 @@ public class FuleLimitDao extends AbstractDao<FuleLimit, Long> {
         entity.setFuleLj(cursor.isNull(offset + 3) ? null : cursor.getFloat(offset + 3));
         entity.setOpUser(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
         entity.setOpDate(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
+        entity.setSysVersion(cursor.getInt(offset + 6));
      }
     
     /** @inheritdoc */

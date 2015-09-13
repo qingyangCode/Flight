@@ -11,7 +11,7 @@ public class Passenger {
 
     private Long id;
     private String userName;
-    private Double userWeight;
+    private Float userWeight;
     private String AircraftReg;
     private Boolean isChecked;
 
@@ -25,7 +25,7 @@ public class Passenger {
         this.id = id;
     }
 
-    public Passenger(Long id, String userName, Double userWeight, String AircraftReg, Boolean isChecked) {
+    public Passenger(Long id, String userName, Float userWeight, String AircraftReg, Boolean isChecked) {
         this.id = id;
         this.userName = userName;
         this.userWeight = userWeight;
@@ -49,11 +49,11 @@ public class Passenger {
         this.userName = userName;
     }
 
-    public Double getUserWeight() {
+    public Float getUserWeight() {
         return userWeight;
     }
 
-    public void setUserWeight(Double userWeight) {
+    public void setUserWeight(Float userWeight) {
         this.userWeight = userWeight;
     }
 

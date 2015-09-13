@@ -24,6 +24,7 @@ public class AllAcType {
     private int SysVersion;
     private String UserCode;
     private String MacFlg;
+    private Float MaxFule;
 
     // KEEP FIELDS - put your custom fields here
     // KEEP FIELDS END
@@ -35,7 +36,7 @@ public class AllAcType {
         this.id = id;
     }
 
-    public AllAcType(Long id, String AircraftType, float PortLimit, String LimitType, String AircraftTypeChName, float TofWeightLimit, float LandWeightLimit, float Mzfw, String Mac, String Mac2, String OpDate, int SysVersion, String UserCode, String MacFlg) {
+    public AllAcType(Long id, String AircraftType, float PortLimit, String LimitType, String AircraftTypeChName, float TofWeightLimit, float LandWeightLimit, float Mzfw, String Mac, String Mac2, String OpDate, int SysVersion, String UserCode, String MacFlg, Float MaxFule) {
         this.id = id;
         this.AircraftType = AircraftType;
         this.PortLimit = PortLimit;
@@ -50,6 +51,7 @@ public class AllAcType {
         this.SysVersion = SysVersion;
         this.UserCode = UserCode;
         this.MacFlg = MacFlg;
+        this.MaxFule = MaxFule;
     }
 
     public Long getId() {
@@ -164,6 +166,14 @@ public class AllAcType {
 
     public void setMacFlg(String MacFlg) {
         this.MacFlg = MacFlg;
+    }
+
+    public Float getMaxFule() {
+        return MaxFule;
+    }
+
+    public void setMaxFule(Float MaxFule) {
+        this.MaxFule = MaxFule;
     }
 
     // KEEP METHODS - put your custom methods here

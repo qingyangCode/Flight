@@ -25,7 +25,7 @@ public class PassengerDao extends AbstractDao<Passenger, Long> {
     public static class Properties {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
         public final static Property UserName = new Property(1, String.class, "userName", false, "USER_NAME");
-        public final static Property UserWeight = new Property(2, Double.class, "userWeight", false, "USER_WEIGHT");
+        public final static Property UserWeight = new Property(2, Float.class, "userWeight", false, "USER_WEIGHT");
         public final static Property AircraftReg = new Property(3, String.class, "AircraftReg", false, "AIRCRAFT_REG");
         public final static Property IsChecked = new Property(4, Boolean.class, "isChecked", false, "IS_CHECKED");
     };
@@ -71,7 +71,7 @@ public class PassengerDao extends AbstractDao<Passenger, Long> {
             stmt.bindString(2, userName);
         }
  
-        Double userWeight = entity.getUserWeight();
+        Float userWeight = entity.getUserWeight();
         if (userWeight != null) {
             stmt.bindDouble(3, userWeight);
         }
@@ -99,7 +99,7 @@ public class PassengerDao extends AbstractDao<Passenger, Long> {
         Passenger entity = new Passenger( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
             cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // userName
-            cursor.isNull(offset + 2) ? null : cursor.getDouble(offset + 2), // userWeight
+            cursor.isNull(offset + 2) ? null : cursor.getFloat(offset + 2), // userWeight
             cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // AircraftReg
             cursor.isNull(offset + 4) ? null : cursor.getShort(offset + 4) != 0 // isChecked
         );
@@ -111,7 +111,7 @@ public class PassengerDao extends AbstractDao<Passenger, Long> {
     public void readEntity(Cursor cursor, Passenger entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
         entity.setUserName(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
-        entity.setUserWeight(cursor.isNull(offset + 2) ? null : cursor.getDouble(offset + 2));
+        entity.setUserWeight(cursor.isNull(offset + 2) ? null : cursor.getFloat(offset + 2));
         entity.setAircraftReg(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
         entity.setIsChecked(cursor.isNull(offset + 4) ? null : cursor.getShort(offset + 4) != 0);
      }

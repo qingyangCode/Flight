@@ -14,7 +14,7 @@ public class AllAircraft {
     private String UserCode;
     private String AircraftType;
     private Integer Bw;
-    private Double Lj;
+    private Float Lj;
     private String LayoutPic;
     private String OpDate;
     private Integer SysVersion;
@@ -30,7 +30,7 @@ public class AllAircraft {
         this.id = id;
     }
 
-    public AllAircraft(Long id, String AircraftReg, String UserCode, String AircraftType, Integer Bw, Double Lj, String LayoutPic, String OpDate, Integer SysVersion, String AcRemark) {
+    public AllAircraft(Long id, String AircraftReg, String UserCode, String AircraftType, Integer Bw, Float Lj, String LayoutPic, String OpDate, Integer SysVersion, String AcRemark) {
         this.id = id;
         this.AircraftReg = AircraftReg;
         this.UserCode = UserCode;
@@ -83,11 +83,11 @@ public class AllAircraft {
         this.Bw = Bw;
     }
 
-    public Double getLj() {
+    public Float getLj() {
         return Lj;
     }
 
-    public void setLj(Double Lj) {
+    public void setLj(Float Lj) {
         this.Lj = Lj;
     }
 

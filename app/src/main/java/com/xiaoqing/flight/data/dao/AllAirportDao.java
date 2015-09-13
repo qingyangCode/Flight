@@ -26,7 +26,7 @@ public class AllAirportDao extends AbstractDao<AllAirport, Long> {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
         public final static Property Str4code = new Property(1, String.class, "Str4code", false, "STR4CODE");
         public final static Property StrAirportName = new Property(2, String.class, "StrAirportName", false, "STR_AIRPORT_NAME");
-        public final static Property SysVersion = new Property(3, Integer.class, "SysVersion", false, "SYS_VERSION");
+        public final static Property SysVersion = new Property(3, int.class, "SysVersion", false, "SYS_VERSION");
     };
 
 
@@ -45,7 +45,7 @@ public class AllAirportDao extends AbstractDao<AllAirport, Long> {
                 "'_id' INTEGER PRIMARY KEY AUTOINCREMENT ," + // 0: id
                 "'STR4CODE' TEXT," + // 1: Str4code
                 "'STR_AIRPORT_NAME' TEXT," + // 2: StrAirportName
-                "'SYS_VERSION' INTEGER);"); // 3: SysVersion
+                "'SYS_VERSION' INTEGER NOT NULL );"); // 3: SysVersion
     }
 
     /** Drops the underlying database table. */
@@ -73,11 +73,7 @@ public class AllAirportDao extends AbstractDao<AllAirport, Long> {
         if (StrAirportName != null) {
             stmt.bindString(3, StrAirportName);
         }
- 
-        Integer SysVersion = entity.getSysVersion();
-        if (SysVersion != null) {
-            stmt.bindLong(4, SysVersion);
-        }
+        stmt.bindLong(4, entity.getSysVersion());
     }
 
     /** @inheritdoc */
@@ -93,7 +89,7 @@ public class AllAirportDao extends AbstractDao<AllAirport, Long> {
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
             cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // Str4code
             cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // StrAirportName
-            cursor.isNull(offset + 3) ? null : cursor.getInt(offset + 3) // SysVersion
+            cursor.getInt(offset + 3) // SysVersion
         );
         return entity;
     }
@@ -104,7 +100,7 @@ public class AllAirportDao extends AbstractDao<AllAirport, Long> {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
         entity.setStr4code(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
         entity.setStrAirportName(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
-        entity.setSysVersion(cursor.isNull(offset + 3) ? null : cursor.getInt(offset + 3));
+        entity.setSysVersion(cursor.getInt(offset + 3));
      }
     
     /** @inheritdoc */
