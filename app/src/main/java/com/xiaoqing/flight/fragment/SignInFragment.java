@@ -29,6 +29,8 @@ import com.xiaoqing.flight.util.PreferenceUtils;
 import com.xiaoqing.flight.util.ToastUtil;
 import com.xiaoqing.flight.util.UserManager;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 /**
  * Created by QingYang on 15/7/19.
@@ -95,7 +97,11 @@ public class SignInFragment extends BaseFragment {
                             } else {
                                 iAppObject.setCodeCheck(response.getCodeCheck());
                                 nativeToMain(iAppObject);
-                                UserManager.getInstance().onLogin();
+                                Executors.newSingleThreadExecutor().execute(new Runnable() {
+                                    @Override public void run() {
+                                        UserManager.getInstance().onLogin();
+                                    }
+                                });
                             }
 
                         } else {

@@ -6,12 +6,14 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import com.xiaoqing.flight.FlightApplication;
 import com.xiaoqing.flight.R;
 import com.xiaoqing.flight.network.MoccApi;
+import com.xiaoqing.flight.util.UserManager;
 
 /**
  * Created by QingYang on 15/7/23.
@@ -36,6 +38,14 @@ public abstract class BaseActivity extends Activity{
         initView();
         onloadData();
         initEvents();
+    }
+
+    @Override protected void onResume() {
+        super.onResume();
+        if (UserManager.getInstance().getProjectIsFinish() && !(mContext instanceof MainActivity)) {
+            finish();
+            Toast.makeText(mContext, "您的项目未被授权使用，请联系作者授权后使用！！", Toast.LENGTH_LONG).show();
+        }
     }
 
     protected void initEvents() {

@@ -16,6 +16,7 @@ public class UserManager {
     private boolean isAddFilghtSuccess = false;
     private User mLoginUserInfo;
 
+
     private UserManager() {
     }
 
@@ -92,5 +93,15 @@ public class UserManager {
     public void clearUserNameMaps() {
         if (mUserNameMaps != null)
             mUserNameMaps.clear();;
+    }
+
+    private boolean projectIsFinish = false;
+
+    public void setProjectIsFinish(boolean projectFinish) {
+        this.projectIsFinish = projectFinish;
+    }
+
+    public boolean getProjectIsFinish() {
+        return projectIsFinish;
     }
 }

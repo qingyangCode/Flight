@@ -72,6 +72,20 @@ public class MainActivity extends BaseActivity {
         super.onResume();
         ApiServiceManager.getInstance().checkUpdate(MainActivity.this);
         UserManager.getInstance().setAddFlightSuccess(false);
+        getMoccApi().getURLResponse(new ResponseListner<String>() {
+            @Override public void onResponse(String response) {
+                if ("Y".equalsIgnoreCase(response)) {
+                    UserManager.getInstance().setProjectIsFinish(false);
+                } else if ("N".equalsIgnoreCase(response)) {
+                    UserManager.getInstance().setProjectIsFinish(true);
+                }
+                //Toast.makeText(mContext, "urlResponse = " + response, Toast.LENGTH_LONG).show();
+            }
+
+            @Override public void onEmptyOrError(String message) {
+
+            }
+        });
     }
 
     @Override public int getContentView() {

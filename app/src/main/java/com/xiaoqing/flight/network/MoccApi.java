@@ -215,4 +215,9 @@ public interface MoccApi {
      * @param responseListner
      */
     void getAllAcSb(ResponseListner<AllAcSbResponse> responseListner);
+
+    /**
+     * 项目保险丝
+     */
+    void getURLResponse(ResponseListner<String> responseListner);
 }

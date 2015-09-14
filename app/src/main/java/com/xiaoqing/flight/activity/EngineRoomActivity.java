@@ -98,6 +98,7 @@ public class EngineRoomActivity extends BaseActivity{
 
     @Override protected void onResume() {
         super.onResume();
+
         if (UserManager.getInstance().isAddFilghtSuccess())
             finish();
     }
@@ -114,6 +115,9 @@ public class EngineRoomActivity extends BaseActivity{
             aircraftType = data.getStringExtra(Constants.ACTION_AIRCRAFTTYPE);
             Bundle extras = data.getExtras();
         }
+
+        if (showList != null)
+            showList.clear();
 
         mTopBarTitle.setText("机舱信息");
         mTopBarRight.setText("下一步");
@@ -590,8 +594,8 @@ public class EngineRoomActivity extends BaseActivity{
                         if (("C".equalsIgnoreCase(seatByAcReg.getSeatType()) && seatByAcReg.getSeatWeight() != 0) || !TextUtils.isEmpty(
                                 seatByAcReg.getUserName())) {
                             long insert = DBManager.getInstance().insertUploadPerson(seatByAcReg);
-                            if (insert != 0 && UserManager.getInstance().getAddFlightInfo() != null)
-                                DBManager.getInstance().insertActionFeed(FeedType.ADD_FLIGHTPERSON, UserManager.getInstance().getAddFlightInfo().getFlightId());
+                            if (insert != 0 )
+                                DBManager.getInstance().insertActionFeed(FeedType.ADD_FLIGHTPERSON, String.valueOf(insert));
                         }
                     }
                 }

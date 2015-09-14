@@ -315,7 +315,9 @@ public class RestrictionMapActivity extends BaseActivity{
                     beforeLj = fuleLimits.get(i).getFuleLj();
                     break;
                 }
+            }
 
+            if (beforeLj == 0) {
                 int left = 0;
                 int right = fuleLimits.size() - 1;
                 while (left < right) {
@@ -339,7 +341,11 @@ public class RestrictionMapActivity extends BaseActivity{
 
 
             float flightCg = 0;
-            flightCg = (airLj + totalPassengerLj + totalSbLj + beforeLj) / (realOilFloat - slideOilFloat);
+            try {
+                flightCg = (airLj + totalPassengerLj + totalSbLj + beforeLj) / (realOilFloat - slideOilFloat);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             mFlightCg.setText(FormatUtil.formatTo2Decimal(flightCg));
 
             getFuleLimit();
@@ -779,8 +785,14 @@ public class RestrictionMapActivity extends BaseActivity{
             ApiServiceManager.getInstance().getFilghtId(new ResponseListner<String>() {
                 @Override public void onResponse(String response) {
                     if (!TextUtils.isEmpty(response)) {
-                        UserManager.getInstance().getAddFlightInfo().setFlightId(response);
-                        handler.sendEmptyMessage(ACTION_ADDFILGHT);
+                        try {
+                            Integer.parseInt(response);
+                            UserManager.getInstance().getAddFlightInfo().setFlightId(response);
+                            handler.sendEmptyMessage(ACTION_ADDFILGHT);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            ToastUtil.showToast(mContext, R.drawable.toast_warning, response);
+                        }
                     } else {
                         hiddenDialog();
                         addFlightInfoToDB();
@@ -794,7 +806,7 @@ public class RestrictionMapActivity extends BaseActivity{
                 }
             });
         } else {
-
+            addFlightInfo();
         }
     }
 
@@ -804,6 +816,7 @@ public class RestrictionMapActivity extends BaseActivity{
         DBManager.getInstance().insertFlightInfo();
         UserManager.getInstance().setAddFlightSuccess(true);
         mTopBarRight.setVisibility(View.GONE);
+        ToastUtil.showToast(mContext, R.drawable.toast_confirm, "当前网络不稳定，数据已存储，在网络正常时自动同步数据");
     }
     private void showProgressDialog() {
         if (progressDialog == null) {

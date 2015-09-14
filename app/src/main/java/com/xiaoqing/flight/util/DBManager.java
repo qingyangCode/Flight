@@ -1,5 +1,6 @@
 package com.xiaoqing.flight.util;
 
+import android.text.TextUtils;
 import com.xiaoqing.flight.FlightApplication;
 import com.xiaoqing.flight.data.dao.AcGrants;
 import com.xiaoqing.flight.data.dao.AcGrantsDao;
@@ -34,6 +35,7 @@ import com.xiaoqing.flight.data.dao.User;
 import com.xiaoqing.flight.data.dao.UserDao;
 import com.xiaoqing.flight.network.synchronous.FeedType;
 import de.greenrobot.dao.query.QueryBuilder;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -273,12 +275,13 @@ public class DBManager {
     public long insertUploadPerson(SeatByAcReg seatByAcReg) {
         UploadAirPersonDao uploadAirPersonDao = daoSession.getUploadAirPersonDao();
         List<UploadAirPerson> list = null;
-        if (UserManager.getInstance().getAddFlightInfo() != null) {
+        if (UserManager.getInstance().getAddFlightInfo() == null || TextUtils.isEmpty(UserManager.getInstance().getAddFlightInfo().getFlightId())) {
+            UserManager.getInstance().getAddFlightInfo().setFlightId(DateFormatUtil.formatTDate());
+        }
          list = uploadAirPersonDao.queryBuilder()
                 .where(UploadAirPersonDao.Properties.FlightId.eq(UserManager.getInstance().getAddFlightInfo().getFlightId()), UploadAirPersonDao.Properties.SeatId.eq(seatByAcReg.getSeatId()))
                 .list();
 
-        }
         if (list != null && list.size() > 0) {
             uploadAirPersonDao.deleteInTx(list);
             for (UploadAirPerson uploadAirPerson : list) {
@@ -344,11 +347,11 @@ public class DBManager {
     }
 
     //删除航班信息
-    public void deleteFlightInfo() {
+    public void deleteFlightInfo(String flightID) {
+        if (TextUtils.isEmpty(flightID)) return;
         AddFlightInfoDao addFlightInfoDao = FlightApplication.getDaoSession().getAddFlightInfoDao();
         List<AddFlightInfo> list = addFlightInfoDao.queryBuilder().where(
-                AddFlightInfoDao.Properties.FlightId.eq(
-                        UserManager.getInstance().getAddFlightInfo().getFlightId())).list();
+                AddFlightInfoDao.Properties.FlightId.eq(flightID)).list();
         if (list != null && list.size() > 0) {
             addFlightInfoDao.delete(list.get(0));
         }

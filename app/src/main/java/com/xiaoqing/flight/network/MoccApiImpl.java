@@ -1,5 +1,6 @@
 package com.xiaoqing.flight.network;
 
+import android.os.AsyncTask;
 import android.text.TextUtils;
 import com.xiaoqing.flight.entity.AcGrantsResponse;
 import com.xiaoqing.flight.entity.AcWeightLimitResponse;
@@ -24,26 +25,30 @@ import com.xiaoqing.flight.util.DateFormatUtil;
 import com.xiaoqing.flight.util.DigestUtils;
 import com.xiaoqing.flight.util.LogUtil;
 import com.xiaoqing.flight.util.UserManager;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
  * Created by QingYang on 15/7/21.
  */
-public class MoccApiImpl implements MoccApi{
+public class MoccApiImpl implements MoccApi {
 
     private final String TAG = MoccApiImpl.class.getSimpleName();
 
     /**
      * 获得校验值
-     * @param userName
-     * @param responseListner
      */
-    @Override
-    public void getRandomString(String userName, ResponseListner responseListner) {
+    @Override public void getRandomString(String userName, ResponseListner responseListner) {
         String url = "http://124.127.106.196:80/Login1.ashx";
-        StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>")
-                .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
+        StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>").append(
+                "<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
                 .append("<CMD>GetRandomString</CMD>")
-                .append("<UserCode>"+userName+"</UserCode>")
+                .append("<UserCode>" + userName + "</UserCode>")
                 .append("RequestData/>").append("</MessageObject>");
         String xmlParam = sb.toString();
         NetBase net = new NetBase(url, xmlParam, responseListner);
@@ -52,15 +57,12 @@ public class MoccApiImpl implements MoccApi{
 
     /**
      * 验证用户
-     * @param userName
-     * @param pwd
-     * @param responseListner
      */
-    @Override
-    public void validateUser(String userName, String pwd, ResponseListner responseListner){
+    @Override public void validateUser(String userName, String pwd,
+            ResponseListner responseListner) {
         //String url = "http://124.127.106.196:80/Login1.ashx";
-        StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>")
-                .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
+        StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>").append(
+                "<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
                 .append("<CMD>ValidateUser</CMD>")
                 .append("<UserCode>" + userName + "</UserCode>")
                 .append("<CheckCode>" + pwd + "</CheckCode>")
@@ -68,15 +70,12 @@ public class MoccApiImpl implements MoccApi{
         String xmlParam = sb.toString();
         NetBase net = new NetBase(BASE_URL, xmlParam, responseListner);
         net.execute();
-
     }
 
     /**
      * 实现登录效果
-     * @param userName
-     * @param pwd
      */
-    public void doLogin(final String userName, final String pwd, final ResponseListner ll){
+    public void doLogin(final String userName, final String pwd, final ResponseListner ll) {
         getRandomString(userName, new ResponseListner<String>() {
             @Override public void onResponse(String response) {
                 final String xml2json = CommonUtils.xml2JSON(response);
@@ -117,45 +116,41 @@ public class MoccApiImpl implements MoccApi{
     //	一、获取所有飞机信息
     public void getAllAircraft(String userName, final ResponseListner responseListner) {
         //String url = "http://124.127.106.196:80/Login1.ashx";
-        StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>")
-                .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
+        StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>").append(
+                "<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
                 .append("<CMD>GetAllAircraft</CMD>")
-                .append("<UserCode>"+"Test"+"</UserCode>")
-                .append("<CheckCode>"+ UserManager.getInstance().getUser().getCodeCheck() +"</CheckCode>")
+                .append("<UserCode>" + "Test" + "</UserCode>")
+                .append("<CheckCode>"
+                        + UserManager.getInstance().getUser().getCodeCheck()
+                        + "</CheckCode>")
                 .append("RequestData/>").append("</MessageObject>");
         String xmlParam = sb.toString();
         NetBase net = new NetBase(BASE_URL, xmlParam, new ResponseListner<String>() {
-            @Override
-            public void onResponse(String response) {
+            @Override public void onResponse(String response) {
                 String xml2json = CommonUtils.xml2JSON(response);
                 LogUtil.LOGD(TAG, "getAllAircraft === " + xml2json);
-                if(!TextUtils.isEmpty(xml2json)){
+                if (!TextUtils.isEmpty(xml2json)) {
                     AllAirCraftResponse allAirCraft = AllAirCraftResponse.parse(xml2json);
                     responseListner.onResponse(allAirCraft);
                 }
             }
 
-            @Override
-            public void onEmptyOrError(String message) {
+            @Override public void onEmptyOrError(String message) {
                 responseListner.onEmptyOrError(message);
             }
-
         });
         net.execute();
     }
 
-
-
-
-
-
-    public void getAllUser(String userName,  final ResponseListner responseListner) {
+    public void getAllUser(String userName, final ResponseListner responseListner) {
         //String url = "http://124.127.106.196:80/Login1.ashx";
-        StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>")
-                .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
+        StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>").append(
+                "<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
                 .append("<CMD>GetAllUser</CMD>")
                 .append("<UserCode>" + UserManager.getInstance().getUser().getUserCode() + "</UserCode>")
-                .append("<CheckCode>"+UserManager.getInstance().getUser().getCodeCheck()+"</CheckCode>")
+                .append("<CheckCode>"
+                        + UserManager.getInstance().getUser().getCodeCheck()
+                        + "</CheckCode>")
                 .append("<RequestData>")
                 .append("<IAppObject xsi:type=\"AppUser\">")
                 .append("<UserCode>" + userName + "</UserCode>")
@@ -165,11 +160,10 @@ public class MoccApiImpl implements MoccApi{
                 .append("</MessageObject>");
         String xmlParam = sb.toString();
         NetBase net = new NetBase(BASE_URL, xmlParam, new ResponseListner<String>() {
-            @Override
-            public void onResponse(String response) {
+            @Override public void onResponse(String response) {
                 String xml2json = CommonUtils.xml2JSON(response);
-                LogUtil.LOGD(TAG,"GetAllUser ==== " + xml2json);
-                if(!TextUtils.isEmpty(xml2json)){
+                LogUtil.LOGD(TAG, "GetAllUser ==== " + xml2json);
+                if (!TextUtils.isEmpty(xml2json)) {
                     AllUsersResponse parse = AllUsersResponse.parse(xml2json);
                     responseListner.onResponse(parse);
                 } else {
@@ -177,20 +171,23 @@ public class MoccApiImpl implements MoccApi{
                 }
             }
 
-            @Override
-            public void onEmptyOrError(String message) {
+            @Override public void onEmptyOrError(String message) {
                 responseListner.onResponse(null);
             }
         });
         net.execute();
     }
 
-    public void getSeatByAcReg(String aircraftReg, String bw, String lj, String opDate, String SysVersion, final ResponseListner<SeatByAcRegResponse> responseListner){
-        StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>")
-                .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
+    public void getSeatByAcReg(String aircraftReg, String bw, String lj, String opDate, String SysVersion, final ResponseListner<SeatByAcRegResponse> responseListner) {
+        StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>").append(
+                "<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
                 .append("<CMD>GetSeatByAcReg</CMD>")
-                .append("<UserCode>"+ UserManager.getInstance().getUser().getUserCode()+"</UserCode>")
-                .append("<CheckCode>"+UserManager.getInstance().getUser().getCodeCheck()+"</CheckCode>")
+                .append("<UserCode>"
+                        + UserManager.getInstance().getUser().getUserCode()
+                        + "</UserCode>")
+                .append("<CheckCode>"
+                        + UserManager.getInstance().getUser().getCodeCheck()
+                        + "</CheckCode>")
                 .append("<RequestData>")
                 .append("<IAppObject xsi:type=\"AppAircraft\">")
                 .append("<AircraftReg>" + aircraftReg + "</AircraftReg>")
@@ -198,8 +195,7 @@ public class MoccApiImpl implements MoccApi{
                 .append("<Lj>" + lj + "</Lj>")
                 .append("<OpDate>" + opDate + "</OpDate>")
                 .append("<SysVersion> " + SysVersion + " </SysVersion>")
-                .append("</IAppObject>\n" + "  </RequestData>\n" + "</MessageObject>")
-                ;
+                .append("</IAppObject>\n" + "  </RequestData>\n" + "</MessageObject>");
         final String xmlParam = sb.toString();
         ResponseListner<String> responseListner1 = new ResponseListner<String>() {
             @Override public void onResponse(String response) {
@@ -212,20 +208,24 @@ public class MoccApiImpl implements MoccApi{
             @Override public void onEmptyOrError(String message) {
                 responseListner.onEmptyOrError(message);
             }
-        }; NetBase net = new NetBase(BASE_URL, xmlParam, responseListner1);
+        };
+        NetBase net = new NetBase(BASE_URL, xmlParam, responseListner1);
         net.execute();
-    };
+    }
 
-    @Override public void getFuleLimitByAcType(String AircraftType, String PortLimit,
-            String TofWeightLimit, String LandWeightLimit, String Mzfw, String OpDate,
-            String SysVersion, final ResponseListner<FuleLimitResponse> responseListner) {
-        StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>")
-                .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
+    ;
+
+    @Override public void getFuleLimitByAcType(String AircraftType, String PortLimit, String TofWeightLimit,
+            String LandWeightLimit, String Mzfw, String OpDate, String SysVersion, final ResponseListner<FuleLimitResponse> responseListner) {
+        StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>").append(
+                "<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
                 .append("<CMD>GetFuleLimitByAcType</CMD>")
                 .append("<UserCode>"
                         + UserManager.getInstance().getUser().getUserCode()
                         + "</UserCode>")
-                .append("<CheckCode>"+ UserManager.getInstance().getUser().getCodeCheck()+"</CheckCode>")
+                .append("<CheckCode>"
+                        + UserManager.getInstance().getUser().getCodeCheck()
+                        + "</CheckCode>")
                 .append("<RequestData>")
                 .append("<IAppObject xsi:type=\"AppAircraft\">")
                 .append("<AircraftType>" + AircraftType + "</AircraftType>")
@@ -235,13 +235,12 @@ public class MoccApiImpl implements MoccApi{
                 .append("<Mzfw>" + Mzfw + "</Mzfw>")
                 .append("<OpDate>" + OpDate + "</OpDate>")
                 .append("<SysVersion> " + SysVersion + " </SysVersion>")
-                .append("</IAppObject>\n" + "  </RequestData>\n" + "</MessageObject>")
-                ;
+                .append("</IAppObject>\n" + "  </RequestData>\n" + "</MessageObject>");
         final String xmlParam = sb.toString();
         ResponseListner<String> responseListner1 = new ResponseListner<String>() {
             @Override public void onResponse(String response) {
-                if (response.contains("</ResponseData>"))
-                    response = response.replace("</ResponseData>", "<IAppObject xsi:type=\"AppMessage\"> </IAppObject></ResponseData>");
+                if (response.contains("</ResponseData>")) response = response.replace("</ResponseData>",
+                        "<IAppObject xsi:type=\"AppMessage\"> </IAppObject></ResponseData>");
                 String xmlStr = CommonUtils.xml2JSON(response);
                 LogUtil.LOGD(TAG, "GetFuleLimitByAcType ===== " + xmlStr);
                 FuleLimitResponse fuleLimitResponse = FuleLimitResponse.parse(xmlStr);
@@ -251,7 +250,8 @@ public class MoccApiImpl implements MoccApi{
             @Override public void onEmptyOrError(String message) {
                 responseListner.onEmptyOrError(message);
             }
-        }; NetBase net = new NetBase(BASE_URL, xmlParam, responseListner1);
+        };
+        NetBase net = new NetBase(BASE_URL, xmlParam, responseListner1);
         net.execute();
     }
 
@@ -259,21 +259,20 @@ public class MoccApiImpl implements MoccApi{
             String TofWeightLimit, String LandWeightLimit, String Mzfw, String OpDate,
             String SysVersion, final ResponseListner<AcWeightLimitResponse> responseListner) {
 
-        StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>")
-                .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
+        StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>").append(
+                "<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
                 .append("<CMD>GetAcWeightLimitByAcType</CMD>")
-                .append("<UserCode>" + UserManager.getInstance().getUser().getUserCode()+ "</UserCode>")
+                .append("<UserCode>" + UserManager.getInstance().getUser().getUserCode() + "</UserCode>")
                 .append("<CheckCode>" + UserManager.getInstance().getUser().getCodeCheck() + "</CheckCode>")
                 .append("<RequestData>")
                 .append("<IAppObject xsi:type=\"AppAircraftType\">")
-                .append("<AircraftType>" +AircraftType+ "</AircraftType>")
+                .append("<AircraftType>" + AircraftType + "</AircraftType>")
                 .append("<PortLimit>" + PortLimit + "</PortLimit>")
-                .append("<TofWeightLimit>"  +TofWeightLimit+ "</TofWeightLimit>")
-                .append("<LandWeightLimit>" +LandWeightLimit+ "</LandWeightLimit>")
+                .append("<TofWeightLimit>" + TofWeightLimit + "</TofWeightLimit>")
+                .append("<LandWeightLimit>" + LandWeightLimit + "</LandWeightLimit>")
                 .append("<Mzfw>" + Mzfw + "</Mzfw>")
                 .append("<OpDate>" + DateFormatUtil.formatTDate() + "</OpDate>")
-                .append("</IAppObject>\n" + "  </RequestData>\n" + "</MessageObject>")
-                ;
+                .append("</IAppObject>\n" + "  </RequestData>\n" + "</MessageObject>");
         final String xmlParam = sb.toString();
         ResponseListner<String> responseListner1 = new ResponseListner<String>() {
             @Override public void onResponse(String response) {
@@ -286,20 +285,23 @@ public class MoccApiImpl implements MoccApi{
             @Override public void onEmptyOrError(String message) {
                 responseListner.onEmptyOrError(message);
             }
-        }; NetBase net = new NetBase(BASE_URL, xmlParam, responseListner1);
+        };
+        NetBase net = new NetBase(BASE_URL, xmlParam, responseListner1);
         net.execute();
-
     }
 
     @Override public void getAllAcType(final ResponseListner<AllAcTypeResponse> responseListner) {
-        StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>")
-                .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
+        StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>").append(
+                "<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
                 .append("<CMD>GetAllAcType</CMD>")
-                .append("<UserCode>"+ UserManager.getInstance().getUser().getUserCode()+"</UserCode>")
-                .append("<CheckCode>"+ UserManager.getInstance().getUser().getCodeCheck()+"</CheckCode>")
+                .append("<UserCode>"
+                        + UserManager.getInstance().getUser().getUserCode()
+                        + "</UserCode>")
+                .append("<CheckCode>"
+                        + UserManager.getInstance().getUser().getCodeCheck()
+                        + "</CheckCode>")
                 .append("<RequestData/>")
-                .append("</MessageObject>")
-                ;
+                .append("</MessageObject>");
         final String xmlParam = sb.toString();
         ResponseListner<String> responseListner1 = new ResponseListner<String>() {
             @Override public void onResponse(String response) {
@@ -312,19 +314,23 @@ public class MoccApiImpl implements MoccApi{
             @Override public void onEmptyOrError(String message) {
                 responseListner.onEmptyOrError(message);
             }
-        }; NetBase net = new NetBase(BASE_URL, xmlParam, responseListner1);
+        };
+        NetBase net = new NetBase(BASE_URL, xmlParam, responseListner1);
         net.execute();
     }
 
     @Override public void getAllSb(final ResponseListner<AllSbResponse> responseListner) {
-        StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>")
-                .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
+        StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>").append(
+                "<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
                 .append("<CMD>GetAllSb</CMD>")
-                .append("<UserCode>"+ UserManager.getInstance().getUser().getUserCode()+"</UserCode>")
-                .append("<CheckCode>"+ UserManager.getInstance().getUser().getCodeCheck()+"</CheckCode>")
+                .append("<UserCode>"
+                        + UserManager.getInstance().getUser().getUserCode()
+                        + "</UserCode>")
+                .append("<CheckCode>"
+                        + UserManager.getInstance().getUser().getCodeCheck()
+                        + "</CheckCode>")
                 .append("<RequestData/>")
-                .append("</MessageObject>")
-                ;
+                .append("</MessageObject>");
         final String xmlParam = sb.toString();
         ResponseListner<String> responseListner1 = new ResponseListner<String>() {
             @Override public void onResponse(String response) {
@@ -337,7 +343,8 @@ public class MoccApiImpl implements MoccApi{
             @Override public void onEmptyOrError(String message) {
                 responseListner.onEmptyOrError(message);
             }
-        }; NetBase net = new NetBase(BASE_URL, xmlParam, responseListner1);
+        };
+        NetBase net = new NetBase(BASE_URL, xmlParam, responseListner1);
         net.execute();
     }
 
@@ -369,9 +376,11 @@ public class MoccApiImpl implements MoccApi{
     //        .append("</IAppObject>")
     //        .append("</RequestData>")
     //        .append("</MessageObject>");
-    @Override public void addFlightCd(String AircraftReg, String SeatId, String FlightId, String SeatCode, String SeatType, String AcTypeSeatLimit, String AcTypeLj, String AcRegCagWeight, String AcRegCagLj, String SeatLastLimit, String PassagerName, String RealWeight, String OpUser, String OpDate, final ResponseListner<GrantsByUserCodeResponse> responseListner) {
-        StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>")
-                .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
+    @Override public void addFlightCd(String AircraftReg, String SeatId, String FlightId, String SeatCode, String SeatType, String AcTypeSeatLimit, String AcTypeLj,
+            String AcRegCagWeight, String AcRegCagLj, String SeatLastLimit, String PassagerName,
+            String RealWeight, String OpUser, String OpDate, final ResponseListner<GrantsByUserCodeResponse> responseListner) {
+        StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>").append(
+                "<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
                 .append("<CMD>AddFlightCd</CMD>")
                 .append("<UserCode>"
                         + UserManager.getInstance().getUser().getUserCode()
@@ -400,15 +409,13 @@ public class MoccApiImpl implements MoccApi{
                 .append("</MessageObject>");
         String xmlParam = sb.toString();
         NetBase net = new NetBase(BASE_URL, xmlParam, new ResponseListner<String>() {
-            @Override
-            public void onResponse(String response) {
+            @Override public void onResponse(String response) {
                 String xml2json = CommonUtils.xml2JSON(response);
                 GrantsByUserCodeResponse parse = GrantsByUserCodeResponse.parse(xml2json);
                 responseListner.onResponse(parse);
             }
 
-            @Override
-            public void onEmptyOrError(String message) {
+            @Override public void onEmptyOrError(String message) {
                 responseListner.onEmptyOrError(message);
             }
         });
@@ -422,8 +429,8 @@ public class MoccApiImpl implements MoccApi{
             String NoFuleWeight, String AirportLimitWeight, String BalancePic,
             String BalancePicName, String OpUser, String OpDate,
             final ResponseListner<AddFlightInfoResponse> responseListner) {
-        StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>")
-                .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
+        StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>").append(
+                "<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
                 .append("<CMD>AddFlightInfo</CMD>")
                 .append("<UserCode>"
                         + UserManager.getInstance().getUser().getUserCode()
@@ -459,15 +466,13 @@ public class MoccApiImpl implements MoccApi{
                 .append("</MessageObject>");
         String xmlParam = sb.toString();
         NetBase net = new NetBase(BASE_URL, xmlParam, new ResponseListner<String>() {
-            @Override
-            public void onResponse(String response) {
+            @Override public void onResponse(String response) {
                 String xml2json = CommonUtils.xml2JSON(response);
                 AddFlightInfoResponse parse = AddFlightInfoResponse.parse(xml2json);
                 responseListner.onResponse(parse);
             }
 
-            @Override
-            public void onEmptyOrError(String message) {
+            @Override public void onEmptyOrError(String message) {
                 responseListner.onEmptyOrError(message);
             }
         });
@@ -475,14 +480,17 @@ public class MoccApiImpl implements MoccApi{
     }
 
     @Override public void getflightid(final ResponseListner<FlightidResponse> responseListner) {
-        StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>")
-                .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
+        StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>").append(
+                "<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
                 .append("<CMD>GetFlightId</CMD>")
-                .append("<UserCode>"+ UserManager.getInstance().getUser().getUserCode()+"</UserCode>")
-                .append("<CheckCode>"+ UserManager.getInstance().getUser().getCodeCheck()+"</CheckCode>")
+                .append("<UserCode>"
+                        + UserManager.getInstance().getUser().getUserCode()
+                        + "</UserCode>")
+                .append("<CheckCode>"
+                        + UserManager.getInstance().getUser().getCodeCheck()
+                        + "</CheckCode>")
                 .append("<RequestData/>")
-                .append("</MessageObject>")
-                ;
+                .append("</MessageObject>");
         final String xmlParam = sb.toString();
         ResponseListner<String> responseListner1 = new ResponseListner<String>() {
             @Override public void onResponse(String response) {
@@ -495,16 +503,21 @@ public class MoccApiImpl implements MoccApi{
             @Override public void onEmptyOrError(String message) {
                 responseListner.onEmptyOrError(message);
             }
-        }; NetBase net = new NetBase(BASE_URL, xmlParam, responseListner1);
+        };
+        NetBase net = new NetBase(BASE_URL, xmlParam, responseListner1);
         net.execute();
     }
 
     public void getGrantsByUserCode(final ResponseListner<AllAirCraftResponse> responseListner) {
-        StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>")
-                .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
+        StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>").append(
+                "<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
                 .append("<CMD>GetGrantsByUserCode</CMD>")
-                .append("<UserCode>"+ UserManager.getInstance().getUser().getUserCode() +"</UserCode>")
-                .append("<CheckCode>"+ UserManager.getInstance().getUser().getCodeCheck() +"</CheckCode>")
+                .append("<UserCode>"
+                        + UserManager.getInstance().getUser().getUserCode()
+                        + "</UserCode>")
+                .append("<CheckCode>"
+                        + UserManager.getInstance().getUser().getCodeCheck()
+                        + "</CheckCode>")
                 .append("<RequestData>")
                 .append("<IAppObject xsi:type=\"AppUser\">")
                 .append("<UserCode>" + UserManager.getInstance().getUser().getUserCode() + "</UserCode>")
@@ -514,29 +527,26 @@ public class MoccApiImpl implements MoccApi{
                 .append("</MessageObject>");
         String xmlParam = sb.toString();
         NetBase net = new NetBase(BASE_URL, xmlParam, new ResponseListner<String>() {
-            @Override
-            public void onResponse(String response) {
+            @Override public void onResponse(String response) {
                 String xml2json = CommonUtils.xml2JSON(response);
                 LogUtil.LOGD(TAG, "getAllAircraft === " + xml2json);
-                if(!TextUtils.isEmpty(xml2json)){
+                if (!TextUtils.isEmpty(xml2json)) {
                     AllAirCraftResponse allAirCraft = AllAirCraftResponse.parse(xml2json);
                     responseListner.onResponse(allAirCraft);
                 }
             }
 
-            @Override
-            public void onEmptyOrError(String message) {
+            @Override public void onEmptyOrError(String message) {
                 responseListner.onEmptyOrError(message);
             }
-
         });
         net.execute();
     }
 
     @Override public void validCaption(String StrUserCode, String StrAcType, String StrUserPass,
             final ResponseListner<ValidCaptionResponse> responseListner) {
-        StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>")
-                .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
+        StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>").append(
+                "<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
                 .append("<CMD>ValidCaption</CMD>")
                 .append("<UserCode>" + UserManager.getInstance().getUser().getUserCode() + "</UserCode>")
                 .append("<CheckCode>" + UserManager.getInstance().getUser().getCodeCheck() + "</CheckCode>")
@@ -560,17 +570,22 @@ public class MoccApiImpl implements MoccApi{
             @Override public void onEmptyOrError(String message) {
                 responseListner.onEmptyOrError(message);
             }
-        }; NetBase net = new NetBase(BASE_URL, xmlParam, responseListner1);
+        };
+        NetBase net = new NetBase(BASE_URL, xmlParam, responseListner1);
         net.execute();
     }
 
     @Override public void getMessageByDate(String startDate,
             final ResponseListner<MessageResponse> responseListner) {
-        StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>")
-                .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
+        StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>").append(
+                "<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
                 .append("<CMD>GetMessageByDate</CMD>")
-                .append("<UserCode>"+ UserManager.getInstance().getUser().getUserCode() +"</UserCode>")
-                .append("<CheckCode>"+ UserManager.getInstance().getUser().getCodeCheck() +"</CheckCode>")
+                .append("<UserCode>"
+                        + UserManager.getInstance().getUser().getUserCode()
+                        + "</UserCode>")
+                .append("<CheckCode>"
+                        + UserManager.getInstance().getUser().getCodeCheck()
+                        + "</CheckCode>")
                 .append("<RequestData>")
                 .append("<IAppObject xsi:type=\"MsgQDate\">")
                 .append("<DtStart>" + startDate + "</DtStart>")
@@ -581,8 +596,8 @@ public class MoccApiImpl implements MoccApi{
         final String xmlParam = sb.toString();
         ResponseListner<String> responseListner1 = new ResponseListner<String>() {
             @Override public void onResponse(String response) {
-                if (response.contains("</ResponseData>"))
-                    response = response.replace("</ResponseData>", "<IAppObject xsi:type=\"AppMessage\"> </IAppObject></ResponseData>");
+                if (response.contains("</ResponseData>")) response = response.replace("</ResponseData>",
+                        "<IAppObject xsi:type=\"AppMessage\"> </IAppObject></ResponseData>");
                 String xmlStr = CommonUtils.xml2JSON(response);
                 LogUtil.LOGD(TAG, "GetMessageByDate ===== " + xmlStr);
                 MessageResponse allAcType = MessageResponse.parse(xmlStr);
@@ -592,20 +607,23 @@ public class MoccApiImpl implements MoccApi{
             @Override public void onEmptyOrError(String message) {
                 responseListner.onEmptyOrError(message);
             }
-        }; NetBase net = new NetBase(BASE_URL, xmlParam, responseListner1);
+        };
+        NetBase net = new NetBase(BASE_URL, xmlParam, responseListner1);
         net.execute();
     }
 
-    @Override
-    public void getAcGrants(final ResponseListner<AcGrantsResponse> responseListner) {
-        StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>")
-                .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
+    @Override public void getAcGrants(final ResponseListner<AcGrantsResponse> responseListner) {
+        StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>").append(
+                "<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
                 .append("<CMD>GetAcGrants</CMD>")
-                .append("<UserCode>"+ UserManager.getInstance().getUser().getUserCode()+"</UserCode>")
-                .append("<CheckCode>"+ UserManager.getInstance().getUser().getCodeCheck()+"</CheckCode>")
+                .append("<UserCode>"
+                        + UserManager.getInstance().getUser().getUserCode()
+                        + "</UserCode>")
+                .append("<CheckCode>"
+                        + UserManager.getInstance().getUser().getCodeCheck()
+                        + "</CheckCode>")
                 .append("<RequestData/>")
-                .append("</MessageObject>")
-                ;
+                .append("</MessageObject>");
         final String xmlParam = sb.toString();
         ResponseListner<String> responseListner1 = new ResponseListner<String>() {
             @Override public void onResponse(String response) {
@@ -618,19 +636,23 @@ public class MoccApiImpl implements MoccApi{
             @Override public void onEmptyOrError(String message) {
                 responseListner.onEmptyOrError(message);
             }
-        }; NetBase net = new NetBase(BASE_URL, xmlParam, responseListner1);
+        };
+        NetBase net = new NetBase(BASE_URL, xmlParam, responseListner1);
         net.execute();
     }
 
     @Override public void getAllAirPort(final ResponseListner<AllAirportResponse> responseListner) {
-        StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>")
-                .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
+        StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>").append(
+                "<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
                 .append("<CMD>GetAllAirport</CMD>")
-                .append("<UserCode>"+ UserManager.getInstance().getUser().getUserCode()+"</UserCode>")
-                .append("<CheckCode>"+ UserManager.getInstance().getUser().getCodeCheck()+"</CheckCode>")
+                .append("<UserCode>"
+                        + UserManager.getInstance().getUser().getUserCode()
+                        + "</UserCode>")
+                .append("<CheckCode>"
+                        + UserManager.getInstance().getUser().getCodeCheck()
+                        + "</CheckCode>")
                 .append("<RequestData/>")
-                .append("</MessageObject>")
-                ;
+                .append("</MessageObject>");
         final String xmlParam = sb.toString();
         ResponseListner<String> responseListner1 = new ResponseListner<String>() {
             @Override public void onResponse(String response) {
@@ -643,19 +665,23 @@ public class MoccApiImpl implements MoccApi{
             @Override public void onEmptyOrError(String message) {
                 responseListner.onEmptyOrError(message);
             }
-        }; NetBase net = new NetBase(BASE_URL, xmlParam, responseListner1);
+        };
+        NetBase net = new NetBase(BASE_URL, xmlParam, responseListner1);
         net.execute();
     }
 
     @Override public void getAllSeat(final ResponseListner<SeatByAcRegResponse> responseListner) {
-        StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>")
-                .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
+        StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>").append(
+                "<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
                 .append("<CMD>GetAllSeat</CMD>")
-                .append("<UserCode>"+ UserManager.getInstance().getUser().getUserCode()+"</UserCode>")
-                .append("<CheckCode>"+ UserManager.getInstance().getUser().getCodeCheck()+"</CheckCode>")
+                .append("<UserCode>"
+                        + UserManager.getInstance().getUser().getUserCode()
+                        + "</UserCode>")
+                .append("<CheckCode>"
+                        + UserManager.getInstance().getUser().getCodeCheck()
+                        + "</CheckCode>")
                 .append("<RequestData/>")
-                .append("</MessageObject>")
-                ;
+                .append("</MessageObject>");
         final String xmlParam = sb.toString();
         ResponseListner<String> responseListner1 = new ResponseListner<String>() {
             @Override public void onResponse(String response) {
@@ -668,19 +694,23 @@ public class MoccApiImpl implements MoccApi{
             @Override public void onEmptyOrError(String message) {
                 responseListner.onEmptyOrError(message);
             }
-        }; NetBase net = new NetBase(BASE_URL, xmlParam, responseListner1);
+        };
+        NetBase net = new NetBase(BASE_URL, xmlParam, responseListner1);
         net.execute();
     }
 
     @Override public void getAllFuleLimit(final ResponseListner<FuleLimitResponse> responseListner) {
-        StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>")
-                .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
+        StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>").append(
+                "<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
                 .append("<CMD>GetAllFuleLimit</CMD>")
-                .append("<UserCode>"+ UserManager.getInstance().getUser().getUserCode()+"</UserCode>")
-                .append("<CheckCode>"+ UserManager.getInstance().getUser().getCodeCheck()+"</CheckCode>")
+                .append("<UserCode>"
+                        + UserManager.getInstance().getUser().getUserCode()
+                        + "</UserCode>")
+                .append("<CheckCode>"
+                        + UserManager.getInstance().getUser().getCodeCheck()
+                        + "</CheckCode>")
                 .append("<RequestData/>")
-                .append("</MessageObject>")
-                ;
+                .append("</MessageObject>");
         final String xmlParam = sb.toString();
         ResponseListner<String> responseListner1 = new ResponseListner<String>() {
             @Override public void onResponse(String response) {
@@ -693,20 +723,23 @@ public class MoccApiImpl implements MoccApi{
             @Override public void onEmptyOrError(String message) {
                 responseListner.onEmptyOrError(message);
             }
-        }; NetBase net = new NetBase(BASE_URL, xmlParam, responseListner1);
+        };
+        NetBase net = new NetBase(BASE_URL, xmlParam, responseListner1);
         net.execute();
     }
 
-    @Override public void getAllAcWeightLimit(
-            final ResponseListner<AcWeightLimitResponse> responseListner) {
-        StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>")
-                .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
+    @Override public void getAllAcWeightLimit(final ResponseListner<AcWeightLimitResponse> responseListner) {
+        StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>").append(
+                "<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
                 .append("<CMD>GetAllAcWeightLimit</CMD>")
-                .append("<UserCode>"+ UserManager.getInstance().getUser().getUserCode()+"</UserCode>")
-                .append("<CheckCode>"+ UserManager.getInstance().getUser().getCodeCheck()+"</CheckCode>")
+                .append("<UserCode>"
+                        + UserManager.getInstance().getUser().getUserCode()
+                        + "</UserCode>")
+                .append("<CheckCode>"
+                        + UserManager.getInstance().getUser().getCodeCheck()
+                        + "</CheckCode>")
                 .append("<RequestData/>")
-                .append("</MessageObject>")
-                ;
+                .append("</MessageObject>");
         final String xmlParam = sb.toString();
         ResponseListner<String> responseListner1 = new ResponseListner<String>() {
             @Override public void onResponse(String response) {
@@ -719,24 +752,29 @@ public class MoccApiImpl implements MoccApi{
             @Override public void onEmptyOrError(String message) {
                 responseListner.onEmptyOrError(message);
             }
-        }; NetBase net = new NetBase(BASE_URL, xmlParam, responseListner1);
+        };
+        NetBase net = new NetBase(BASE_URL, xmlParam, responseListner1);
         net.execute();
     }
 
     @Override public void checkUpdate(String versionCode,
             final ResponseListner<UpdateInfoResponse> responseListner) {
-        StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>")
-                .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
+        StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>").append(
+                "<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
                 .append("<CMD>checkUpdate</CMD>")
-                .append("<UserCode>"+ UserManager.getInstance().getUser().getUserCode()+"</UserCode>")
-                .append("<CheckCode>"+ UserManager.getInstance().getUser().getCodeCheck()+"</CheckCode>")
+                .append("<UserCode>"
+                        + UserManager.getInstance().getUser().getUserCode()
+                        + "</UserCode>")
+                .append("<CheckCode>"
+                        + UserManager.getInstance().getUser().getCodeCheck()
+                        + "</CheckCode>")
                 .append("<RequestData>")
                 .append("<IAppObject xsi:type=\"MsgQDate\">")
                 .append("<VersionCode>" + versionCode + "</VersionCode>")
                 .append("</IAppObject>")
                 .append("</RequestData>")
                 .append("</MessageObject>");
-                ;
+        ;
         final String xmlParam = sb.toString();
         ResponseListner<String> responseListner1 = new ResponseListner<String>() {
             @Override public void onResponse(String response) {
@@ -749,24 +787,28 @@ public class MoccApiImpl implements MoccApi{
             @Override public void onEmptyOrError(String message) {
                 responseListner.onEmptyOrError(message);
             }
-        }; NetBase net = new NetBase(BASE_URL, xmlParam, responseListner1);
+        };
+        NetBase net = new NetBase(BASE_URL, xmlParam, responseListner1);
         net.execute();
     }
 
     @Override public void getAllAcSb(final ResponseListner<AllAcSbResponse> responseListner) {
-        StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>")
-                .append("<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
-                .append("<CMD>GetAllAcWeightLimit</CMD>")
-                .append("<UserCode>"+ UserManager.getInstance().getUser().getUserCode()+"</UserCode>")
-                .append("<CheckCode>"+ UserManager.getInstance().getUser().getCodeCheck()+"</CheckCode>")
+        StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>").append(
+                "<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
+                .append("<CMD>GetAllAcSb</CMD>")
+                .append("<UserCode>"
+                        + UserManager.getInstance().getUser().getUserCode()
+                        + "</UserCode>")
+                .append("<CheckCode>"
+                        + UserManager.getInstance().getUser().getCodeCheck()
+                        + "</CheckCode>")
                 .append("<RequestData/>")
-                .append("</MessageObject>")
-                ;
+                .append("</MessageObject>");
         final String xmlParam = sb.toString();
         ResponseListner<String> responseListner1 = new ResponseListner<String>() {
             @Override public void onResponse(String response) {
                 String xmlStr = CommonUtils.xml2JSON(response);
-                LogUtil.LOGD(TAG, "GetAllAcWeightLimit ===== " + xmlStr);
+                LogUtil.LOGD(TAG, "GetAllAcSb ===== " + xmlStr);
                 AllAcSbResponse allAcType = AllAcSbResponse.parse(xmlStr);
                 responseListner.onResponse(allAcType);
             }
@@ -774,7 +816,78 @@ public class MoccApiImpl implements MoccApi{
             @Override public void onEmptyOrError(String message) {
                 responseListner.onEmptyOrError(message);
             }
-        }; NetBase net = new NetBase(BASE_URL, xmlParam, responseListner1);
+        };
+        NetBase net = new NetBase(BASE_URL, xmlParam, responseListner1);
         net.execute();
+    }
+
+    @Override
+    public void getURLResponse(final ResponseListner<String> responseListner) {
+
+
+        new AsyncTask<Void, Void, String>(){
+
+            @Override protected String doInBackground(Void... params) {
+                HttpURLConnection conn = null; //连接对象
+                InputStream is = null;
+                String resultData = "";
+                try {
+                    URL url = new URL("http://dhc001.pagekite.me/jiuAPP/login/loginController/state3.action"); //URL对象
+                    conn = (HttpURLConnection) url.openConnection(); //使用URL打开一个链接
+                    //conn.setDoInput(true); //允许输入流，即允许下载
+                    //conn.setDoOutput(true); //允许输出流，即允许上传
+                    conn.setUseCaches(false); //不使用缓冲
+                    conn.setRequestMethod("GET"); //使用get请求
+                    is = conn.getInputStream();   //获取输入流，此时才真正建立链接
+                    byte[] bytes = new byte[is.available()];
+                    is.read(bytes);
+
+                    //resultData = new String(bytes);
+                    StringBuilder sb2;
+                    int responseCode = conn.getResponseCode();
+                    if (responseCode == 200) {
+                        sb2 = new StringBuilder();
+                        int ch;
+                        while ((ch = is.read()) != -1)
+                        {
+                            sb2.append((char) ch);
+                        }
+
+                        resultData = sb2.toString();
+                    }
+
+                    //InputStreamReader isr = new InputStreamReader(is);
+                    //BufferedReader bufferReader = new BufferedReader(isr);
+                    //String inputLine = "";
+                    //while ((inputLine = bufferReader.readLine()) != null) {
+                    //    resultData += inputLine + "\n";
+                    //}
+
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    if (is != null) {
+                        try {
+                            is.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    if (conn != null) {
+                        conn.disconnect();
+                    }
+                }
+                return resultData;
+            }
+
+            @Override protected void onPostExecute(String s) {
+                super.onPostExecute(s);
+                responseListner.onResponse(s);
+            }
+        }.execute();
+
+
     }
 }
