@@ -33,6 +33,9 @@ public class AddFlightInfo implements java.io.Serializable {
     private String OpUser;
     private String OpDate;
     private String weightCg;
+    private String Caption;
+    private String TkoZx;
+    private String TkoMac;
 
     // KEEP FIELDS - put your custom fields here
     private ArrayList<Integer> sbList;
@@ -45,7 +48,7 @@ public class AddFlightInfo implements java.io.Serializable {
         this.FlightId = FlightId;
     }
 
-    public AddFlightInfo(String FlightId, String FlightDate, String AircraftReg, String AircraftType, String FlightNo, String Dep4Code, String DepAirportName, String Arr4Code, String ArrAirportName, String MaxFule, String RealFule, String SlieFule, String RouteFule, String TofWeight, String LandWeight, String NoFuleWeight, String AirportLimitWeight, String BalancePic, String BalancePicName, String OpUser, String OpDate, String weightCg) {
+    public AddFlightInfo(String FlightId, String FlightDate, String AircraftReg, String AircraftType, String FlightNo, String Dep4Code, String DepAirportName, String Arr4Code, String ArrAirportName, String MaxFule, String RealFule, String SlieFule, String RouteFule, String TofWeight, String LandWeight, String NoFuleWeight, String AirportLimitWeight, String BalancePic, String BalancePicName, String OpUser, String OpDate, String weightCg, String Caption, String TkoZx, String TkoMac) {
         this.FlightId = FlightId;
         this.FlightDate = FlightDate;
         this.AircraftReg = AircraftReg;
@@ -68,6 +71,9 @@ public class AddFlightInfo implements java.io.Serializable {
         this.OpUser = OpUser;
         this.OpDate = OpDate;
         this.weightCg = weightCg;
+        this.Caption = Caption;
+        this.TkoZx = TkoZx;
+        this.TkoMac = TkoMac;
     }
 
     /** Not-null value. */
@@ -246,6 +252,30 @@ public class AddFlightInfo implements java.io.Serializable {
 
     public void setWeightCg(String weightCg) {
         this.weightCg = weightCg;
+    }
+
+    public String getCaption() {
+        return Caption;
+    }
+
+    public void setCaption(String Caption) {
+        this.Caption = Caption;
+    }
+
+    public String getTkoZx() {
+        return TkoZx;
+    }
+
+    public void setTkoZx(String TkoZx) {
+        this.TkoZx = TkoZx;
+    }
+
+    public String getTkoMac() {
+        return TkoMac;
+    }
+
+    public void setTkoMac(String TkoMac) {
+        this.TkoMac = TkoMac;
     }
 
     // KEEP METHODS - put your custom methods here

@@ -138,21 +138,24 @@
                 android:layout_height="61dp"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:visibility="gone"
+                android:layout_marginRight="32dp"
+                android:visibility="visible"
                 >
                 <CheckBox
                     android:id="@+id/iv_checkbox"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="32dp"
+                    android:visibility="gone"
                     />
                 <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_marginLeft="10dp"
+                    android:gravity="right|center_vertical"
                     android:textSize="18dp"
                     android:textColor="@color/gray_333"
-                    android:text="记住密码"
+                    android:text="修改密码"
                     />
 
             </LinearLayout>

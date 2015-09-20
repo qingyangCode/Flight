@@ -38,6 +38,7 @@ public class AllAcTypeDao extends AbstractDao<AllAcType, Long> {
         public final static Property UserCode = new Property(12, String.class, "UserCode", false, "USER_CODE");
         public final static Property MacFlg = new Property(13, String.class, "MacFlg", false, "MAC_FLG");
         public final static Property MaxFule = new Property(14, Float.class, "MaxFule", false, "MAX_FULE");
+        public final static Property SlideFule = new Property(15, Float.class, "SlideFule", false, "SLIDE_FULE");
     };
 
 
@@ -67,7 +68,8 @@ public class AllAcTypeDao extends AbstractDao<AllAcType, Long> {
                 "'SYS_VERSION' INTEGER NOT NULL ," + // 11: SysVersion
                 "'USER_CODE' TEXT," + // 12: UserCode
                 "'MAC_FLG' TEXT," + // 13: MacFlg
-                "'MAX_FULE' REAL);"); // 14: MaxFule
+                "'MAX_FULE' REAL," + // 14: MaxFule
+                "'SLIDE_FULE' REAL);"); // 15: SlideFule
     }
 
     /** Drops the underlying database table. */
@@ -131,6 +133,11 @@ public class AllAcTypeDao extends AbstractDao<AllAcType, Long> {
         if (MaxFule != null) {
             stmt.bindDouble(15, MaxFule);
         }
+ 
+        Float SlideFule = entity.getSlideFule();
+        if (SlideFule != null) {
+            stmt.bindDouble(16, SlideFule);
+        }
     }
 
     /** @inheritdoc */
@@ -157,7 +164,8 @@ public class AllAcTypeDao extends AbstractDao<AllAcType, Long> {
             cursor.getInt(offset + 11), // SysVersion
             cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12), // UserCode
             cursor.isNull(offset + 13) ? null : cursor.getString(offset + 13), // MacFlg
-            cursor.isNull(offset + 14) ? null : cursor.getFloat(offset + 14) // MaxFule
+            cursor.isNull(offset + 14) ? null : cursor.getFloat(offset + 14), // MaxFule
+            cursor.isNull(offset + 15) ? null : cursor.getFloat(offset + 15) // SlideFule
         );
         return entity;
     }
@@ -180,6 +188,7 @@ public class AllAcTypeDao extends AbstractDao<AllAcType, Long> {
         entity.setUserCode(cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12));
         entity.setMacFlg(cursor.isNull(offset + 13) ? null : cursor.getString(offset + 13));
         entity.setMaxFule(cursor.isNull(offset + 14) ? null : cursor.getFloat(offset + 14));
+        entity.setSlideFule(cursor.isNull(offset + 15) ? null : cursor.getFloat(offset + 15));
      }
     
     /** @inheritdoc */

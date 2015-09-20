@@ -64,13 +64,14 @@ public class MainActivity extends BaseActivity {
 
     @Override protected void onStart() {
         super.onStart();
+        ApiServiceManager.getInstance().checkUpdate(MainActivity.this);
         mSystemNoticeReceiver = new SystemNoticeReceiver();
         registerReceiver(mSystemNoticeReceiver, new IntentFilter(Constants.BROADCAST_SYSTEMNOTICE));
     }
 
     @Override protected void onResume() {
         super.onResume();
-        ApiServiceManager.getInstance().checkUpdate(MainActivity.this);
+
         UserManager.getInstance().setAddFlightSuccess(false);
         getMoccApi().getURLResponse(new ResponseListner<String>() {
             @Override public void onResponse(String response) {

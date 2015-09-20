@@ -90,9 +90,15 @@ public class DBManager {
     //更新数据库版本信息
     public void insertSystemVersion(String versionName, int Version) {
         SystemVersion systemVersion = new SystemVersion();
+        List<SystemVersion> list = systemVersionDao.queryBuilder()
+                .where(SystemVersionDao.Properties.VserionName.eq(versionName))
+                .list();
+        if (list != null && list.size() > 0) {
+            systemVersionDao.deleteInTx(list);
+        }
         systemVersion.setVserionName(versionName);
         systemVersion.setVserion(Version);
-        systemVersionDao.insertOrReplace(systemVersion);
+        systemVersionDao.insert(systemVersion);
     }
 
 
@@ -383,5 +389,17 @@ public class DBManager {
             allAcSbDao.insertInTx(iAppObject);
         }
         insertSystemVersion(Constants.DB_ALLACSB, dbVersion);
+    }
+
+    public void updateUserPassword(String userName, String confirmPwd) {
+        UserDao userDao = FlightApplication.getDaoSession().getUserDao();
+        List<User> list = userDao.queryBuilder()
+                .where(UserDao.Properties.UserCode.eq(userName))
+                .list();
+        if (list != null && list.size() > 0) {
+            User user = list.get(0);
+            user.setUserPassWord(confirmPwd);
+            userDao.update(user);
+        }
     }
 }

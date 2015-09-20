@@ -309,6 +309,9 @@ public class ApiServiceManager {
                 addFlightInfo.getAirportLimitWeight(), addFlightInfo.getBalancePic(),
                 addFlightInfo.getBalancePicName(),
                 UserManager.getInstance().getUser().getUserCode(), DateFormatUtil.formatZDate(),
+                addFlightInfo.getCaption(),
+                addFlightInfo.getTkoZx(),
+                addFlightInfo.getTkoMac(),
                 new ResponseListner<AddFlightInfoResponse>() {
 
                     @Override public void onResponse(AddFlightInfoResponse response) {
@@ -540,38 +543,37 @@ public class ApiServiceManager {
                         }
                         final UpdateInfoResponse.UpdateInfo t =
                                 response.ResponseObject.ResponseData.IAppObject;
+
+                        float Version = 0;
+                        try {
+                            Version = Float.parseFloat(CommonUtils.getVersionName(context));
+                        }catch (Exception e) {
+                            e.printStackTrace();
+                        }
                         if (null != t) {
-                            switch (String.valueOf(CommonUtils.getVersionCode(context))
-                                    .compareTo(t.getVersion())) {
-                                case 0: // 版本一致,不更新
-                                case 1: // 当前版本更大,不更新
-                                    //    Toast.makeText(activity, "当前版本为最新版本", Toast.LENGTH_SHORT).show();
-                                    break;
-                                default: // 低版本，更新
-                                    // 加入红点提示
-                                    new AlertDialog.Builder((Activity) context).setTitle("版本升级")
-                                            .setMessage(t.getContent())
-                                            .setNegativeButton("立即更新",
-                                                    new DialogInterface.OnClickListener() {
-                                                        @Override
-                                                        public void onClick(DialogInterface dialog,
-                                                                int which) {
-                                                            CommonUtils.startWebView(context,
-                                                                    t.getUrl());
-                                                        }
-                                                    })
-                                            .setPositiveButton("忽略本次",
-                                                    new DialogInterface.OnClickListener() {
+                            if (Version < t.getVersion()) {
+                                new AlertDialog.Builder((Activity) context).setTitle("版本升级")
+                                        .setMessage(t.getContent())
+                                        .setNegativeButton("立即更新",
+                                                new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialog,
+                                                            int which) {
+                                                        CommonUtils.startWebView(context,
+                                                                t.getUrl());
+                                                    }
+                                                })
+                                        .setPositiveButton("忽略本次",
+                                                new DialogInterface.OnClickListener() {
 
-                                                        @Override
-                                                        public void onClick(DialogInterface dialog,
-                                                                int which) {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialog,
+                                                            int which) {
 
-                                                        }
-                                                    })
-                                            .create()
-                                            .show();
-                                    break;
+                                                    }
+                                                })
+                                        .create()
+                                        .show();
                             }
                         }
                     }

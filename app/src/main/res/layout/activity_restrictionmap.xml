@@ -248,7 +248,7 @@
 
                 <TextView
                     style="@style/item_key"
-                    android:text="MAC 值"
+                    android:text="% MAC 值"
                     android:layout_weight="0.3"
                     />
 

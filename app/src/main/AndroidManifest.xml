@@ -59,6 +59,10 @@
             android:name=".activity.SystemNoticeDetailActivity"
             android:screenOrientation="portrait"
             />
+        <activity
+            android:name=".activity.ResetPasswordActivity"
+            android:screenOrientation="portrait"
+            />
         <receiver android:name=".reveiver.MyReveiver">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>

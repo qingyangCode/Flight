@@ -103,4 +103,40 @@
         <item name="android:lineSpacingExtra">2dp</item>
         <item name="android:layout_marginBottom">15dp</item>
     </style>
+    <style name="change_pwd_title_font">
+        <item name="android:textSize">14dp</item>
+        <item name="android:textColor">#FF616161</item>
+        <item name="android:textStyle">italic|bold</item>
+        <item name="android:paddingTop">5dp</item>
+        <item name="android:paddingBottom">5dp</item>
+        <item name="android:paddingLeft">20dp</item>
+    </style>
+    <style name="my_account_item_layout">
+        <item name="android:background">@color/white</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">58dp</item>
+        <item name="android:paddingLeft">15dp</item>
+        <item name="android:paddingRight">17dp</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:orientation">horizontal</item>
+    </style>
+    <style name="my_account_item_value">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">0.6</item>
+        <item name="android:textSize">18dp</item>
+        <item name="android:gravity">center_vertical|right</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:background">@null</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textColor">@color/gray_333</item>
+        <item name="android:textColorHint">@color/gray_666</item>
+    </style>
+    <style name="my_account_item_key">
+        <item name="android:textColor">@color/gray_333</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">0.4</item>
+        <item name="android:textSize">19dp</item>
+        <item name="android:gravity">center_vertical|left</item>
+        <item name="android:layout_height">match_parent</item>
+    </style>
 </resources>

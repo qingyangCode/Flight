@@ -104,6 +104,10 @@ public class RestrictionMapActivity extends BaseActivity{
     private String aircraftReg;
     private Context mContext;
     private CommonProgressDialog progressDialog;
+    private float flightCg = 0;//起飞重心
+    private float mac = 0;//起飞MAC
+    private String captainName = "";
+    private float upWeight = 0;
 
     private Handler handler = new Handler() {
         @Override public void handleMessage(Message msg) {
@@ -172,7 +176,7 @@ public class RestrictionMapActivity extends BaseActivity{
         if (allAcTypeList != null && allAcTypeList.size() > 0) {
             AllAcType allAcType = allAcTypeList.get(0);
             mMaxOil.setText(allAcType.getMaxFule() + "");
-
+            mSlideOil.setText(allAcType.getSlideFule() + "");
             getFuleLimitFromDB();
 
 
@@ -274,7 +278,7 @@ public class RestrictionMapActivity extends BaseActivity{
                 e.printStackTrace();
             }
 
-            float upWeight =
+            upWeight =
                     noFuleweight + realOilFloat + gooodsWeights - slideOilFloat;//TODO 加设备重量 ＋ 额外重量  // 基本空重 ＋ 设备
             LogUtil.LOGD(TAG, "noFuleweight : " + noFuleweight +" realOilFloat : " + realOilFloat + " gooodsWeights : " + gooodsWeights + " slideOilFloat : " + slideOilFloat);
             mBeforeWeight.setText(FormatUtil.formatTo2Decimal(upWeight));
@@ -308,7 +312,7 @@ public class RestrictionMapActivity extends BaseActivity{
             float beforeLj = 0;
             float beforeFlightOil = realOilFloat - slideOilFloat;
             FuleLimitDao fuleLimitDao = FlightApplication.getDaoSession().getFuleLimitDao();
-            List<FuleLimit> fuleLimits = fuleLimitDao.queryBuilder().list();
+            List<FuleLimit> fuleLimits = fuleLimitDao.queryBuilder().where(FuleLimitDao.Properties.AcType.eq(aircraftType)).list();
             int temp = 0;
 
             for (int i = 0; i < fuleLimits.size(); i++) {// 二分法计算输入油量最近的取值
@@ -330,11 +334,11 @@ public class RestrictionMapActivity extends BaseActivity{
                     }
                     temp = middle;
                 }
-                if (beforeFlightOil < fuleLimits.get(temp).getFuleWeight()) {
-                    beforeLj = fuleLimits.get(temp).getFuleLj()
-                            - (fuleLimits.get(temp).getFuleWeight() - fuleLimits.get(temp - 1)
-                            .getFuleWeight()) * (fuleLimits.get(temp).getFuleLj() - beforeFlightOil)
-                            / (fuleLimits.get(temp).getFuleWeight() - fuleLimits.get(temp - 1)
+                if (beforeFlightOil < fuleLimits.get(temp+1).getFuleWeight()) {
+                    beforeLj = fuleLimits.get(temp + 1).getFuleLj()
+                            - (fuleLimits.get(temp + 1).getFuleLj() - fuleLimits.get(temp)
+                            .getFuleLj()) * (fuleLimits.get(temp + 1).getFuleWeight() - beforeFlightOil)
+                            / (fuleLimits.get(temp + 1).getFuleWeight() - fuleLimits.get(temp)
                             .getFuleWeight());
                 }
             }
@@ -342,7 +346,7 @@ public class RestrictionMapActivity extends BaseActivity{
            LogUtil.LOGD(TAG, "before fly oil == " + beforeLj);
 
 
-            float flightCg = 0;
+
             try {
                 flightCg = (airLj + totalPassengerLj + totalSbLj + beforeLj) / ( - slideOilFloat + allWeight);
             } catch (Exception e) {
@@ -350,7 +354,7 @@ public class RestrictionMapActivity extends BaseActivity{
             }
             mFlightCg.setText(FormatUtil.formatTo2Decimal(flightCg));
 
-            getFuleLimit();
+            getFuleLimit(flightCg);
 
 
         }
@@ -358,7 +362,7 @@ public class RestrictionMapActivity extends BaseActivity{
 
     private int reqeustCount = 0;
 
-    private void getFuleLimit() {
+    private void getFuleLimit(final float flightCg) {
         float oilLj = 0;
         FuleLimitDao fuleLimitDao = FlightApplication.getDaoSession().getFuleLimitDao();
         List<FuleLimit> fullLimitList = fuleLimitDao.queryBuilder()
@@ -370,7 +374,7 @@ public class RestrictionMapActivity extends BaseActivity{
             if (!TextUtils.isEmpty(realOilInput))
                 realOil = Float.parseFloat(realOilInput);
         }catch (Exception e){
-
+            e.printStackTrace();
         }
         if (fullLimitList != null && fullLimitList.size() > 0) {
             for (FuleLimit fuleLimit : fullLimitList) {
@@ -381,17 +385,17 @@ public class RestrictionMapActivity extends BaseActivity{
             }
         }
 
-        double Cg = (airLj + airLj) / allWeight;
-        float weightCg = (float)Cg;
-        float mac = 0;
+        //double Cg = (airLj + airLj) / allWeight;
+        //float weightCg = (float)Cg;
+
         if (MACUtil.TYPE_CE560.equals(aircraftType)) {
-            mac = MACUtil.get560Mac(weightCg);
+            mac = MACUtil.get560Mac(flightCg);
         } else if (MACUtil.TYPE_CE680.equals(aircraftType)) {
-            mac = MACUtil.get680Mac(weightCg);
+            mac = MACUtil.get680Mac(flightCg);
         } else if (MACUtil.TYPE_CE750.equals(aircraftType)) {
-            mac = MACUtil.get750Mac(weightCg);
+            mac = MACUtil.get750Mac(flightCg);
         } else if (MACUtil.TYPE_G450.equals(aircraftType)) {
-            mac = MACUtil.getG450Mac(weightCg);
+            mac = MACUtil.getG450Mac(flightCg);
         }
 
         if (mac != 0)
@@ -411,7 +415,7 @@ public class RestrictionMapActivity extends BaseActivity{
 
                             @Override public void onResponse(FuleLimitResponse response) {
                                 if (response != null && response.ResponseObject != null && response.ResponseObject.ResponseCode == Constants.RESULT_OK) {
-                                    getFuleLimit();
+                                    getFuleLimit(flightCg);
                                 }
                             }
 
@@ -515,13 +519,17 @@ public class RestrictionMapActivity extends BaseActivity{
                 addFlightInfo.setAirportLimitWeight(allAcTypeList.get(0).getPortLimit() + "");
                 addFlightInfo.setBalancePic(addFlightInfo.getFlightNo());
                 addFlightInfo.setBalancePicName(addFlightInfo.getFlightNo());
+                addFlightInfo.setTkoZx(String.valueOf(flightCg));
+                addFlightInfo.setTkoMac(String.valueOf(mac));
 
+                boolean verify = verifiFlightInfo();
                 //Intent intent =
                 //        new Intent(RestrictionMapActivity.this, AircraftPersonnelActivity.class);
                 //intent.putExtra(Constants.ACTION_AIRCRAFTTYPE, aircraftType);
                 //intent.putExtra(Constants.ACTION_AIRCRAFTREG, aircraftreg);
                 //startActivity(intent);
-                showDialog("机长确认", "请输入机长姓名", "机长密码");
+                if (verify)
+                    showDialog("机长确认", "请输入机长姓名", "机长密码");
 
 
             }
@@ -579,8 +587,10 @@ public class RestrictionMapActivity extends BaseActivity{
      */
 
     private boolean isCancelAble;
+
     //机长验证弹出框
     private void confirm(final String userName, final String password) {
+        UserManager.getInstance().getAddFlightInfo().setCaption(userName);
         isCancelAble = false;
         showProgressDialog();
         getMoccApi().validCaption(userName, aircraftType, password, new ResponseListner<ValidCaptionResponse>() {
@@ -590,7 +600,7 @@ public class RestrictionMapActivity extends BaseActivity{
                 if (response != null && response.ResponseObject != null) {
                     if (response.ResponseObject.ResponseCode == Constants.RESULT_OK) {
                         //addFlightInfo();
-                        verifiFlightInfo();
+                        checkFlightId();
                     } else if ("NO".equalsIgnoreCase(response.ResponseObject.ResponseErr)) {
                         ToastUtil.showToast(mContext,
                                 R.drawable.toast_warning, "当前操作需机长验证，请输入机长信息");
@@ -600,7 +610,8 @@ public class RestrictionMapActivity extends BaseActivity{
                         boolean b = vidifyCaptainByDB(userName, password);
                         if (b) {
                             //addFlightInfo();
-                            verifiFlightInfo();
+                            //verifiFlightInfo();
+                            checkFlightId();
                         } else {
                             ToastUtil.showToast(mContext,
                                 R.drawable.toast_warning, "机长信息不正确，请重新输入");
@@ -614,7 +625,8 @@ public class RestrictionMapActivity extends BaseActivity{
                 if (isCancelAble) return;
                 if(vidifyCaptainByDB(userName, password)) {
                     //addFlightInfo();
-                    verifiFlightInfo();
+                    //verifiFlightInfo();
+                    checkFlightId();
                 } else {
                     ToastUtil.showToast(mContext,
                             R.drawable.toast_warning, "机长信息不正确，请重新输入");
@@ -641,7 +653,7 @@ public class RestrictionMapActivity extends BaseActivity{
     }
 
     //验证飞机信息
-    private void verifiFlightInfo() {
+    private boolean verifiFlightInfo() {
         String realityOil = mRealityouil.getText().toString().trim();
         String slideOil = mSlideOil.getText().toString().trim();
         String flyOil = mFlyOil.getText().toString().trim();
@@ -652,10 +664,10 @@ public class RestrictionMapActivity extends BaseActivity{
         //所有座椅重量
         float totalSeatWeight = 0;
         for (SeatByAcReg seatByAcReg : seatList) {
-            if (seatByAcReg.getXPos() != 0) {
-                if (!TextUtils.isEmpty(seatByAcReg.getUserName()) || ("C".equalsIgnoreCase(seatByAcReg.getSeatType()) && seatByAcReg.getSeatWeight() != 0)) {
-                    totalSeatWeight = totalSeatWeight + seatByAcReg.getSeatWeight() + seatByAcReg.getAcRegCargWeight();
-                }
+            if (seatByAcReg.getXPos() != 0 || "C".equalsIgnoreCase(seatByAcReg.getSeatType())) {
+                //if (!TextUtils.isEmpty(seatByAcReg.getUserName()) ) {
+                totalSeatWeight = totalSeatWeight + seatByAcReg.getSeatWeight() + seatByAcReg.getAcRegCargWeight();
+                //}
             }
         }
 
@@ -692,30 +704,31 @@ public class RestrictionMapActivity extends BaseActivity{
 
         if (list != null && list.size() > 0) {
             AllAcType allAcType = list.get(0);
-            float qifeiweight = nofuWeightFloat + realOilFloat + totalSeatWeight - slideOilFloat;
-            float zhouluweight = qifeiweight - flyOilFloat;
+            float zhouluweight = upWeight - flyOilFloat;
             //最大起飞重量
             if (allAcType.getMzfw() -  (nofuWeightFloat + totalSeatWeight) < 0) {
                 ToastUtil.showToast(mContext, R.drawable.toast_warning, "无燃油重量超过了最大无燃油重量限制, 超重 : " + Math.abs(
                         (nofuWeightFloat + totalSeatWeight) - allAcType.getMzfw()) +" lb");
-                return;
+                return false;
             } else if (allAcType.getPortLimit() - (nofuWeightFloat + realOilFloat + totalSeatWeight) < 0) {
                 ToastUtil.showToast(mContext, R.drawable.toast_warning, "滑行重量超过了机坪重量限制, 超重 : " + Math.abs((nofuWeightFloat + realOilFloat + totalSeatWeight) - allAcType.getPortLimit())+"lb");
-                return;
-            } else if(allAcType.getTofWeightLimit() < qifeiweight) {
+                return false;
+            } else if(allAcType.getTofWeightLimit() < upWeight) {
                 ToastUtil.showToast(mContext, R.drawable.toast_warning, "起飞重量超过了最大起飞重量限制, 超重 : "
-                        + Math.abs(qifeiweight - allAcType.getTofWeightLimit()) + " lb");
-                return;
+                        + Math.abs(upWeight - allAcType.getTofWeightLimit()) + " lb");
+                return false;
             } else if (allAcType.getLandWeightLimit() - zhouluweight < 0) {
                 ToastUtil.showToast(mContext, R.drawable.toast_warning, "着陆重量超过了着陆重量限制, 超重 : "
                         + Math.abs(zhouluweight- allAcType.getLandWeightLimit()) + " lb");
-                return;
+                return false;
             } else {
                //TODO 重心前限和后限
 
             }
         }
-        checkFlightId();
+
+        return true;
+
     }
 
     /**

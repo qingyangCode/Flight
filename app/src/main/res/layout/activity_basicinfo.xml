@@ -98,7 +98,7 @@
                     android:id="@+id/tv_playNO"
                     style="@style/item_value"
                     android:hint="请输入航班号"
-                    android:text="CFI090"
+                    android:text="CFI0"
                     />
             </LinearLayout>
 

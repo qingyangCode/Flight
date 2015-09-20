@@ -16,6 +16,7 @@ import com.xiaoqing.flight.entity.FuleLimitResponse;
 import com.xiaoqing.flight.entity.GrantsByUserCodeResponse;
 import com.xiaoqing.flight.entity.LoginUserInfoResponse;
 import com.xiaoqing.flight.entity.MessageResponse;
+import com.xiaoqing.flight.entity.ResetPasswordResponse;
 import com.xiaoqing.flight.entity.SeatByAcRegResponse;
 import com.xiaoqing.flight.entity.TUserInfo;
 import com.xiaoqing.flight.entity.UpdateInfoResponse;
@@ -395,7 +396,7 @@ public class MoccApiImpl implements MoccApi {
             String Arr4Code, String ArrAirportName, String MaxFule, String RealFule,
             String SlieFule, String RouteFule, String TofWeight, String LandWeight,
             String NoFuleWeight, String AirportLimitWeight, String BalancePic,
-            String BalancePicName, String OpUser, String OpDate,
+            String BalancePicName, String OpUser, String OpDate, String Caption, String TkoZx, String TkoMac,
             final ResponseListner<AddFlightInfoResponse> responseListner) {
         StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>").append(
                 "<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
@@ -429,6 +430,9 @@ public class MoccApiImpl implements MoccApi {
                 .append("<BalancePicName>" + BalancePicName + "</BalancePicName>")
                 .append("<OpUser>" + OpUser + "</OpUser>")
                 .append("<OpDate>" + OpDate + "</OpDate>")
+                .append("<Caption>" + Caption + "</Caption>")
+                .append("<TkoZx>" + TkoZx + "</TkoZx>")
+                .append("<TkoMac>" + TkoMac + "</TkoMac>")
                 .append("</IAppObject>")
                 .append("</RequestData>")
                 .append("</MessageObject>");
@@ -727,27 +731,24 @@ public class MoccApiImpl implements MoccApi {
 
     @Override public void checkUpdate(String versionCode,
             final ResponseListner<UpdateInfoResponse> responseListner) {
+
         StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>").append(
                 "<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
-                .append("<CMD>checkUpdate</CMD>")
-                .append("<UserCode>"
-                        + UserManager.getInstance().getUser().getUserCode()
-                        + "</UserCode>")
-                .append("<CheckCode>"
-                        + UserManager.getInstance().getUser().getCodeCheck()
-                        + "</CheckCode>")
-                .append("<RequestData>")
-                .append("<IAppObject xsi:type=\"MsgQDate\">")
-                .append("<VersionCode>" + versionCode + "</VersionCode>")
-                .append("</IAppObject>")
-                .append("</RequestData>")
+                .append("<CMD>GetVersion</CMD>")
+                .append("<UserCode>" + UserManager.getInstance().getUser().getUserCode()+ "</UserCode>")
+                .append("<CheckCode>" + UserManager.getInstance().getUser().getCodeCheck() + "</CheckCode>")
+                //.append("<RequestData>")
+                //.append("<IAppObject xsi:type=\"MsgQDate\">")
+                //.append("<VersionCode>" + versionCode + "</VersionCode>")
+                        //.append("</IAppObject>")
+                .append("<RequestData />")
                 .append("</MessageObject>");
         ;
         final String xmlParam = sb.toString();
         ResponseListner<String> responseListner1 = new ResponseListner<String>() {
             @Override public void onResponse(String response) {
                 String xmlStr = CommonUtils.xml2JSON(response);
-                LogUtil.LOGD(TAG, "GetAllAcWeightLimit ===== " + xmlStr);
+                LogUtil.LOGD(TAG, "GetVersion ===== " + xmlStr);
                 UpdateInfoResponse allAcType = UpdateInfoResponse.parse(xmlStr);
                 responseListner.onResponse(allAcType);
             }
@@ -778,6 +779,38 @@ public class MoccApiImpl implements MoccApi {
                 String xmlStr = CommonUtils.xml2JSON(response);
                 LogUtil.LOGD(TAG, "GetAllAcSb ===== " + xmlStr);
                 AllAcSbResponse allAcType = AllAcSbResponse.parse(xmlStr);
+                responseListner.onResponse(allAcType);
+            }
+
+            @Override public void onEmptyOrError(String message) {
+                responseListner.onEmptyOrError(message);
+            }
+        };
+        NetBase net = new NetBase(BASE_URL, xmlParam, responseListner1);
+        net.execute();
+    }
+
+    @Override public void changePassword(String userName, String oldPwd, String confirmPwd, final ResponseListner<ResetPasswordResponse> responseListner) {
+
+        StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>").append(
+                "<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
+                .append("<CMD>UpdateUserPass</CMD>\n")
+                .append("<UserCode>"+ userName + "</UserCode>\n")
+                .append("<CheckCode>"+ UserManager.getInstance().getUser().getCodeCheck()+ "</CheckCode>\n")
+                .append("<RequestData>\n")
+                .append("<IAppObject xsi:type = \"AppChangePass\">\n")
+                .append("<UserCode>" + userName + "</UserCode>\n")
+                .append("<OldPass>"+ oldPwd + "</OldPass>\n")
+                .append("<NewPass>"+ confirmPwd +"</NewPass>\n")
+                .append("</IAppObject>\n")
+                .append("</RequestData>\n")
+                .append("</MessageObject>\n");
+        final String xmlParam = sb.toString();
+        ResponseListner<String> responseListner1 = new ResponseListner<String>() {
+            @Override public void onResponse(String response) {
+                String xmlStr = CommonUtils.xml2JSON(response);
+                LogUtil.LOGD(TAG, "GetAllAcSb ===== " + xmlStr);
+                ResetPasswordResponse allAcType = ResetPasswordResponse.parse(xmlStr);
                 responseListner.onResponse(allAcType);
             }
 
@@ -855,7 +888,7 @@ public class MoccApiImpl implements MoccApi {
                 responseListner.onResponse(s);
             }
         }.execute();
-
-
     }
+
+
 }

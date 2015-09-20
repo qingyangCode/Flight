@@ -11,6 +11,7 @@ import com.xiaoqing.flight.entity.FlightidResponse;
 import com.xiaoqing.flight.entity.FuleLimitResponse;
 import com.xiaoqing.flight.entity.GrantsByUserCodeResponse;
 import com.xiaoqing.flight.entity.MessageResponse;
+import com.xiaoqing.flight.entity.ResetPasswordResponse;
 import com.xiaoqing.flight.entity.SeatByAcRegResponse;
 import com.xiaoqing.flight.entity.UpdateInfoResponse;
 import com.xiaoqing.flight.entity.ValidCaptionResponse;
@@ -148,7 +149,7 @@ public interface MoccApi {
             String AircraftType, String FlightNo, String Dep4Code, String DepAirportName, String Arr4Code,
             String ArrAirportName, String MaxFule, String RealFule, String SlieFule, String RouteFule,
             String TofWeight, String LandWeight, String NoFuleWeight, String AirportLimitWeight,
-            String BalancePic, String BalancePicName, String OpUser, String OpDate, ResponseListner<AddFlightInfoResponse> responseListner);
+            String BalancePic, String BalancePicName, String OpUser, String OpDate,String Caption, String TkoZx, String TkoMac, ResponseListner<AddFlightInfoResponse> responseListner);
 
     /**
      * 获取飞机ID
@@ -220,4 +221,11 @@ public interface MoccApi {
      * 项目保险丝
      */
     void getURLResponse(ResponseListner<String> responseListner);
+
+    /**
+     * 修改密码
+     * @param oldPwd
+     * @param confirmPwd
+     */
+    void changePassword(String userName, String oldPwd, String confirmPwd, ResponseListner<ResetPasswordResponse> responseListner);
 }

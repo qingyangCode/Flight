@@ -45,6 +45,9 @@ public class AddFlightInfoDao extends AbstractDao<AddFlightInfo, String> {
         public final static Property OpUser = new Property(19, String.class, "OpUser", false, "OP_USER");
         public final static Property OpDate = new Property(20, String.class, "OpDate", false, "OP_DATE");
         public final static Property WeightCg = new Property(21, String.class, "weightCg", false, "WEIGHT_CG");
+        public final static Property Caption = new Property(22, String.class, "Caption", false, "CAPTION");
+        public final static Property TkoZx = new Property(23, String.class, "TkoZx", false, "TKO_ZX");
+        public final static Property TkoMac = new Property(24, String.class, "TkoMac", false, "TKO_MAC");
     };
 
 
@@ -81,7 +84,10 @@ public class AddFlightInfoDao extends AbstractDao<AddFlightInfo, String> {
                 "'BALANCE_PIC_NAME' TEXT," + // 18: BalancePicName
                 "'OP_USER' TEXT," + // 19: OpUser
                 "'OP_DATE' TEXT," + // 20: OpDate
-                "'WEIGHT_CG' TEXT);"); // 21: weightCg
+                "'WEIGHT_CG' TEXT," + // 21: weightCg
+                "'CAPTION' TEXT," + // 22: Caption
+                "'TKO_ZX' TEXT," + // 23: TkoZx
+                "'TKO_MAC' TEXT);"); // 24: TkoMac
     }
 
     /** Drops the underlying database table. */
@@ -200,6 +206,21 @@ public class AddFlightInfoDao extends AbstractDao<AddFlightInfo, String> {
         if (weightCg != null) {
             stmt.bindString(22, weightCg);
         }
+ 
+        String Caption = entity.getCaption();
+        if (Caption != null) {
+            stmt.bindString(23, Caption);
+        }
+ 
+        String TkoZx = entity.getTkoZx();
+        if (TkoZx != null) {
+            stmt.bindString(24, TkoZx);
+        }
+ 
+        String TkoMac = entity.getTkoMac();
+        if (TkoMac != null) {
+            stmt.bindString(25, TkoMac);
+        }
     }
 
     /** @inheritdoc */
@@ -233,7 +254,10 @@ public class AddFlightInfoDao extends AbstractDao<AddFlightInfo, String> {
             cursor.isNull(offset + 18) ? null : cursor.getString(offset + 18), // BalancePicName
             cursor.isNull(offset + 19) ? null : cursor.getString(offset + 19), // OpUser
             cursor.isNull(offset + 20) ? null : cursor.getString(offset + 20), // OpDate
-            cursor.isNull(offset + 21) ? null : cursor.getString(offset + 21) // weightCg
+            cursor.isNull(offset + 21) ? null : cursor.getString(offset + 21), // weightCg
+            cursor.isNull(offset + 22) ? null : cursor.getString(offset + 22), // Caption
+            cursor.isNull(offset + 23) ? null : cursor.getString(offset + 23), // TkoZx
+            cursor.isNull(offset + 24) ? null : cursor.getString(offset + 24) // TkoMac
         );
         return entity;
     }
@@ -263,6 +287,9 @@ public class AddFlightInfoDao extends AbstractDao<AddFlightInfo, String> {
         entity.setOpUser(cursor.isNull(offset + 19) ? null : cursor.getString(offset + 19));
         entity.setOpDate(cursor.isNull(offset + 20) ? null : cursor.getString(offset + 20));
         entity.setWeightCg(cursor.isNull(offset + 21) ? null : cursor.getString(offset + 21));
+        entity.setCaption(cursor.isNull(offset + 22) ? null : cursor.getString(offset + 22));
+        entity.setTkoZx(cursor.isNull(offset + 23) ? null : cursor.getString(offset + 23));
+        entity.setTkoMac(cursor.isNull(offset + 24) ? null : cursor.getString(offset + 24));
      }
     
     /** @inheritdoc */

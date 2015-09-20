@@ -145,6 +145,9 @@ public class TablesMain {
         flightInfo.addStringProperty("OpUser");
         flightInfo.addStringProperty("OpDate");
         flightInfo.addStringProperty("weightCg");
+        flightInfo.addStringProperty("Caption");
+        flightInfo.addStringProperty("TkoZx");
+        flightInfo.addStringProperty("TkoMac");
 
 
 
@@ -239,6 +242,7 @@ public class TablesMain {
         allAcType.addStringProperty("UserCode");
         allAcType.addStringProperty("MacFlg");
         allAcType.addFloatProperty("MaxFule");
+        allAcType.addFloatProperty("SlideFule");
     }
 
     private void addSystemVersion() {

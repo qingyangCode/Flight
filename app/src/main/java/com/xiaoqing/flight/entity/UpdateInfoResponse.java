@@ -20,15 +20,15 @@ public class UpdateInfoResponse {
     }
 
     public class UpdateInfo{
-        private String Version;
+        private int Version;
         private String Content;
         private String Url;
 
-        public String getVersion() {
+        public int getVersion() {
             return Version;
         }
 
-        public void setVersion(String version) {
+        public void setVersion(int version) {
             Version = version;
         }
 

@@ -142,10 +142,6 @@ public class EngineRoomActivity extends BaseActivity{
         mWeight.setText("重量 (lb.)");
         //mListView.addHeaderView(inflate);
         getSeatByDB();
-        if (seatList == null || seatList.size() == 0) {
-            if (CommonUtils.isNetworkConnected(this))
-                getSeatByNet();
-        }
     }
 
     @OnClick(R.id.add_person)
@@ -277,6 +273,12 @@ public class EngineRoomActivity extends BaseActivity{
         List<SeatByAcReg> lists = seatByAcRegDao.queryBuilder()
                 .where(SeatByAcRegDao.Properties.AcReg.eq(aircraftReg))
                 .list();
+        if (lists == null || lists.size() == 0) {
+            if (CommonUtils.isNetworkConnected(this))
+                getSeatByNet();
+            return;
+        }
+
         seatList.addAll(lists);
 
         Collections.sort(seatList, new Comparator<SeatByAcReg>() {
@@ -405,7 +407,7 @@ public class EngineRoomActivity extends BaseActivity{
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
-                            if (weight > seatByAcReg.getAcTypeSeatLimit()) {
+                            if (weight > seatByAcReg.getSeatLastLimit()) {
                                 et_weight.setBackgroundColor(getResources().getColor(R.color.red));
                             } else {
                                 et_weight.setBackgroundResource(R.drawable.engineeroom_name_bg);
@@ -501,7 +503,7 @@ public class EngineRoomActivity extends BaseActivity{
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
-                            if (weight > seatByAcReg.getAcTypeSeatLimit()) {
+                            if (weight > seatByAcReg.getSeatLastLimit()) {
                                 et_weight.setBackgroundColor(getResources().getColor(R.color.red));
                             } else {
                                 et_weight.setBackgroundResource(R.drawable.engineeroom_name_bg);

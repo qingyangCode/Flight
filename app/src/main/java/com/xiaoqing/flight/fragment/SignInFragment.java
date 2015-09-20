@@ -17,6 +17,7 @@ import butterknife.OnClick;
 import com.xiaoqing.flight.FlightApplication;
 import com.xiaoqing.flight.R;
 import com.xiaoqing.flight.activity.MainActivity;
+import com.xiaoqing.flight.activity.ResetPasswordActivity;
 import com.xiaoqing.flight.data.dao.User;
 import com.xiaoqing.flight.data.dao.UserDao;
 import com.xiaoqing.flight.entity.LoginUserInfoResponse;
@@ -159,10 +160,22 @@ public class SignInFragment extends BaseFragment {
     }
 
     @OnClick(R.id.layout_remember_password) public void onRememberPasswordClick() {
-        if (mCheckbox.isChecked()) {
-            mCheckbox.setChecked(false);
-        } else {
-            mCheckbox.setChecked(true);
+        //if (mCheckbox.isChecked()) {
+        //    mCheckbox.setChecked(false);
+        //} else {
+        //    mCheckbox.setChecked(true);
+        //}
+
+        startActivityForResult(new Intent(getActivity(), ResetPasswordActivity.class), 5);
+
+    }
+
+    @Override public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == getActivity().RESULT_OK) {
+            if (requestCode == 5) {
+                ToastUtil.showToast(getActivity(), R.drawable.toast_confirm, "密码修改成功！");
+            }
         }
 
     }

@@ -116,7 +116,7 @@ public class BasicInfoActivity extends BaseActivity {
                 new ArrayAdapter<String>(mContext, R.layout.list_item, airName);
         mOrigination.setAdapter(stringArrayAdapter);
         mDestination.setAdapter(stringArrayAdapter);
-        ApiServiceManager.getInstance().getSeatInfo(aircraftReg, null);
+        //ApiServiceManager.getInstance().getSeatInfo(aircraftReg, null);
         ApiServiceManager.getInstance().getFilghtId(new ResponseListner<String>() {
             @Override public void onResponse(String response) {
                 UserManager.getInstance().getAddFlightInfo().setFlightId(response);
@@ -299,6 +299,9 @@ public class BasicInfoActivity extends BaseActivity {
                 String toAirport = mDestination.getText().toString().trim();
                 if(TextUtils.isEmpty(playNO)) {
                     ToastUtil.showToast(BasicInfoActivity.this, R.drawable.toast_warning, "航班号不能为空");
+                    return;
+                } else if (playNO.equals("CFI0")) {
+                    ToastUtil.showToast(BasicInfoActivity.this, R.drawable.toast_warning, "请补全航班号");
                     return;
                 } else if (TextUtils.isEmpty(from)) {
                     ToastUtil.showToast(BasicInfoActivity.this, R.drawable.toast_warning, "起飞机场不能为空");
