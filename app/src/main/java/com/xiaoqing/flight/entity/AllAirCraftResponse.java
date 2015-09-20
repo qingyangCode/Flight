@@ -13,6 +13,7 @@ public class AllAirCraftResponse extends BaseResponse{
 		public TResponseData ResponseData;
 		public int ResponseCode;
 		public String ResponseErr;
+		public int SysVersion;
 	}
 	
 	public class TResponseData{

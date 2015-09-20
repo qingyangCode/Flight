@@ -97,20 +97,20 @@ public class DBManager {
 
 
     //所有机场名称
-    public void insertAllAirPort(ArrayList<AllAirport> iAppObject) {
+    public void insertAllAirPort(ArrayList<AllAirport> iAppObject, int dbVersion) {
         if (iAppObject == null) return;
         try {
             List<SystemVersion> airPortVersionList = getQueryBuilderByVersionName(Constants.DB_ALLAIRPORT);
             if (airPortVersionList == null
                     || airPortVersionList.size() == 0
-                    || airPortVersionList.get(0).getVserion() != iAppObject.get(0).getSysVersion()) {
+                    || airPortVersionList.get(0).getVserion() != dbVersion) {
                 AllAirportDao allAirportDao = daoSession.getAllAirportDao();
                 List<AllAirport> list = allAirportDao.queryBuilder().list();
                 if (list != null && list.size() > 0) {
                     allAirportDao.deleteInTx(list);
                 }
                 allAirportDao.insertInTx(iAppObject);
-                insertSystemVersion(Constants.DB_ALLAIRPORT, iAppObject.get(0).getSysVersion());
+                insertSystemVersion(Constants.DB_ALLAIRPORT, dbVersion);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -118,18 +118,18 @@ public class DBManager {
     }
 
     //插入所有用户信息
-    public void insertAllUsers(ArrayList<User> allUsers) {
+    public void insertAllUsers(ArrayList<User> allUsers, int dbVersion) {
         if (allUsers == null) return;
         try {
             List<SystemVersion> userVersionList = getQueryBuilderByVersionName(Constants.DB_ALLUSER);
-            if (userVersionList == null || userVersionList.size() == 0 || userVersionList.get(0).getVserion() != allUsers.get(0).getSysVersion()) {
+            if (userVersionList == null || userVersionList.size() == 0 || userVersionList.get(0).getVserion() != dbVersion) {
                 UserDao userDao = daoSession.getUserDao();
                 List<User> list = userDao.queryBuilder().list();
                 if (list != null && list.size() > 0) {
                     userDao.deleteInTx(list);
                 }
                 userDao.insertInTx(allUsers);
-                insertSystemVersion(Constants.DB_ALLUSER, allUsers.get(0).getSysVersion());
+                insertSystemVersion(Constants.DB_ALLUSER, dbVersion);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -137,18 +137,18 @@ public class DBManager {
     }
 
     //全部机型
-    public void insertAllAcType(ArrayList<AllAcType> iAppObject) {
+    public void insertAllAcType(ArrayList<AllAcType> iAppObject, int dbVersion) {
         if (iAppObject == null) return;
         try {
             List<SystemVersion> acTyleVersionList = getQueryBuilderByVersionName(Constants.DB_AllAcType);
-            if (acTyleVersionList == null || acTyleVersionList.size() == 0 || acTyleVersionList.get(0).getVserion() == iAppObject.get(0).getSysVersion()) {
+            if (acTyleVersionList == null || acTyleVersionList.size() == 0 || acTyleVersionList.get(0).getVserion() == dbVersion) {
                 AllAcTypeDao allAcTypeDao = daoSession.getAllAcTypeDao();
                 List<AllAcType> list = allAcTypeDao.queryBuilder().list();
                 if (list != null && list.size() > 0) {
                     allAcTypeDao.deleteInTx(list);
                 }
                 allAcTypeDao.insertInTx(iAppObject);
-                insertSystemVersion(Constants.DB_AllAcType, iAppObject.get(0).getSysVersion());
+                insertSystemVersion(Constants.DB_AllAcType, dbVersion);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -156,51 +156,51 @@ public class DBManager {
     }
 
     //所有机型
-    public void insertAllAircrart(ArrayList<AllAircraft> iAppObject) {
+    public void insertAllAircrart(ArrayList<AllAircraft> iAppObject, int dbVersion) {
         if (iAppObject == null) return;
 
         List<SystemVersion> queryBuilderByVersionName = getQueryBuilderByVersionName(Constants.DB_ALLAirCart);
-        if (queryBuilderByVersionName == null || queryBuilderByVersionName.size() == 0 || queryBuilderByVersionName.get(0).getVserion() != iAppObject.get(0).getSysVersion()) {
+        if (queryBuilderByVersionName == null || queryBuilderByVersionName.size() == 0 || queryBuilderByVersionName.get(0).getVserion() != dbVersion) {
             AllAircraftDao allAircraftDao = daoSession.getAllAircraftDao();
             List<AllAircraft> list = allAircraftDao.queryBuilder().list();
             if (list != null && list.size() > 0) {
                 allAircraftDao.deleteInTx(list);
             }
             allAircraftDao.insertInTx(iAppObject);
-            insertSystemVersion(Constants.DB_ALLAirCart, iAppObject.get(0).getSysVersion());
+            insertSystemVersion(Constants.DB_ALLAirCart, dbVersion);
         }
     }
 
     //用户授权机型
-    public void insertAcGrants(ArrayList<AcGrants> iAppObject) {
+    public void insertAcGrants(ArrayList<AcGrants> iAppObject, int dbVersion) {
         if (iAppObject == null || iAppObject.size() == 0) return;
         List<SystemVersion> queryBuilderByVersionName =
                 getQueryBuilderByVersionName(Constants.DB_ACGRANTS);
         if (queryBuilderByVersionName == null || queryBuilderByVersionName.size() == 0
-                || queryBuilderByVersionName.get(0).getVserion() != iAppObject.get(0).getSysVersion()) {
+                || queryBuilderByVersionName.get(0).getVserion() != dbVersion) {
             AcGrantsDao acGrantsDao = daoSession.getAcGrantsDao();
             List<AcGrants> list = acGrantsDao.queryBuilder().list();
             if (list != null && list.size() > 0) {
                 acGrantsDao.deleteInTx(iAppObject);
             }
             acGrantsDao.insertInTx(iAppObject);
-            insertSystemVersion(Constants.DB_ACGRANTS, iAppObject.get(0).getSysVersion());
+            insertSystemVersion(Constants.DB_ACGRANTS, dbVersion);
         }
     }
 
     //座椅
-    public void insertSeatByAcReg(ArrayList<SeatByAcReg> iAppObject) {
+    public void insertSeatByAcReg(ArrayList<SeatByAcReg> iAppObject, int dbVersion) {
         if (iAppObject == null || iAppObject.size() == 0) return;
         List<SystemVersion> systemVersions = getQueryBuilderByVersionName(Constants.DB_ALLSEAT);
         if (systemVersions == null || systemVersions.size() == 0
-                || systemVersions.get(0).getVserion() != iAppObject.get(0).getSysVersion()) {
+                || systemVersions.get(0).getVserion() != dbVersion) {
             SeatByAcRegDao seatByAcRegDao = daoSession.getSeatByAcRegDao();
             List<SeatByAcReg> list = seatByAcRegDao.queryBuilder().list();
             if (list != null && list.size() > 0) {
                 seatByAcRegDao.deleteInTx(list);
             }
             seatByAcRegDao.insertInTx(iAppObject);
-            insertSystemVersion(Constants.DB_ALLSEAT,iAppObject.get(0).getSysVersion());
+            insertSystemVersion(Constants.DB_ALLSEAT, dbVersion);
         }
     }
 
@@ -213,16 +213,16 @@ public class DBManager {
     }
 
     //燃油力矩
-    public void insertFuleLimit(ArrayList<FuleLimit> iAppObject) {
+    public void insertFuleLimit(ArrayList<FuleLimit> iAppObject, int dbVersion) {
         List<SystemVersion> systemVersions = getQueryBuilderByVersionName(Constants.DB_FULELIMIT);
-        if (systemVersions == null || systemVersions.size() == 0 || systemVersions.get(0).getVserion() != iAppObject.get(0).getSysVersion()) {
+        if (systemVersions == null || systemVersions.size() == 0 || systemVersions.get(0).getVserion() != dbVersion) {
             FuleLimitDao fuleLimitDao = daoSession.getFuleLimitDao();
             List<FuleLimit> list = fuleLimitDao.queryBuilder().list();
             if (list != null && list.size() > 0) {
                 fuleLimitDao.deleteInTx(list);
             }
             fuleLimitDao.insertInTx(iAppObject);
-            insertSystemVersion(Constants.DB_FULELIMIT, iAppObject.get(0).getSysVersion());
+            insertSystemVersion(Constants.DB_FULELIMIT, dbVersion);
         }
     }
 
@@ -241,17 +241,17 @@ public class DBManager {
     }
 
     //差分站
-    public void insertAllSb(ArrayList<AllSb> iAppObject) {
+    public void insertAllSb(ArrayList<AllSb> iAppObject, int dbVersion) {
         List<SystemVersion> systemVersions =
                 getQueryBuilderByVersionName(Constants.DB_ALLSB);
-        if (systemVersions == null || systemVersions.size() == 0 || systemVersions.get(0).getVserion() != iAppObject.get(0).getSysVersion()) {
+        if (systemVersions == null || systemVersions.size() == 0 || systemVersions.get(0).getVserion() != dbVersion) {
             AllSbDao allSbDao = daoSession.getAllSbDao();
             List<AllSb> list = allSbDao.queryBuilder().list();
             if (list != null && list.size() > 0) {
                 allSbDao.deleteInTx(list);
             }
             allSbDao.insertInTx(iAppObject);
-            insertSystemVersion(Constants.DB_ALLSB, iAppObject.get(0).getSysVersion());
+            insertSystemVersion(Constants.DB_ALLSB, dbVersion);
         }
     }
 
@@ -358,23 +358,23 @@ public class DBManager {
     }
 
     //全部飞机重心限制信息
-    public void insertAllAcWeightLimit(ArrayList<AcWeightLimit> iAppObject) {
+    public void insertAllAcWeightLimit(ArrayList<AcWeightLimit> iAppObject, int dbVersion) {
         List<SystemVersion> systemVersions = getQueryBuilderByVersionName(Constants.DB_ALLACWEIGHT);
         AcWeightLimitDao acWeightLimitDao = daoSession.getAcWeightLimitDao();
-        if (systemVersions == null || systemVersions.size() == 0 || systemVersions.get(0).getVserion() != iAppObject.get(0).getSysVersion()) {
+        if (systemVersions == null || systemVersions.size() == 0 || systemVersions.get(0).getVserion() != dbVersion) {
             List<AcWeightLimit> list = acWeightLimitDao.queryBuilder().list();
             if (list != null && list.size() > 0) {
                 acWeightLimitDao.deleteInTx(list);
             }
             acWeightLimitDao.insertInTx(iAppObject);
-            insertSystemVersion(Constants.DB_ALLACWEIGHT, iAppObject.get(0).getSysVersion());
+            insertSystemVersion(Constants.DB_ALLACWEIGHT, dbVersion);
         }
     }
 
     //所有飞机的所有设备
-    public void insertAllAcSb(ArrayList<AllAcSb> iAppObject) {
+    public void insertAllAcSb(ArrayList<AllAcSb> iAppObject, int dbVersion) {
         List<SystemVersion> systemVersions = getQueryBuilderByVersionName(Constants.DB_ALLACSB);
-        if (systemVersions == null || systemVersions.size() == 0 || systemVersions.get(0).getVserion() != iAppObject.get(0).getSysversion()) {
+        if (systemVersions == null || systemVersions.size() == 0 || systemVersions.get(0).getVserion() != dbVersion) {
             AllAcSbDao allAcSbDao = daoSession.getAllAcSbDao();
             List<AllAcSb> list = allAcSbDao.queryBuilder().list();
             if (list != null && list.size() > 0) {
@@ -382,5 +382,6 @@ public class DBManager {
             }
             allAcSbDao.insertInTx(iAppObject);
         }
+        insertSystemVersion(Constants.DB_ALLACSB, dbVersion);
     }
 }

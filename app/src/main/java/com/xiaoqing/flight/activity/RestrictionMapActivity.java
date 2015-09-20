@@ -98,7 +98,7 @@ public class RestrictionMapActivity extends BaseActivity{
 
     private ArrayList<SeatByAcReg> seatList;
     private String aircraftType;
-    private float airLj = 0;
+    private float  airLj = 0;
     List<AllAcType> allAcTypeList;
     private float allWeight;
     private String aircraftReg;
@@ -144,9 +144,10 @@ public class RestrictionMapActivity extends BaseActivity{
         //飞机基本信息
         AllAircraftDao allAircraftDao = FlightApplication.getDaoSession().getAllAircraftDao();
         List<AllAircraft> allAircraftList = allAircraftDao.queryBuilder()
-                .where(AllAircraftDao.Properties.AircraftType.eq(aircraftType))
+                .where(AllAircraftDao.Properties.AircraftReg.eq(aircraftReg))
                 .list();
 
+        if (allAircraftList != null && allAircraftList.size() > 0)
         airLj = allAircraftList.get(0).getLj();
 
         updateWeightInfos();
@@ -283,9 +284,9 @@ public class RestrictionMapActivity extends BaseActivity{
                             - slideOilFloat  - flyOilFloat;
 
             mDownWight.setText(FormatUtil.formatTo2Decimal(downWeight));
-            allWeight = allAcType.getMzfw() + realOilFloat + gooodsWeights;
+            allWeight = noFuleweight + realOilFloat + gooodsWeights;
 
-            //起飞重心： 力矩／重量 （基本空重力矩 ＋ 乘客 + 货物 ＋ 额外重量 ＋ 设备 ＋ 起飞油量）/（实际油量 － 滑行油量）// 油量力矩
+            //起飞重心： 力矩／重量 （基本空重力矩 ＋ 乘客 + 货物 ＋ 额外重量 ＋ 设备 ＋ 起飞油量）/（实际油量 － 滑行油量 + 基本空中 ＋ 设备重 ＋ 乘客重 ＋ 货物重）// 油量力矩
 
             //所有设备的lj
             float totalSbLj = 0;
@@ -338,11 +339,12 @@ public class RestrictionMapActivity extends BaseActivity{
                 }
             }
 
+           LogUtil.LOGD(TAG, "before fly oil == " + beforeLj);
 
 
             float flightCg = 0;
             try {
-                flightCg = (airLj + totalPassengerLj + totalSbLj + beforeLj) / (realOilFloat - slideOilFloat);
+                flightCg = (airLj + totalPassengerLj + totalSbLj + beforeLj) / ( - slideOilFloat + allWeight);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -698,7 +700,7 @@ public class RestrictionMapActivity extends BaseActivity{
                         (nofuWeightFloat + totalSeatWeight) - allAcType.getMzfw()) +" lb");
                 return;
             } else if (allAcType.getPortLimit() - (nofuWeightFloat + realOilFloat + totalSeatWeight) < 0) {
-                ToastUtil.showToast(mContext, R.drawable.toast_warning, "滑行重量超过了机坪重量限制, 超重 : " + Math.abs((nofuWeightFloat + realOilFloat + totalSeatWeight) - allAcType.getPortLimit())+"kg");
+                ToastUtil.showToast(mContext, R.drawable.toast_warning, "滑行重量超过了机坪重量限制, 超重 : " + Math.abs((nofuWeightFloat + realOilFloat + totalSeatWeight) - allAcType.getPortLimit())+"lb");
                 return;
             } else if(allAcType.getTofWeightLimit() < qifeiweight) {
                 ToastUtil.showToast(mContext, R.drawable.toast_warning, "起飞重量超过了最大起飞重量限制, 超重 : "

@@ -14,6 +14,7 @@ public class SeatByAcRegResponse {
     public class TResponseObject{
         public int ResponseCode;
         public TResponseData ResponseData;
+        public int SysVersion;
     }
 
     public class TResponseData{

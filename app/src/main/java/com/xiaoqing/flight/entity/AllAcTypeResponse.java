@@ -13,6 +13,7 @@ public class AllAcTypeResponse {
     public class TResponseObject{
         public TResponseData ResponseData;
         public int ResponseCode;
+        public int SysVersion;
     }
 
     public class TResponseData{

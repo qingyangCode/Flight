@@ -16,6 +16,8 @@ import butterknife.InjectView;
 import com.xiaoqing.flight.FlightApplication;
 import com.xiaoqing.flight.R;
 import com.xiaoqing.flight.data.dao.AddFlightInfo;
+import com.xiaoqing.flight.data.dao.AllAcSb;
+import com.xiaoqing.flight.data.dao.AllAcSbDao;
 import com.xiaoqing.flight.data.dao.AllAirport;
 import com.xiaoqing.flight.data.dao.AllAirportDao;
 import com.xiaoqing.flight.data.dao.AllSb;
@@ -53,7 +55,7 @@ public class BasicInfoActivity extends BaseActivity {
     private String aircraftType;
     private float lj;
     private float bw;
-    private List<AllSb> allSbList;
+    private List<AllAcSb> allSbList;
 
     private int AIR_DEP = 1;//起飞机场
     private int AIR_ARR = 2;//到达机场
@@ -84,8 +86,8 @@ public class BasicInfoActivity extends BaseActivity {
             mFocus.setText(FormatUtil.formatTo2Decimal(lj / bw));
         }
 
-        List<AllSb> allSbFromDB = getAllSbFromDB();
-        if (allSbFromDB == null || allSbFromDB.size() == 0) {
+        List<AllAcSb> allAcSbFromDB = getAllSbFromDB();
+        if (allAcSbFromDB == null || allAcSbFromDB.size() == 0) {
             ApiServiceManager.getInstance().getAllSb(new ResponseListner<AllSbResponse>() {
                 @Override public void onResponse(AllSbResponse response) {
                     getAllSbFromDB();
@@ -227,45 +229,57 @@ public class BasicInfoActivity extends BaseActivity {
     /**
      * 差分站设备
      */
-    private List<AllSb> getAllSbFromDB() {
-        AllSbDao allSbDao = FlightApplication.getDaoSession().getAllSbDao();
+    private List<AllAcSb> getAllSbFromDB() {
+
+
+        AllAcSbDao allAcSbDao = FlightApplication.getDaoSession().getAllAcSbDao();
         allSbList =
-                allSbDao.queryBuilder().where(AllSbDao.Properties.AcType.eq(aircraftType)).list();
+                allAcSbDao.queryBuilder().where(AllAcSbDao.Properties.AcReg.eq(aircraftReg)).list();
         final HashMap<Integer, Float> weightList = new HashMap<>();
         mPointLayout.removeAllViews();
-        for (final AllSb allSb : allSbList) {
+        for (final AllAcSb allAcSb : allSbList) {
             View view = View.inflate(BasicInfoActivity.this, R.layout.layout_chafenzhan, null);
             TextView machineTitle = (TextView) view.findViewById(R.id.tv_firstName_title);
             CheckBox checkbox = (CheckBox) view.findViewById(R.id.checkbox);
-            machineTitle.setText(allSb.getSbName());
+            AllSbDao allSbDao = FlightApplication.getDaoSession().getAllSbDao();
+            List<AllSb> list = allSbDao.queryBuilder()
+                    .where(AllSbDao.Properties.AcType.eq(aircraftType),
+                            AllSbDao.Properties.SbId.eq(allAcSb.getSbId()))
+                    .list();
+            if (list != null && list.size() != 0)
+                machineTitle.setText(list.get(0).getSbName());
 
             checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    Float aFloat = weightList.get(allSb.getSbId());
+                    Float aFloat = weightList.get(allAcSb.getSbId());
                     if (isChecked) {
                         if (aFloat == null) {
-                            weightList.put(allSb.getSbId(), allSb.getSbWeight());
+                            weightList.put(allAcSb.getSbId(), allAcSb.getSbWeight());
                         }
                         ArrayList<Integer> sbList = new ArrayList<>();
-                        sbList.add(allSb.getSbId());
+                        sbList.add(allAcSb.getSbId());
                         UserManager.getInstance().getAddFlightInfo().setSbList(sbList);
                     } else {
                         if (aFloat != null) {
-                            weightList.remove(allSb.getSbId());
+                            weightList.remove(allAcSb.getSbId());
                         }
                         List<Integer> sbList =
                                 UserManager.getInstance().getAddFlightInfo().getSbList();
-                        if (sbList != null && sbList.size() > 0 && sbList.contains(allSb.getSbId())) {
-                            sbList.remove(allSb.getSbId());
+                        if (sbList != null && sbList.size() > 0 && sbList.contains(allAcSb.getSbId())) {
+                            sbList.remove(allAcSb.getSbId());
                         }
                     }
                     float weightCount = 0;
+                    float allSbLj = 0;
                     for (Integer sbID : weightList.keySet()) {
                         weightCount += weightList.get(sbID);
-                    }
-                    mWeight.setText((bw + weightCount) + "");
-                    mFocus.setText(FormatUtil.formatTo2Decimal(lj / (bw + weightCount)));
+                        if (sbID == allAcSb.getSbId()) {
+                            allSbLj += allAcSb.getSbLb() * weightList.get(sbID);
+                        }
+                    } mWeight.setText((bw + weightCount) + "");
+
+                    mFocus.setText(FormatUtil.formatTo2Decimal((allSbLj + lj) / (bw + weightCount)));
                 }
             });
             mPointLayout.addView(view);

@@ -13,6 +13,7 @@ public class AcWeightLimitResponse extends BaseResponse{
     public class TResponseObject{
         public TResponseData ResponseData;
         public int ResponseCode;
+        public int SysVersion;
     }
 
     public class TResponseData{

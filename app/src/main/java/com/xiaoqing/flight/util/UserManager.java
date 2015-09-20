@@ -63,7 +63,6 @@ public class UserManager {
         ApiServiceManager.getInstance().getAllFuleLimit(null);
         ApiServiceManager.getInstance().getAllAcWeightLimit(null);
         ApiServiceManager.getInstance().getAllAcSb(null);
-
     }
 
     private AddFlightInfo mAddFilghtInfo;

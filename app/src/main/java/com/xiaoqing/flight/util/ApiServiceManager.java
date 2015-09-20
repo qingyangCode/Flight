@@ -79,7 +79,7 @@ public class ApiServiceManager {
                                 && response.ResponseObject.ResponseCode == Constants.RESULT_OK) {
                             ArrayList<User> allUsers =
                                     response.ResponseObject.ResponseData.IAppObject;
-                            DBManager.getInstance().insertAllUsers(allUsers);
+                            DBManager.getInstance().insertAllUsers(allUsers, response.ResponseObject.SysVersion);
                         }
                         if (responseListner != null) responseListner.onResponse(response);
                     }
@@ -102,7 +102,7 @@ public class ApiServiceManager {
                         && response.ResponseObject != null
                         && response.ResponseObject.ResponseCode == Constants.RESULT_OK) {
                     DBManager.getInstance()
-                            .insertAllAcType(response.ResponseObject.ResponseData.IAppObject);
+                            .insertAllAcType(response.ResponseObject.ResponseData.IAppObject ,response.ResponseObject.SysVersion);
                 }
                 if (responseListner != null) responseListner.onResponse(response);
             }
@@ -133,7 +133,7 @@ public class ApiServiceManager {
                             if (response != null
                                     && response.ResponseObject.ResponseCode == Constants.RESULT_OK) {
 
-                                DBManager.getInstance().insertSeatByAcReg(response.ResponseObject.ResponseData.IAppObject);
+                                DBManager.getInstance().insertSeatByAcReg(response.ResponseObject.ResponseData.IAppObject, response.ResponseObject.SysVersion);
                                 if (responseResponseListner != null)
                                     responseResponseListner.onResponse(response);
                             }
@@ -157,7 +157,7 @@ public class ApiServiceManager {
                         && response.ResponseObject != null
                         && response.ResponseObject.ResponseCode == Constants.RESULT_OK) {
                     DBManager.getInstance()
-                            .insertAllSb(response.ResponseObject.ResponseData.IAppObject);
+                            .insertAllSb(response.ResponseObject.ResponseData.IAppObject, response.ResponseObject.SysVersion);
                 }
                 if (responseResponseListner != null) {
                     responseResponseListner.onResponse(response);
@@ -221,7 +221,7 @@ public class ApiServiceManager {
                                 && response.ResponseObject.ResponseCode == Constants.RESULT_OK) {
                             DBManager.getInstance()
                                     .insertFuleLimit(
-                                            response.ResponseObject.ResponseData.IAppObject);
+                                            response.ResponseObject.ResponseData.IAppObject, response.ResponseObject.SysVersion);
                         }
                         if (responseListner != null) responseListner.onResponse(response);
                     }
@@ -350,7 +350,7 @@ public class ApiServiceManager {
                         && response.ResponseObject.ResponseData.IAppObject != null) {
                     ArrayList<AcGrants> AcGrantLists =
                             response.ResponseObject.ResponseData.IAppObject;
-                    DBManager.getInstance().insertAcGrants(AcGrantLists);
+                    DBManager.getInstance().insertAcGrants(AcGrantLists, response.ResponseObject.SysVersion);
                 }
                 if (responseResponseListner != null) responseResponseListner.onResponse(response);
             }
@@ -375,7 +375,7 @@ public class ApiServiceManager {
                                 && response.ResponseObject.ResponseCode == Constants.RESULT_OK) {
                             DBManager.getInstance()
                                     .insertAllAircrart(
-                                            response.ResponseObject.ResponseData.IAppObject);
+                                            response.ResponseObject.ResponseData.IAppObject, response.ResponseObject.SysVersion);
                         }
                     }
 
@@ -395,7 +395,7 @@ public class ApiServiceManager {
                         && response.ResponseObject.ResponseCode == Constants.RESULT_OK) {
                     ArrayList<AllAirport> iAppObject =
                             response.ResponseObject.ResponseData.IAppObject;
-                    DBManager.getInstance().insertAllAirPort(iAppObject);
+                    DBManager.getInstance().insertAllAirPort(iAppObject, response.ResponseObject.SysVersion);
                 }
                 if (responseListner != null) responseListner.onResponse(response);
             }
@@ -475,7 +475,7 @@ public class ApiServiceManager {
                     responseListner.onResponse(response);
                 if (response != null && response.ResponseObject != null && response.ResponseObject.ResponseData != null
                         && response.ResponseObject.ResponseData.IAppObject != null) {
-                        DBManager.getInstance().insertSeatByAcReg(response.ResponseObject.ResponseData.IAppObject);
+                        DBManager.getInstance().insertSeatByAcReg(response.ResponseObject.ResponseData.IAppObject, response.ResponseObject.SysVersion);
                 }
             }
 
@@ -498,7 +498,7 @@ public class ApiServiceManager {
                         && response.ResponseObject.ResponseData != null
                         && response.ResponseObject.ResponseData.IAppObject != null) {
                     DBManager.getInstance()
-                            .insertFuleLimit(response.ResponseObject.ResponseData.IAppObject);
+                            .insertFuleLimit(response.ResponseObject.ResponseData.IAppObject, response.ResponseObject.SysVersion);
                 }
             }
 
@@ -517,7 +517,7 @@ public class ApiServiceManager {
                         && response.ResponseObject.ResponseData.IAppObject != null) {
                     DBManager.getInstance()
                             .insertAllAcWeightLimit(
-                                    response.ResponseObject.ResponseData.IAppObject);
+                                    response.ResponseObject.ResponseData.IAppObject, response.ResponseObject.SysVersion);
                 }
             }
 
@@ -586,7 +586,7 @@ public class ApiServiceManager {
         getMoccApi().getAllAcSb(new ResponseListner<AllAcSbResponse>() {
             @Override public void onResponse(AllAcSbResponse response) {
                 if (response != null && response.ResponseObject != null && response.ResponseObject.ResponseCode == Constants.RESULT_OK && response.ResponseObject.ResponseData != null) {
-                    DBManager.getInstance().insertAllAcSb(response.ResponseObject.ResponseData.IAppObject);
+                    DBManager.getInstance().insertAllAcSb(response.ResponseObject.ResponseData.IAppObject, response.ResponseObject.SysVersion);
                 }
             }
 

@@ -12,6 +12,7 @@ public class AcGrantsResponse extends BaseResponse{
     public class TResponseObject{
         public TResponseData ResponseData;
         public int ResponseCode;
+        public int SysVersion;
     }
 
 

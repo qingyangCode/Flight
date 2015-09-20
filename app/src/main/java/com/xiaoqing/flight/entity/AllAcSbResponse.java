@@ -14,6 +14,7 @@ public class AllAcSbResponse {
     public class TResponseObject{
         public TResponseData ResponseData;
         public int ResponseCode;
+        public int SysVersion;
     }
 
     public class TResponseData{
