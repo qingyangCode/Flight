@@ -3,6 +3,9 @@ package com.xiaoqing.flight.activity;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -13,6 +16,8 @@ import butterknife.OnClick;
 import com.xiaoqing.flight.FlightApplication;
 import com.xiaoqing.flight.R;
 import com.xiaoqing.flight.network.MoccApi;
+import com.xiaoqing.flight.network.ResponseListner;
+import com.xiaoqing.flight.util.ApiServiceManager;
 import com.xiaoqing.flight.util.UserManager;
 
 /**
@@ -28,6 +33,20 @@ public abstract class BaseActivity extends Activity{
     TextView mTopBarTitle;
     @InjectView(R.id.tv_top_bar_right)
     TextView mTopBarRight;
+    private final int ACTION_ADDFILGHT = 1;
+
+    private String mFlightId = "";
+
+    private Handler handler = new Handler() {
+        @Override public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case ACTION_ADDFILGHT:
+                    ApiServiceManager.getInstance().feedFlightInfo(mFlightId);
+                    break;
+            }
+        }
+    };
 
 
     @Override protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +65,9 @@ public abstract class BaseActivity extends Activity{
             finish();
             Toast.makeText(mContext, "您的项目未被授权使用，请联系作者授权后使用！！", Toast.LENGTH_LONG).show();
         }
+
+        checkFlightId();
+
     }
 
     protected void initEvents() {
@@ -93,6 +115,35 @@ public abstract class BaseActivity extends Activity{
 
     public boolean isShowTopBarLeft() {
         return true;
+    }
+
+
+    private void checkFlightId() {
+        String flightId = UserManager.getInstance().getAddFlightInfo().getFlightId();
+        int flightID = 0;
+        try {
+            if (!TextUtils.isEmpty(flightId))
+                flightID = Integer.parseInt(flightId);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if (flightID == 0) {
+            ApiServiceManager.getInstance().getFilghtId(new ResponseListner<String>() {
+                @Override public void onResponse(String response) {
+                    if (!TextUtils.isEmpty(response)) {
+                        mFlightId = response;
+                        //UserManager.getInstance().getAddFlightInfo().setFlightId(response);
+                        handler.sendEmptyMessage(ACTION_ADDFILGHT);
+                    }
+                }
+
+                @Override public void onEmptyOrError(String message) {
+                }
+            });
+        } else {
+            ApiServiceManager.getInstance().feedFlightInfo(mFlightId);
+        }
     }
 
 }

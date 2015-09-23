@@ -36,6 +36,14 @@ public class AddFlightInfo implements java.io.Serializable {
     private String Caption;
     private String TkoZx;
     private String TkoMac;
+    private String passengerWeight;
+    private String articleWeight;
+    private String beforeFlyFule;
+    private String landWeightCg;
+    private String beforeWCgmin;
+    private String beforeWCgmax;
+    private String landWCgmin;
+    private String landWCgmax;
 
     // KEEP FIELDS - put your custom fields here
     private ArrayList<Integer> sbList;
@@ -48,7 +56,7 @@ public class AddFlightInfo implements java.io.Serializable {
         this.FlightId = FlightId;
     }
 
-    public AddFlightInfo(String FlightId, String FlightDate, String AircraftReg, String AircraftType, String FlightNo, String Dep4Code, String DepAirportName, String Arr4Code, String ArrAirportName, String MaxFule, String RealFule, String SlieFule, String RouteFule, String TofWeight, String LandWeight, String NoFuleWeight, String AirportLimitWeight, String BalancePic, String BalancePicName, String OpUser, String OpDate, String weightCg, String Caption, String TkoZx, String TkoMac) {
+    public AddFlightInfo(String FlightId, String FlightDate, String AircraftReg, String AircraftType, String FlightNo, String Dep4Code, String DepAirportName, String Arr4Code, String ArrAirportName, String MaxFule, String RealFule, String SlieFule, String RouteFule, String TofWeight, String LandWeight, String NoFuleWeight, String AirportLimitWeight, String BalancePic, String BalancePicName, String OpUser, String OpDate, String weightCg, String Caption, String TkoZx, String TkoMac, String passengerWeight, String articleWeight, String beforeFlyFule, String landWeightCg, String beforeWCgmin, String beforeWCgmax, String landWCgmin, String landWCgmax) {
         this.FlightId = FlightId;
         this.FlightDate = FlightDate;
         this.AircraftReg = AircraftReg;
@@ -74,6 +82,14 @@ public class AddFlightInfo implements java.io.Serializable {
         this.Caption = Caption;
         this.TkoZx = TkoZx;
         this.TkoMac = TkoMac;
+        this.passengerWeight = passengerWeight;
+        this.articleWeight = articleWeight;
+        this.beforeFlyFule = beforeFlyFule;
+        this.landWeightCg = landWeightCg;
+        this.beforeWCgmin = beforeWCgmin;
+        this.beforeWCgmax = beforeWCgmax;
+        this.landWCgmin = landWCgmin;
+        this.landWCgmax = landWCgmax;
     }
 
     /** Not-null value. */
@@ -276,6 +292,70 @@ public class AddFlightInfo implements java.io.Serializable {
 
     public void setTkoMac(String TkoMac) {
         this.TkoMac = TkoMac;
+    }
+
+    public String getPassengerWeight() {
+        return passengerWeight;
+    }
+
+    public void setPassengerWeight(String passengerWeight) {
+        this.passengerWeight = passengerWeight;
+    }
+
+    public String getArticleWeight() {
+        return articleWeight;
+    }
+
+    public void setArticleWeight(String articleWeight) {
+        this.articleWeight = articleWeight;
+    }
+
+    public String getBeforeFlyFule() {
+        return beforeFlyFule;
+    }
+
+    public void setBeforeFlyFule(String beforeFlyFule) {
+        this.beforeFlyFule = beforeFlyFule;
+    }
+
+    public String getLandWeightCg() {
+        return landWeightCg;
+    }
+
+    public void setLandWeightCg(String landWeightCg) {
+        this.landWeightCg = landWeightCg;
+    }
+
+    public String getBeforeWCgmin() {
+        return beforeWCgmin;
+    }
+
+    public void setBeforeWCgmin(String beforeWCgmin) {
+        this.beforeWCgmin = beforeWCgmin;
+    }
+
+    public String getBeforeWCgmax() {
+        return beforeWCgmax;
+    }
+
+    public void setBeforeWCgmax(String beforeWCgmax) {
+        this.beforeWCgmax = beforeWCgmax;
+    }
+
+    public String getLandWCgmin() {
+        return landWCgmin;
+    }
+
+    public void setLandWCgmin(String landWCgmin) {
+        this.landWCgmin = landWCgmin;
+    }
+
+    public String getLandWCgmax() {
+        return landWCgmax;
+    }
+
+    public void setLandWCgmax(String landWCgmax) {
+        this.landWCgmax = landWCgmax;
     }
 
     // KEEP METHODS - put your custom methods here

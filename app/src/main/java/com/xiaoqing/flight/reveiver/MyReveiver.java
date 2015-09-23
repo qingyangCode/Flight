@@ -39,7 +39,7 @@ public class MyReveiver extends BroadcastReceiver{
             super.handleMessage(msg);
             switch (msg.what) {
                 case ACTION_ADDFILGHT:
-                    feedFlightInfo();
+                    ApiServiceManager.getInstance().feedFlightInfo(mFlightId);
                     break;
             }
         }
@@ -107,48 +107,10 @@ public class MyReveiver extends BroadcastReceiver{
                 }
             });
         } else {
-            feedFlightInfo();
+            ApiServiceManager.getInstance().feedFlightInfo(mFlightId);
         }
     }
 
 
-    //同步无网络下航班信息
-    private void feedFlightInfo() {
-        ActionFeedDao actionFeedDao = FlightApplication.getDaoSession().getActionFeedDao();
-        List<ActionFeed> list = actionFeedDao.queryBuilder()
-                .where(ActionFeedDao.Properties.UserCode.eq(
-                        UserManager.getInstance().getUser().getUserCode()),
-                        ActionFeedDao.Properties.Feed_type.eq(
-                                FeedType.toInt(FeedType.ADD_PLAYINFO)))
-                .list();
-        if (list != null && list.size() > 0) {
-            final ActionFeed actionFeed = list.get(0);
-            AddFlightInfoDao addFlightInfoDao = FlightApplication.getDaoSession().getAddFlightInfoDao();
-            final String beforeFlightId = actionFeed.getFeed_id();
-            List<AddFlightInfo> flightInfoList = addFlightInfoDao.queryBuilder()
-                    .where(AddFlightInfoDao.Properties.FlightId.eq(actionFeed.getFeed_id())).list();
 
-            if (flightInfoList != null && flightInfoList.size() > 0) {
-                if (!TextUtils.isEmpty(mFlightId))
-                    flightInfoList.get(0).setFlightId(mFlightId);
-                ApiServiceManager.getInstance().addFlightInfo(flightInfoList.get(0), new ResponseListner<AddFlightInfoResponse>() {
-                    @Override public void onResponse(AddFlightInfoResponse response) {
-                        if (response != null && response.ResponseObject != null && response.ResponseObject.ResponseCode == Constants.RESULT_OK) {
-                            DBManager.getInstance().deleteFlightInfo(actionFeed.getFeed_id());
-                            ActionFeed actionFeed1 = new ActionFeed();
-                            actionFeed1.setFeed_type(FeedType.toInt(FeedType.ADD_FLIGHTPERSON));
-                            actionFeed1.setFeed_id(actionFeed.getFeed_id());
-                            actionFeed1.setUserCode(actionFeed.getUserCode());
-                            DBManager.getInstance().deleteActionFeed(actionFeed1);
-                            ApiServiceManager.getInstance().uploadAirPersonInfo();
-                        }
-                    }
-
-                    @Override public void onEmptyOrError(String message) {
-
-                    }
-                });
-            }
-        }
-    }
 }

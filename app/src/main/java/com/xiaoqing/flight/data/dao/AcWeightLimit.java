@@ -11,9 +11,9 @@ public class AcWeightLimit {
 
     private Long id;
     private String AcType;
-    private String Weight;
-    private String WeightCg1;
-    private String WeightCg2;
+    private Float Weight;
+    private Float WeightCg1;
+    private Float WeightCg2;
     private String OpUser;
     private int SysVersion;
     private String OpDate;
@@ -28,7 +28,7 @@ public class AcWeightLimit {
         this.id = id;
     }
 
-    public AcWeightLimit(Long id, String AcType, String Weight, String WeightCg1, String WeightCg2, String OpUser, int SysVersion, String OpDate) {
+    public AcWeightLimit(Long id, String AcType, Float Weight, Float WeightCg1, Float WeightCg2, String OpUser, int SysVersion, String OpDate) {
         this.id = id;
         this.AcType = AcType;
         this.Weight = Weight;
@@ -55,27 +55,27 @@ public class AcWeightLimit {
         this.AcType = AcType;
     }
 
-    public String getWeight() {
+    public Float getWeight() {
         return Weight;
     }
 
-    public void setWeight(String Weight) {
+    public void setWeight(Float Weight) {
         this.Weight = Weight;
     }
 
-    public String getWeightCg1() {
+    public Float getWeightCg1() {
         return WeightCg1;
     }
 
-    public void setWeightCg1(String WeightCg1) {
+    public void setWeightCg1(Float WeightCg1) {
         this.WeightCg1 = WeightCg1;
     }
 
-    public String getWeightCg2() {
+    public Float getWeightCg2() {
         return WeightCg2;
     }
 
-    public void setWeightCg2(String WeightCg2) {
+    public void setWeightCg2(Float WeightCg2) {
         this.WeightCg2 = WeightCg2;
     }
 

@@ -123,14 +123,22 @@ public class BasicInfoActivity extends BaseActivity {
             }
 
             @Override public void onEmptyOrError(String message) {
-                UserManager.getInstance().getAddFlightInfo().setFlightId(DateFormatUtil.formatTDate());
-
+                UserManager.getInstance()
+                        .getAddFlightInfo()
+                        .setFlightId(DateFormatUtil.formatTDate());
             }
         });
     }
 
     @Override protected void initEvents() {
         super.initEvents();
+        mPlayNO.setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                mPlayNO.requestFocus();
+                mPlayNO.setSelection(mPlayNO.getText().toString().length());
+            }
+        });
+
         mOrigination.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -277,7 +285,8 @@ public class BasicInfoActivity extends BaseActivity {
                         if (sbID == allAcSb.getSbId()) {
                             allSbLj += allAcSb.getSbLb() * weightList.get(sbID);
                         }
-                    } mWeight.setText((bw + weightCount) + "");
+                    }
+                    mWeight.setText((bw + weightCount) + "");
 
                     mFocus.setText(FormatUtil.formatTo2Decimal((allSbLj + lj) / (bw + weightCount)));
                 }

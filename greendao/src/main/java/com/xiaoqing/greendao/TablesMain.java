@@ -145,9 +145,17 @@ public class TablesMain {
         flightInfo.addStringProperty("OpUser");
         flightInfo.addStringProperty("OpDate");
         flightInfo.addStringProperty("weightCg");
-        flightInfo.addStringProperty("Caption");
-        flightInfo.addStringProperty("TkoZx");
-        flightInfo.addStringProperty("TkoMac");
+        flightInfo.addStringProperty("Caption");//机长
+        flightInfo.addStringProperty("TkoZx");//起飞重心
+        flightInfo.addStringProperty("TkoMac");//起飞MAC
+        flightInfo.addStringProperty("passengerWeight");//人员重量
+        flightInfo.addStringProperty("articleWeight");//物品重量
+        flightInfo.addStringProperty("beforeFlyFule");//起飞油量
+        flightInfo.addStringProperty("landWeightCg");//着陆重心
+        flightInfo.addStringProperty("beforeWCgmin");//起飞重心前限
+        flightInfo.addStringProperty("beforeWCgmax");//起飞重心后限
+        flightInfo.addStringProperty("landWCgmin");//着陆重心前限
+        flightInfo.addStringProperty("landWCgmax");//着陆重心后限
 
 
 
@@ -217,9 +225,9 @@ public class TablesMain {
         Entity acWeoghtLimit = mSchema.addEntity("AcWeightLimit");
         acWeoghtLimit.addIdProperty().autoincrement();
         acWeoghtLimit.addStringProperty("AcType");
-        acWeoghtLimit.addStringProperty("Weight");
-        acWeoghtLimit.addStringProperty("WeightCg1");
-        acWeoghtLimit.addStringProperty("WeightCg2");
+        acWeoghtLimit.addFloatProperty("Weight");
+        acWeoghtLimit.addFloatProperty("WeightCg1");
+        acWeoghtLimit.addFloatProperty("WeightCg2");
         acWeoghtLimit.addStringProperty("OpUser");
         acWeoghtLimit.addIntProperty("SysVersion").notNull();
         acWeoghtLimit.addStringProperty("OpDate");

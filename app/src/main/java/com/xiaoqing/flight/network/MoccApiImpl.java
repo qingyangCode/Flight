@@ -397,6 +397,8 @@ public class MoccApiImpl implements MoccApi {
             String SlieFule, String RouteFule, String TofWeight, String LandWeight,
             String NoFuleWeight, String AirportLimitWeight, String BalancePic,
             String BalancePicName, String OpUser, String OpDate, String Caption, String TkoZx, String TkoMac,
+            String PassWeight, String CarWeight, String TkoForLimit, String  TkoAltLimit,
+            String LandZx, String LandForLimit, String LandAltLimit, String TkoFule, String UseWeight, String UseWeightZx,
             final ResponseListner<AddFlightInfoResponse> responseListner) {
         StringBuffer sb = new StringBuffer("<?xml version=\"1.0\"?>").append(
                 "<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
@@ -433,6 +435,16 @@ public class MoccApiImpl implements MoccApi {
                 .append("<Caption>" + Caption + "</Caption>")
                 .append("<TkoZx>" + TkoZx + "</TkoZx>")
                 .append("<TkoMac>" + TkoMac + "</TkoMac>")
+                .append("<PassWeight>" + PassWeight + "</PassWeight>")
+                .append("<CarWeight>" + CarWeight + "</CarWeight>")
+                .append("<TkoForLimit>" + TkoForLimit + "</TkoForLimit>")
+                .append("<TkoAltLimit>" + TkoAltLimit + "</TkoAltLimit>")
+                .append("<LandZx>" + LandZx + "</LandZx>")
+                .append("<LandForLimit>" + LandForLimit + "</LandForLimit>")
+                .append("<LandAltLimit>" + LandAltLimit + "</LandAltLimit>")
+                .append("<TkoFule>" + TkoFule + "</TkoFule>")
+                .append("<UseWeight>" + UseWeight + "</UseWeight>")
+                .append("<UseWeightZx>" + UseWeightZx + "</UseWeightZx>")
                 .append("</IAppObject>")
                 .append("</RequestData>")
                 .append("</MessageObject>");

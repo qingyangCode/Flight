@@ -149,7 +149,10 @@ public interface MoccApi {
             String AircraftType, String FlightNo, String Dep4Code, String DepAirportName, String Arr4Code,
             String ArrAirportName, String MaxFule, String RealFule, String SlieFule, String RouteFule,
             String TofWeight, String LandWeight, String NoFuleWeight, String AirportLimitWeight,
-            String BalancePic, String BalancePicName, String OpUser, String OpDate,String Caption, String TkoZx, String TkoMac, ResponseListner<AddFlightInfoResponse> responseListner);
+            String BalancePic, String BalancePicName, String OpUser, String OpDate,String Caption,
+            String TkoZx, String TkoMac, String PassWeight, String CarWeight, String TkoForLimit, String  TkoAltLimit,
+            String LandZx, String LandForLimit, String LandAltLimit, String TkoFule, String UseWeight, String UseWeightZx,
+            ResponseListner<AddFlightInfoResponse> responseListner);
 
     /**
      * 获取飞机ID

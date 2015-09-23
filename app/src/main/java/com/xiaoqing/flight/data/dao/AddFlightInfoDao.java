@@ -48,6 +48,14 @@ public class AddFlightInfoDao extends AbstractDao<AddFlightInfo, String> {
         public final static Property Caption = new Property(22, String.class, "Caption", false, "CAPTION");
         public final static Property TkoZx = new Property(23, String.class, "TkoZx", false, "TKO_ZX");
         public final static Property TkoMac = new Property(24, String.class, "TkoMac", false, "TKO_MAC");
+        public final static Property PassengerWeight = new Property(25, String.class, "passengerWeight", false, "PASSENGER_WEIGHT");
+        public final static Property ArticleWeight = new Property(26, String.class, "articleWeight", false, "ARTICLE_WEIGHT");
+        public final static Property BeforeFlyFule = new Property(27, String.class, "beforeFlyFule", false, "BEFORE_FLY_FULE");
+        public final static Property LandWeightCg = new Property(28, String.class, "landWeightCg", false, "LAND_WEIGHT_CG");
+        public final static Property BeforeWCgmin = new Property(29, String.class, "beforeWCgmin", false, "BEFORE_WCGMIN");
+        public final static Property BeforeWCgmax = new Property(30, String.class, "beforeWCgmax", false, "BEFORE_WCGMAX");
+        public final static Property LandWCgmin = new Property(31, String.class, "landWCgmin", false, "LAND_WCGMIN");
+        public final static Property LandWCgmax = new Property(32, String.class, "landWCgmax", false, "LAND_WCGMAX");
     };
 
 
@@ -87,7 +95,15 @@ public class AddFlightInfoDao extends AbstractDao<AddFlightInfo, String> {
                 "'WEIGHT_CG' TEXT," + // 21: weightCg
                 "'CAPTION' TEXT," + // 22: Caption
                 "'TKO_ZX' TEXT," + // 23: TkoZx
-                "'TKO_MAC' TEXT);"); // 24: TkoMac
+                "'TKO_MAC' TEXT," + // 24: TkoMac
+                "'PASSENGER_WEIGHT' TEXT," + // 25: passengerWeight
+                "'ARTICLE_WEIGHT' TEXT," + // 26: articleWeight
+                "'BEFORE_FLY_FULE' TEXT," + // 27: beforeFlyFule
+                "'LAND_WEIGHT_CG' TEXT," + // 28: landWeightCg
+                "'BEFORE_WCGMIN' TEXT," + // 29: beforeWCgmin
+                "'BEFORE_WCGMAX' TEXT," + // 30: beforeWCgmax
+                "'LAND_WCGMIN' TEXT," + // 31: landWCgmin
+                "'LAND_WCGMAX' TEXT);"); // 32: landWCgmax
     }
 
     /** Drops the underlying database table. */
@@ -221,6 +237,46 @@ public class AddFlightInfoDao extends AbstractDao<AddFlightInfo, String> {
         if (TkoMac != null) {
             stmt.bindString(25, TkoMac);
         }
+ 
+        String passengerWeight = entity.getPassengerWeight();
+        if (passengerWeight != null) {
+            stmt.bindString(26, passengerWeight);
+        }
+ 
+        String articleWeight = entity.getArticleWeight();
+        if (articleWeight != null) {
+            stmt.bindString(27, articleWeight);
+        }
+ 
+        String beforeFlyFule = entity.getBeforeFlyFule();
+        if (beforeFlyFule != null) {
+            stmt.bindString(28, beforeFlyFule);
+        }
+ 
+        String landWeightCg = entity.getLandWeightCg();
+        if (landWeightCg != null) {
+            stmt.bindString(29, landWeightCg);
+        }
+ 
+        String beforeWCgmin = entity.getBeforeWCgmin();
+        if (beforeWCgmin != null) {
+            stmt.bindString(30, beforeWCgmin);
+        }
+ 
+        String beforeWCgmax = entity.getBeforeWCgmax();
+        if (beforeWCgmax != null) {
+            stmt.bindString(31, beforeWCgmax);
+        }
+ 
+        String landWCgmin = entity.getLandWCgmin();
+        if (landWCgmin != null) {
+            stmt.bindString(32, landWCgmin);
+        }
+ 
+        String landWCgmax = entity.getLandWCgmax();
+        if (landWCgmax != null) {
+            stmt.bindString(33, landWCgmax);
+        }
     }
 
     /** @inheritdoc */
@@ -257,7 +313,15 @@ public class AddFlightInfoDao extends AbstractDao<AddFlightInfo, String> {
             cursor.isNull(offset + 21) ? null : cursor.getString(offset + 21), // weightCg
             cursor.isNull(offset + 22) ? null : cursor.getString(offset + 22), // Caption
             cursor.isNull(offset + 23) ? null : cursor.getString(offset + 23), // TkoZx
-            cursor.isNull(offset + 24) ? null : cursor.getString(offset + 24) // TkoMac
+            cursor.isNull(offset + 24) ? null : cursor.getString(offset + 24), // TkoMac
+            cursor.isNull(offset + 25) ? null : cursor.getString(offset + 25), // passengerWeight
+            cursor.isNull(offset + 26) ? null : cursor.getString(offset + 26), // articleWeight
+            cursor.isNull(offset + 27) ? null : cursor.getString(offset + 27), // beforeFlyFule
+            cursor.isNull(offset + 28) ? null : cursor.getString(offset + 28), // landWeightCg
+            cursor.isNull(offset + 29) ? null : cursor.getString(offset + 29), // beforeWCgmin
+            cursor.isNull(offset + 30) ? null : cursor.getString(offset + 30), // beforeWCgmax
+            cursor.isNull(offset + 31) ? null : cursor.getString(offset + 31), // landWCgmin
+            cursor.isNull(offset + 32) ? null : cursor.getString(offset + 32) // landWCgmax
         );
         return entity;
     }
@@ -290,6 +354,14 @@ public class AddFlightInfoDao extends AbstractDao<AddFlightInfo, String> {
         entity.setCaption(cursor.isNull(offset + 22) ? null : cursor.getString(offset + 22));
         entity.setTkoZx(cursor.isNull(offset + 23) ? null : cursor.getString(offset + 23));
         entity.setTkoMac(cursor.isNull(offset + 24) ? null : cursor.getString(offset + 24));
+        entity.setPassengerWeight(cursor.isNull(offset + 25) ? null : cursor.getString(offset + 25));
+        entity.setArticleWeight(cursor.isNull(offset + 26) ? null : cursor.getString(offset + 26));
+        entity.setBeforeFlyFule(cursor.isNull(offset + 27) ? null : cursor.getString(offset + 27));
+        entity.setLandWeightCg(cursor.isNull(offset + 28) ? null : cursor.getString(offset + 28));
+        entity.setBeforeWCgmin(cursor.isNull(offset + 29) ? null : cursor.getString(offset + 29));
+        entity.setBeforeWCgmax(cursor.isNull(offset + 30) ? null : cursor.getString(offset + 30));
+        entity.setLandWCgmin(cursor.isNull(offset + 31) ? null : cursor.getString(offset + 31));
+        entity.setLandWCgmax(cursor.isNull(offset + 32) ? null : cursor.getString(offset + 32));
      }
     
     /** @inheritdoc */

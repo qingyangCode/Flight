@@ -591,15 +591,15 @@ public class EngineRoomActivity extends BaseActivity{
                  */
 
                 for (final SeatByAcReg seatByAcReg : showList) {
-                    if (seatByAcReg.getXPos() != 0) {
+                    //if (seatByAcReg.getXPos() != 0) {
                         //货物 或 有人
-                        if (("C".equalsIgnoreCase(seatByAcReg.getSeatType()) && seatByAcReg.getSeatWeight() != 0) || !TextUtils.isEmpty(
-                                seatByAcReg.getUserName())) {
-                            long insert = DBManager.getInstance().insertUploadPerson(seatByAcReg);
-                            if (insert != 0 )
-                                DBManager.getInstance().insertActionFeed(FeedType.ADD_FLIGHTPERSON, String.valueOf(insert));
-                        }
+                    if (("C".equalsIgnoreCase(seatByAcReg.getSeatType()) && seatByAcReg.getSeatWeight() != 0) || ("S".equalsIgnoreCase(seatByAcReg.getSeatType()) && !TextUtils.isEmpty(
+                            seatByAcReg.getUserName()))) {
+                        long insert = DBManager.getInstance().insertUploadPerson(seatByAcReg);
+                        if (insert != 0 )
+                            DBManager.getInstance().insertActionFeed(FeedType.ADD_FLIGHTPERSON, String.valueOf(insert));
                     }
+                    //}
                 }
                 //更新座椅的操作时间
                 DBManager.getInstance().updateSeatByAcRegOpDate(showList);

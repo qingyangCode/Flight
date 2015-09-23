@@ -5,11 +5,13 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.text.TextUtils;
 import com.xiaoqing.flight.FlightApplication;
 import com.xiaoqing.flight.data.dao.AcGrants;
 import com.xiaoqing.flight.data.dao.ActionFeed;
 import com.xiaoqing.flight.data.dao.ActionFeedDao;
 import com.xiaoqing.flight.data.dao.AddFlightInfo;
+import com.xiaoqing.flight.data.dao.AddFlightInfoDao;
 import com.xiaoqing.flight.data.dao.AllAcSb;
 import com.xiaoqing.flight.data.dao.AllAircraft;
 import com.xiaoqing.flight.data.dao.AllAircraftDao;
@@ -102,7 +104,8 @@ public class ApiServiceManager {
                         && response.ResponseObject != null
                         && response.ResponseObject.ResponseCode == Constants.RESULT_OK) {
                     DBManager.getInstance()
-                            .insertAllAcType(response.ResponseObject.ResponseData.IAppObject ,response.ResponseObject.SysVersion);
+                            .insertAllAcType(response.ResponseObject.ResponseData.IAppObject,
+                                    response.ResponseObject.SysVersion);
                 }
                 if (responseListner != null) responseListner.onResponse(response);
             }
@@ -179,12 +182,11 @@ public class ApiServiceManager {
     public void getFilghtId(final ResponseListner<String> responseResponseListner) {
         FlightApplication.getMoccApi().getflightid(new ResponseListner<FlightidResponse>() {
             @Override public void onResponse(FlightidResponse response) {
-                if (response != null
-                        && response.ResponseObject != null) {
+                if (response != null && response.ResponseObject != null) {
                     if (response.ResponseObject.ResponseCode == Constants.RESULT_OK) {
                         if (responseResponseListner != null && response.ResponseObject != null)
                             responseResponseListner.onResponse(response.ResponseObject.ResponseErr);
-                    }else {
+                    } else {
                         if (responseResponseListner != null && response.ResponseObject != null)
                             responseResponseListner.onResponse(response.ResponseObject.ResponseErr);
                     }
@@ -221,7 +223,8 @@ public class ApiServiceManager {
                                 && response.ResponseObject.ResponseCode == Constants.RESULT_OK) {
                             DBManager.getInstance()
                                     .insertFuleLimit(
-                                            response.ResponseObject.ResponseData.IAppObject, response.ResponseObject.SysVersion);
+                                            response.ResponseObject.ResponseData.IAppObject,
+                                            response.ResponseObject.SysVersion);
                         }
                         if (responseListner != null) responseListner.onResponse(response);
                     }
@@ -297,6 +300,9 @@ public class ApiServiceManager {
      * @param addFlightInfo
      * @param responseListner
      */
+
+    //String PassWeight, String CarWeight, String TkoForLimit, String  TkoAltLimit,
+    //String LandForLimit, String LandAltLimit, String TkoFule, String UseWeight, String UseWeightZx,
     public void addFlightInfo(final AddFlightInfo addFlightInfo, final ResponseListner<AddFlightInfoResponse> responseListner) {
         getMoccApi().addFlightInfo(addFlightInfo.getFlightId(), DateFormatUtil.formatZDate(),
                 addFlightInfo.getAircraftReg(), addFlightInfo.getAircraftType(),
@@ -308,10 +314,13 @@ public class ApiServiceManager {
                 addFlightInfo.getLandWeight(), addFlightInfo.getNoFuleWeight(),
                 addFlightInfo.getAirportLimitWeight(), addFlightInfo.getBalancePic(),
                 addFlightInfo.getBalancePicName(),
-                UserManager.getInstance().getUser().getUserCode(), DateFormatUtil.formatZDate(),
-                addFlightInfo.getCaption(),
-                addFlightInfo.getTkoZx(),
-                addFlightInfo.getTkoMac(),
+                UserManager.getInstance().getUser().getUserCode(), addFlightInfo.getOpDate(),
+                addFlightInfo.getCaption(), addFlightInfo.getTkoZx(), addFlightInfo.getTkoMac(),
+                addFlightInfo.getPassengerWeight(), addFlightInfo.getArticleWeight(),
+                addFlightInfo.getBeforeWCgmin(), addFlightInfo.getBeforeWCgmax(),
+                addFlightInfo.getLandWeightCg(), addFlightInfo.getLandWCgmin(),
+                addFlightInfo.getLandWCgmax(), addFlightInfo.getBeforeFlyFule(),
+                addFlightInfo.getNoFuleWeight(), addFlightInfo.getWeightCg(),
                 new ResponseListner<AddFlightInfoResponse>() {
 
                     @Override public void onResponse(AddFlightInfoResponse response) {
@@ -330,7 +339,6 @@ public class ApiServiceManager {
                         //    DBManager.getInstance().deleteActionFeed(actionFeed);
                         //    DBManager.getInstance().deleteFlightInfo(addFlightInfo.getFlightId());
                         //}
-
 
                     }
 
@@ -353,13 +361,15 @@ public class ApiServiceManager {
                         && response.ResponseObject.ResponseData.IAppObject != null) {
                     ArrayList<AcGrants> AcGrantLists =
                             response.ResponseObject.ResponseData.IAppObject;
-                    DBManager.getInstance().insertAcGrants(AcGrantLists, response.ResponseObject.SysVersion);
+                    DBManager.getInstance()
+                            .insertAcGrants(AcGrantLists, response.ResponseObject.SysVersion);
                 }
                 if (responseResponseListner != null) responseResponseListner.onResponse(response);
             }
 
             @Override public void onEmptyOrError(String message) {
-                if (responseResponseListner != null) responseResponseListner.onEmptyOrError(message);
+                if (responseResponseListner != null)
+                    responseResponseListner.onEmptyOrError(message);
             }
         });
     }
@@ -378,7 +388,8 @@ public class ApiServiceManager {
                                 && response.ResponseObject.ResponseCode == Constants.RESULT_OK) {
                             DBManager.getInstance()
                                     .insertAllAircrart(
-                                            response.ResponseObject.ResponseData.IAppObject, response.ResponseObject.SysVersion);
+                                            response.ResponseObject.ResponseData.IAppObject,
+                                            response.ResponseObject.SysVersion);
                         }
                     }
 
@@ -398,7 +409,8 @@ public class ApiServiceManager {
                         && response.ResponseObject.ResponseCode == Constants.RESULT_OK) {
                     ArrayList<AllAirport> iAppObject =
                             response.ResponseObject.ResponseData.IAppObject;
-                    DBManager.getInstance().insertAllAirPort(iAppObject, response.ResponseObject.SysVersion);
+                    DBManager.getInstance()
+                            .insertAllAirPort(iAppObject, response.ResponseObject.SysVersion);
                 }
                 if (responseListner != null) responseListner.onResponse(response);
             }
@@ -446,7 +458,7 @@ public class ApiServiceManager {
                                         && response.ResponseObject.ResponseCode
                                         == Constants.RESULT_OK) {
                                     deleteFlightPersonFeed();
-                                    uploadAirPersonDao.deleteByKey(uploadAirPerson.getId());
+                                    uploadAirPersonDao.delete(uploadAirPerson);
                                 }
                             }
 
@@ -501,7 +513,8 @@ public class ApiServiceManager {
                         && response.ResponseObject.ResponseData != null
                         && response.ResponseObject.ResponseData.IAppObject != null) {
                     DBManager.getInstance()
-                            .insertFuleLimit(response.ResponseObject.ResponseData.IAppObject, response.ResponseObject.SysVersion);
+                            .insertFuleLimit(response.ResponseObject.ResponseData.IAppObject,
+                                    response.ResponseObject.SysVersion);
                 }
             }
 
@@ -519,8 +532,8 @@ public class ApiServiceManager {
                         && response.ResponseObject.ResponseData != null
                         && response.ResponseObject.ResponseData.IAppObject != null) {
                     DBManager.getInstance()
-                            .insertAllAcWeightLimit(
-                                    response.ResponseObject.ResponseData.IAppObject, response.ResponseObject.SysVersion);
+                            .insertAllAcWeightLimit(response.ResponseObject.ResponseData.IAppObject,
+                                    response.ResponseObject.SysVersion);
                 }
             }
 
@@ -547,7 +560,7 @@ public class ApiServiceManager {
                         float Version = 0;
                         try {
                             Version = Float.parseFloat(CommonUtils.getVersionName(context));
-                        }catch (Exception e) {
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                         if (null != t) {
@@ -587,8 +600,13 @@ public class ApiServiceManager {
     public void getAllAcSb(ResponseListner<AllAcSb> responseListner) {
         getMoccApi().getAllAcSb(new ResponseListner<AllAcSbResponse>() {
             @Override public void onResponse(AllAcSbResponse response) {
-                if (response != null && response.ResponseObject != null && response.ResponseObject.ResponseCode == Constants.RESULT_OK && response.ResponseObject.ResponseData != null) {
-                    DBManager.getInstance().insertAllAcSb(response.ResponseObject.ResponseData.IAppObject, response.ResponseObject.SysVersion);
+                if (response != null
+                        && response.ResponseObject != null
+                        && response.ResponseObject.ResponseCode == Constants.RESULT_OK
+                        && response.ResponseObject.ResponseData != null) {
+                    DBManager.getInstance()
+                            .insertAllAcSb(response.ResponseObject.ResponseData.IAppObject,
+                                    response.ResponseObject.SysVersion);
                 }
             }
 
@@ -596,6 +614,48 @@ public class ApiServiceManager {
 
             }
         });
+    }
+
+    //同步无网络下航班信息
+    public void feedFlightInfo(String mFlightId) {
+        ActionFeedDao actionFeedDao = FlightApplication.getDaoSession().getActionFeedDao();
+        List<ActionFeed> list = actionFeedDao.queryBuilder()
+                .where(ActionFeedDao.Properties.UserCode.eq(
+                                UserManager.getInstance().getUser().getUserCode()),
+                        ActionFeedDao.Properties.Feed_type.eq(
+                                FeedType.toInt(FeedType.ADD_PLAYINFO)))
+                .list();
+        if (list != null && list.size() > 0) {
+            final ActionFeed actionFeed = list.get(0);
+            AddFlightInfoDao addFlightInfoDao = FlightApplication.getDaoSession().getAddFlightInfoDao();
+            final String beforeFlightId = actionFeed.getFeed_id();
+            List<AddFlightInfo> flightInfoList = addFlightInfoDao.queryBuilder()
+                    .where(AddFlightInfoDao.Properties.FlightId.eq(actionFeed.getFeed_id())).list();
+
+            if (flightInfoList != null && flightInfoList.size() > 0) {
+                if (!TextUtils.isEmpty(mFlightId)) {
+                    flightInfoList.get(0).setFlightId(mFlightId);
+                    UserManager.getInstance().getAddFlightInfo().setFlightId(mFlightId);
+                }
+                ApiServiceManager.getInstance().addFlightInfo(flightInfoList.get(0), new ResponseListner<AddFlightInfoResponse>() {
+                    @Override public void onResponse(AddFlightInfoResponse response) {
+                        if (response != null && response.ResponseObject != null && response.ResponseObject.ResponseCode == Constants.RESULT_OK) {
+                            DBManager.getInstance().deleteFlightInfo(actionFeed.getFeed_id());
+                            //ActionFeed actionFeed1 = new ActionFeed();
+                            //actionFeed1.setFeed_type(FeedType.toInt(FeedType.ADD_FLIGHTPERSON));
+                            //actionFeed1.setFeed_id(actionFeed.getFeed_id());
+                            //actionFeed1.setUserCode(actionFeed.getUserCode());
+                            DBManager.getInstance().deleteActionFeed(actionFeed);
+                            ApiServiceManager.getInstance().uploadAirPersonInfo();
+                        }
+                    }
+
+                    @Override public void onEmptyOrError(String message) {
+
+                    }
+                });
+            }
+        }
     }
 
 
