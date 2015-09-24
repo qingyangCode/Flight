@@ -3,6 +3,7 @@ package com.xiaoqing.flight.activity;
 import android.content.DialogInterface;
 import android.text.TextUtils;
 import android.widget.EditText;
+import android.widget.TextView;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import com.xiaoqing.flight.FlightApplication;
@@ -31,6 +32,8 @@ public class ResetPasswordActivity extends BaseActivity{
     EditText mEdConfirm;
     @InjectView(R.id.tv_userName)
     EditText mUserName;
+    @InjectView(R.id.tv_top_bar_title)
+    TextView mTitle;
 
     private boolean isCancel = false;
 
@@ -41,6 +44,7 @@ public class ResetPasswordActivity extends BaseActivity{
 
     @Override protected void onloadData() {
         setTitle("修改密码");
+        mTitle.setText("修改密码");
 
 
     }

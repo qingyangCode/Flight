@@ -156,6 +156,10 @@ public class TablesMain {
         flightInfo.addStringProperty("beforeWCgmax");//起飞重心后限
         flightInfo.addStringProperty("landWCgmin");//着陆重心前限
         flightInfo.addStringProperty("landWCgmax");//着陆重心后限
+        flightInfo.addFloatProperty("UseWeight");//使用空重
+        flightInfo.addFloatProperty("UseWeightCg");//使用空重重心
+        flightInfo.addStringProperty("BasicWeight");//飞机基本重量
+        flightInfo.addFloatProperty("allSbLj");//查奋战力矩
 
 
 

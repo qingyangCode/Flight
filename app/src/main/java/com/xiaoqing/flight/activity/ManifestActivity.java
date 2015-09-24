@@ -25,6 +25,8 @@ import com.xiaoqing.flight.data.dao.AcGrantsDao;
 import com.xiaoqing.flight.data.dao.AddFlightInfo;
 import com.xiaoqing.flight.data.dao.UploadAirPerson;
 import com.xiaoqing.flight.data.dao.UploadAirPersonDao;
+import com.xiaoqing.flight.data.dao.User;
+import com.xiaoqing.flight.data.dao.UserDao;
 import com.xiaoqing.flight.entity.AddFlightInfoResponse;
 import com.xiaoqing.flight.entity.ValidCaptionResponse;
 import com.xiaoqing.flight.network.ResponseListner;
@@ -38,7 +40,6 @@ import com.xiaoqing.flight.util.ToastUtil;
 import com.xiaoqing.flight.util.UserManager;
 import com.xiaoqing.flight.util.WindowUtil;
 import java.util.List;
-import org.w3c.dom.Text;
 
 /**
  * Created by QingYang on 15/9/20.
@@ -124,21 +125,22 @@ public class ManifestActivity extends BaseActivity {
         aircraftType = getIntent().getStringExtra(Constants.ACTION_AIRCRAFTTYPE);
         aircraftReg = getIntent().getStringExtra(Constants.ACTION_AIRCRAFTREG);
 
-        AddFlightInfo addFlightInfo = UserManager.getInstance().getAddFlightInfo();
+        AddFlightInfo addFlightInfo = FlightApplication.getAddFlightInfo();
         if (addFlightInfo != null) {
-            if (!TextUtils.isEmpty(addFlightInfo.getOpDate()))
-                tv_date.setText(addFlightInfo.getOpDate().substring(0, addFlightInfo.getOpDate().indexOf(".")));
+            if (!TextUtils.isEmpty(addFlightInfo.getOpDate())) {
+                String substring = addFlightInfo.getOpDate()
+                        .substring(0, addFlightInfo.getOpDate().indexOf("."));
+                if (!TextUtils.isEmpty(substring))
+                    tv_date.setText(substring.replace("T","\n"));
+            }
             tv_acreg.setText(addFlightInfo.getAircraftReg());
             tv_flightNo.setText(addFlightInfo.getFlightNo());
             tv_flyAirport.setText(addFlightInfo.getDepAirportName());
             tv_arrAirport.setText(addFlightInfo.getArrAirportName());
 
-            tv_useWeight.setText(addFlightInfo.getNoFuleWeight());
-            try {
-                tv_useWeightCg.setText(FormatUtil.formatTo2Decimal(Float.parseFloat(addFlightInfo.getWeightCg())));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            tv_useWeight.setText(FormatUtil.formatTo2Decimal(addFlightInfo.getUseWeight()));
+            tv_useWeightCg.setText(FormatUtil.formatTo2Decimal(addFlightInfo.getUseWeightCg()));
+
 
 
             tv_realOil.setText(addFlightInfo.getRealFule());
@@ -176,6 +178,7 @@ public class ManifestActivity extends BaseActivity {
         if (mLayoutGoods != null) mLayoutGoods.removeAllViews();
         float passengerWeight = 0;
         float goodsWeight = 0;
+        //float exitgoodsWeight = 0;
         if (list != null && list.size() != 0) {
            for (UploadAirPerson person : list) {
                View view = View.inflate(mContext, R.layout.layout_mainfest_item, null);
@@ -195,6 +198,7 @@ public class ManifestActivity extends BaseActivity {
                } else if ("C".equalsIgnoreCase(person.getSeatType())) {
                    mLayoutGoods.addView(view);
                    goodsWeight += person.getRealWeight();
+                   //exitgoodsWeight += person.getAcRegCargWeight();
 
                }
            }
@@ -202,9 +206,14 @@ public class ManifestActivity extends BaseActivity {
 
         tv_passengerWeight.setText(FormatUtil.formatTo2Decimal(passengerWeight));
         tv_goodsweight.setText(FormatUtil.formatTo2Decimal(goodsWeight));
-        UserManager.getInstance().getAddFlightInfo().setPassengerWeight(
+        FlightApplication.getAddFlightInfo().setPassengerWeight(
                 FormatUtil.formatTo2Decimal(passengerWeight));
-        UserManager.getInstance().getAddFlightInfo().setArticleWeight(FormatUtil.formatTo2Decimal(goodsWeight));
+        FlightApplication.getAddFlightInfo().setArticleWeight(
+                FormatUtil.formatTo2Decimal(goodsWeight));
+        //float useWeight = Float.parseFloat(FlightApplication.getAddFlightInfo().getNoFuleWeight())
+        //        + exitgoodsWeight;
+
+        //FlightApplication.getAddFlightInfo().setUseWeight(useWeight);
     }
 
     @Override public View.OnClickListener getRightOnClickListener() {
@@ -270,7 +279,7 @@ public class ManifestActivity extends BaseActivity {
 
     //机长验证弹出框
     private void confirm(final String userName, final String password) {
-        UserManager.getInstance().getAddFlightInfo().setCaption(userName);
+        FlightApplication.getAddFlightInfo().setCaption(userName);
         isCancelAble = false;
         showProgressDialog();
         getMoccApi().validCaption(userName, aircraftType, password, new ResponseListner<ValidCaptionResponse>() {
@@ -357,7 +366,7 @@ public class ManifestActivity extends BaseActivity {
     private void addFlightInfo() {
         showProgressDialog();
         //TODO 查询  飞行ID
-        ApiServiceManager.getInstance().addFlightInfo(UserManager.getInstance().getAddFlightInfo(), new ResponseListner<AddFlightInfoResponse>() {
+        ApiServiceManager.getInstance().addFlightInfo(FlightApplication.getAddFlightInfo(), new ResponseListner<AddFlightInfoResponse>() {
             @Override public void onResponse(AddFlightInfoResponse response) {
                 hiddenDialog();
                 if (response != null
@@ -368,16 +377,20 @@ public class ManifestActivity extends BaseActivity {
                     Toast.makeText(mContext, "航班信息添加成功", Toast.LENGTH_LONG).show();
                     UserManager.getInstance().setAddFlightSuccess(true);
                     mTopBarRight.setVisibility(View.GONE);
-                    tv_captain.setText(UserManager.getInstance().getAddFlightInfo().getCaption());
+
+                    showCaptionName();
+
                     //上传机上成员信息
                     ApiServiceManager.getInstance().uploadAirPersonInfo();
-                    //DBManager.getInstance().deleteFlightInfo(UserManager.getInstance().getAddFlightInfo().getFlightId());
+                    //DBManager.getInstance().deleteFlightInfo(FlightApplication.getAddFlightInfo().getFlightId());
                 } else {
                     addFlightInfoToDB();
                     ToastUtil.showToast(mContext,
                             R.drawable.toast_warning, !TextUtils.isEmpty(response.ResponseObject.ResponseErr) ? response.ResponseObject.ResponseErr : "服务器繁忙，请稍后再试" );
                 }
             }
+
+
 
             @Override public void onEmptyOrError(String message) {
                 hiddenDialog();
@@ -389,9 +402,22 @@ public class ManifestActivity extends BaseActivity {
         });
     }
 
+    private void showCaptionName() {
+        UserDao userDao = FlightApplication.getDaoSession().getUserDao();
+        List<User> list = userDao.queryBuilder()
+                .where(UserDao.Properties.UserCode.eq(
+                        FlightApplication.getAddFlightInfo().getCaption()))
+                .list();
+        if (list != null && list.size() != 0) {
+            tv_captain.setText(list.get(0).getUserName());
+        } else {
+            tv_captain.setText(FlightApplication.getAddFlightInfo().getCaption());
+        }
+    }
+
     //校验航班主键ID是否存在
     private void checkFlightId() {
-        String flightId = UserManager.getInstance().getAddFlightInfo().getFlightId();
+        String flightId = FlightApplication.getAddFlightInfo().getFlightId();
         int flightID = 0;
         try {
             flightID = Integer.parseInt(flightId);
@@ -405,7 +431,7 @@ public class ManifestActivity extends BaseActivity {
                     if (!TextUtils.isEmpty(response)) {
                         try {
                             Integer.parseInt(response);
-                            UserManager.getInstance().getAddFlightInfo().setFlightId(response);
+                            FlightApplication.getAddFlightInfo().setFlightId(response);
                             handler.sendEmptyMessage(ACTION_ADDFILGHT);
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -430,11 +456,11 @@ public class ManifestActivity extends BaseActivity {
 
     private void addFlightInfoToDB() {
         DBManager.getInstance().insertActionFeed(FeedType.ADD_PLAYINFO,
-                UserManager.getInstance().getAddFlightInfo().getFlightId());
+                FlightApplication.getAddFlightInfo().getFlightId());
         DBManager.getInstance().insertFlightInfo();
         UserManager.getInstance().setAddFlightSuccess(true);
         mTopBarRight.setVisibility(View.GONE);
-        tv_captain.setText(UserManager.getInstance().getAddFlightInfo().getCaption());
+        tv_captain.setText(FlightApplication.getAddFlightInfo().getCaption());
         ToastUtil.showToast(mContext, R.drawable.toast_confirm, "当前网络不稳定，数据已存储，在网络正常时自动同步数据");
     }
     private void showProgressDialog() {

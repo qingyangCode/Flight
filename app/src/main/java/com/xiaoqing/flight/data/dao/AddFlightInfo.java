@@ -44,6 +44,10 @@ public class AddFlightInfo implements java.io.Serializable {
     private String beforeWCgmax;
     private String landWCgmin;
     private String landWCgmax;
+    private Float UseWeight;
+    private Float UseWeightCg;
+    private String BasicWeight;
+    private Float allSbLj;
 
     // KEEP FIELDS - put your custom fields here
     private ArrayList<Integer> sbList;
@@ -56,7 +60,7 @@ public class AddFlightInfo implements java.io.Serializable {
         this.FlightId = FlightId;
     }
 
-    public AddFlightInfo(String FlightId, String FlightDate, String AircraftReg, String AircraftType, String FlightNo, String Dep4Code, String DepAirportName, String Arr4Code, String ArrAirportName, String MaxFule, String RealFule, String SlieFule, String RouteFule, String TofWeight, String LandWeight, String NoFuleWeight, String AirportLimitWeight, String BalancePic, String BalancePicName, String OpUser, String OpDate, String weightCg, String Caption, String TkoZx, String TkoMac, String passengerWeight, String articleWeight, String beforeFlyFule, String landWeightCg, String beforeWCgmin, String beforeWCgmax, String landWCgmin, String landWCgmax) {
+    public AddFlightInfo(String FlightId, String FlightDate, String AircraftReg, String AircraftType, String FlightNo, String Dep4Code, String DepAirportName, String Arr4Code, String ArrAirportName, String MaxFule, String RealFule, String SlieFule, String RouteFule, String TofWeight, String LandWeight, String NoFuleWeight, String AirportLimitWeight, String BalancePic, String BalancePicName, String OpUser, String OpDate, String weightCg, String Caption, String TkoZx, String TkoMac, String passengerWeight, String articleWeight, String beforeFlyFule, String landWeightCg, String beforeWCgmin, String beforeWCgmax, String landWCgmin, String landWCgmax, Float UseWeight, Float UseWeightCg, String BasicWeight, Float allSbLj) {
         this.FlightId = FlightId;
         this.FlightDate = FlightDate;
         this.AircraftReg = AircraftReg;
@@ -90,6 +94,10 @@ public class AddFlightInfo implements java.io.Serializable {
         this.beforeWCgmax = beforeWCgmax;
         this.landWCgmin = landWCgmin;
         this.landWCgmax = landWCgmax;
+        this.UseWeight = UseWeight;
+        this.UseWeightCg = UseWeightCg;
+        this.BasicWeight = BasicWeight;
+        this.allSbLj = allSbLj;
     }
 
     /** Not-null value. */
@@ -356,6 +364,38 @@ public class AddFlightInfo implements java.io.Serializable {
 
     public void setLandWCgmax(String landWCgmax) {
         this.landWCgmax = landWCgmax;
+    }
+
+    public Float getUseWeight() {
+        return UseWeight;
+    }
+
+    public void setUseWeight(Float UseWeight) {
+        this.UseWeight = UseWeight;
+    }
+
+    public Float getUseWeightCg() {
+        return UseWeightCg;
+    }
+
+    public void setUseWeightCg(Float UseWeightCg) {
+        this.UseWeightCg = UseWeightCg;
+    }
+
+    public String getBasicWeight() {
+        return BasicWeight;
+    }
+
+    public void setBasicWeight(String BasicWeight) {
+        this.BasicWeight = BasicWeight;
+    }
+
+    public Float getAllSbLj() {
+        return allSbLj;
+    }
+
+    public void setAllSbLj(Float allSbLj) {
+        this.allSbLj = allSbLj;
     }
 
     // KEEP METHODS - put your custom methods here

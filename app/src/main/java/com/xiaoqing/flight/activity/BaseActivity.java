@@ -119,7 +119,7 @@ public abstract class BaseActivity extends Activity{
 
 
     private void checkFlightId() {
-        String flightId = UserManager.getInstance().getAddFlightInfo().getFlightId();
+        String flightId = FlightApplication.getAddFlightInfo().getFlightId();
         int flightID = 0;
         try {
             if (!TextUtils.isEmpty(flightId))

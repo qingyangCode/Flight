@@ -38,7 +38,7 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="2"
-                    android:text="日期(显示到分)"
+                    android:text="日期"
                     android:textSize="16dp"
                     android:gravity="center"
                     android:background="@color/gray_a9"

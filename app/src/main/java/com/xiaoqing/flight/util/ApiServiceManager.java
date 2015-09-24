@@ -81,7 +81,8 @@ public class ApiServiceManager {
                                 && response.ResponseObject.ResponseCode == Constants.RESULT_OK) {
                             ArrayList<User> allUsers =
                                     response.ResponseObject.ResponseData.IAppObject;
-                            DBManager.getInstance().insertAllUsers(allUsers, response.ResponseObject.SysVersion);
+                            DBManager.getInstance()
+                                    .insertAllUsers(allUsers, response.ResponseObject.SysVersion);
                         }
                         if (responseListner != null) responseListner.onResponse(response);
                     }
@@ -160,7 +161,8 @@ public class ApiServiceManager {
                         && response.ResponseObject != null
                         && response.ResponseObject.ResponseCode == Constants.RESULT_OK) {
                     DBManager.getInstance()
-                            .insertAllSb(response.ResponseObject.ResponseData.IAppObject, response.ResponseObject.SysVersion);
+                            .insertAllSb(response.ResponseObject.ResponseData.IAppObject,
+                                    response.ResponseObject.SysVersion);
                 }
                 if (responseResponseListner != null) {
                     responseResponseListner.onResponse(response);
@@ -304,6 +306,13 @@ public class ApiServiceManager {
     //String PassWeight, String CarWeight, String TkoForLimit, String  TkoAltLimit,
     //String LandForLimit, String LandAltLimit, String TkoFule, String UseWeight, String UseWeightZx,
     public void addFlightInfo(final AddFlightInfo addFlightInfo, final ResponseListner<AddFlightInfoResponse> responseListner) {
+
+        float nofuleWeight = 0;
+        try {
+            nofuleWeight = Float.parseFloat(addFlightInfo.getTofWeight()) - Float.parseFloat(addFlightInfo.getRealFule());
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
         getMoccApi().addFlightInfo(addFlightInfo.getFlightId(), DateFormatUtil.formatZDate(),
                 addFlightInfo.getAircraftReg(), addFlightInfo.getAircraftType(),
                 addFlightInfo.getFlightNo(), addFlightInfo.getDep4Code(),
@@ -311,7 +320,7 @@ public class ApiServiceManager {
                 addFlightInfo.getArrAirportName(), addFlightInfo.getMaxFule(),
                 addFlightInfo.getRealFule(), addFlightInfo.getSlieFule(),
                 addFlightInfo.getRouteFule(), addFlightInfo.getTofWeight(),
-                addFlightInfo.getLandWeight(), addFlightInfo.getNoFuleWeight(),
+                addFlightInfo.getLandWeight(), FormatUtil.formatTo2Decimal(nofuleWeight),
                 addFlightInfo.getAirportLimitWeight(), addFlightInfo.getBalancePic(),
                 addFlightInfo.getBalancePicName(),
                 UserManager.getInstance().getUser().getUserCode(), addFlightInfo.getOpDate(),
@@ -320,7 +329,7 @@ public class ApiServiceManager {
                 addFlightInfo.getBeforeWCgmin(), addFlightInfo.getBeforeWCgmax(),
                 addFlightInfo.getLandWeightCg(), addFlightInfo.getLandWCgmin(),
                 addFlightInfo.getLandWCgmax(), addFlightInfo.getBeforeFlyFule(),
-                addFlightInfo.getNoFuleWeight(), addFlightInfo.getWeightCg(),
+                addFlightInfo.getUseWeight()+"", addFlightInfo.getWeightCg(),
                 new ResponseListner<AddFlightInfoResponse>() {
 
                     @Override public void onResponse(AddFlightInfoResponse response) {
@@ -332,7 +341,7 @@ public class ApiServiceManager {
                         //        && response.ResponseObject.ResponseCode == Constants.RESULT_OK) {
                         //    ActionFeed actionFeed = new ActionFeed();
                         //    actionFeed.setFeed_id(
-                        //            UserManager.getInstance().getAddFlightInfo().getFlightId());
+                        //            FlightApplication.getAddFlightInfo().getFlightId());
                         //    actionFeed.setUserCode(
                         //            UserManager.getInstance().getUser().getUserCode());
                         //    actionFeed.setFeed_type(FeedType.toInt(FeedType.ADD_PLAYINFO));
@@ -442,7 +451,7 @@ public class ApiServiceManager {
                 }
                 final UploadAirPerson uploadAirPerson = uploadList.get(0);
                 getMoccApi().addFlightCd(uploadAirPerson.getAircraftReg(), uploadAirPerson.getSeatId() + "",
-                        UserManager.getInstance().getAddFlightInfo().getFlightId(),
+                        FlightApplication.getAddFlightInfo().getFlightId(),
                         uploadAirPerson.getSeatCode(), uploadAirPerson.getSeatType(),
                         uploadAirPerson.getAcTypeSeatLimit() + "", uploadAirPerson.getAcTypeLb()+"",
                         uploadAirPerson.getAcRegCargWeight()+"", uploadAirPerson.getAcTypeLb()+"",
@@ -635,7 +644,7 @@ public class ApiServiceManager {
             if (flightInfoList != null && flightInfoList.size() > 0) {
                 if (!TextUtils.isEmpty(mFlightId)) {
                     flightInfoList.get(0).setFlightId(mFlightId);
-                    UserManager.getInstance().getAddFlightInfo().setFlightId(mFlightId);
+                    FlightApplication.getAddFlightInfo().setFlightId(mFlightId);
                 }
                 ApiServiceManager.getInstance().addFlightInfo(flightInfoList.get(0), new ResponseListner<AddFlightInfoResponse>() {
                     @Override public void onResponse(AddFlightInfoResponse response) {

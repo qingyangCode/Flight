@@ -281,11 +281,11 @@ public class DBManager {
     public long insertUploadPerson(SeatByAcReg seatByAcReg) {
         UploadAirPersonDao uploadAirPersonDao = daoSession.getUploadAirPersonDao();
         List<UploadAirPerson> list = null;
-        if (UserManager.getInstance().getAddFlightInfo() == null || TextUtils.isEmpty(UserManager.getInstance().getAddFlightInfo().getFlightId())) {
-            UserManager.getInstance().getAddFlightInfo().setFlightId(DateFormatUtil.formatTDate());
+        if (FlightApplication.getAddFlightInfo() == null || TextUtils.isEmpty(FlightApplication.getAddFlightInfo().getFlightId())) {
+            FlightApplication.getAddFlightInfo().setFlightId(DateFormatUtil.formatTDate());
         }
          list = uploadAirPersonDao.queryBuilder()
-                .where(UploadAirPersonDao.Properties.FlightId.eq(UserManager.getInstance().getAddFlightInfo().getFlightId()), UploadAirPersonDao.Properties.SeatId.eq(seatByAcReg.getSeatId()))
+                .where(UploadAirPersonDao.Properties.FlightId.eq(FlightApplication.getAddFlightInfo().getFlightId()), UploadAirPersonDao.Properties.SeatId.eq(seatByAcReg.getSeatId()))
                 .list();
 
         if (list != null && list.size() > 0) {
@@ -302,8 +302,8 @@ public class DBManager {
 
         UploadAirPerson uploadAirPerson = new UploadAirPerson();
         uploadAirPerson.setAircraftReg(seatByAcReg.getAcReg());
-        if (UserManager.getInstance().getAddFlightInfo() != null)
-            uploadAirPerson.setFlightId(UserManager.getInstance().getAddFlightInfo().getFlightId());
+        if (FlightApplication.getAddFlightInfo() != null)
+            uploadAirPerson.setFlightId(FlightApplication.getAddFlightInfo().getFlightId());
         uploadAirPerson.setSeatId(seatByAcReg.getSeatId());
         uploadAirPerson.setSeatCode(seatByAcReg.getSeatCode());
         uploadAirPerson.setSeatType(seatByAcReg.getSeatType());
@@ -345,11 +345,11 @@ public class DBManager {
     public void insertFlightInfo() {
         AddFlightInfoDao addFlightInfoDao = FlightApplication.getDaoSession().getAddFlightInfoDao();
         List<AddFlightInfo> list = addFlightInfoDao.queryBuilder().where(
-                AddFlightInfoDao.Properties.FlightId.eq(UserManager.getInstance().getAddFlightInfo().getFlightId())).list();
+                AddFlightInfoDao.Properties.FlightId.eq(FlightApplication.getAddFlightInfo().getFlightId())).list();
         if (list != null && list.size() > 0) {
             addFlightInfoDao.delete(list.get(0));
         }
-        addFlightInfoDao.insert(UserManager.getInstance().getAddFlightInfo());
+        addFlightInfoDao.insert(FlightApplication.getAddFlightInfo());
     }
 
     //删除航班信息

@@ -83,7 +83,7 @@ public class MyReveiver extends BroadcastReceiver{
     }
 
     private void checkFlightId() {
-        String flightId = UserManager.getInstance().getAddFlightInfo().getFlightId();
+        String flightId = FlightApplication.getAddFlightInfo().getFlightId();
         int flightID = 0;
         try {
             if (!TextUtils.isEmpty(flightId))

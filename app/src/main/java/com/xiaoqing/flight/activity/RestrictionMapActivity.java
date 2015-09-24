@@ -87,6 +87,7 @@ public class RestrictionMapActivity extends BaseActivity{
     private Context mContext;
     private CommonProgressDialog progressDialog;
     private float flightCg = 0;//起飞重心
+    private float useWeightCg = 0;//使用空重重心
     private float mac = 0;//起飞MAC
     private String captainName = "";
     private float upWeight = 0;
@@ -189,6 +190,8 @@ public class RestrictionMapActivity extends BaseActivity{
             float totalPassengerLj = 0;
             float passengerWeight = 0;
             float articleWeight = 0;
+            float useWeight = 0;
+            float useWeightLj = 0;
             if (seatList != null && seatList.size() > 0)
                 for(SeatByAcReg seatByAcReg : seatList) {
                     //已有的货物重量 ＋ 座椅上人 或 物品重量
@@ -196,14 +199,16 @@ public class RestrictionMapActivity extends BaseActivity{
                     if ("C".equalsIgnoreCase(seatByAcReg.getSeatType())) {//货物 ＋ 额外物品重量
                         articleWeight = seatByAcReg.getSeatWeight() + seatByAcReg.getAcRegCargWeight();
                         totalPassengerLj = totalPassengerLj + (seatByAcReg.getSeatWeight() + seatByAcReg.getAcRegCargWeight()) * seatByAcReg.getAcTypeLb();
+                        useWeight += seatByAcReg.getAcRegCargWeight();
+                        useWeightLj += seatByAcReg.getAcTypeLb() * seatByAcReg.getAcRegCargWeight();
                     } else {
                         totalPassengerLj += seatByAcReg.getAcTypeLb() * seatByAcReg.getSeatWeight();
                         passengerWeight = seatByAcReg.getSeatWeight();
                     }
                 }
 
-            UserManager.getInstance().getAddFlightInfo().setPassengerWeight(FormatUtil.formatTo2Decimal(passengerWeight));
-            UserManager.getInstance().getAddFlightInfo().setArticleWeight(
+            FlightApplication.getAddFlightInfo().setPassengerWeight(FormatUtil.formatTo2Decimal(passengerWeight));
+            FlightApplication.getAddFlightInfo().setArticleWeight(
                     FormatUtil.formatTo2Decimal(articleWeight));
 
 
@@ -215,8 +220,8 @@ public class RestrictionMapActivity extends BaseActivity{
             float flyOilFloat = 0;
             float beforeWeightFloat = 0;
             float downWeightFloat = 0;
-            String noFuleWeight = UserManager.getInstance().getAddFlightInfo().getNoFuleWeight();
-            float noFuleweight = 0;
+            String basicWt = FlightApplication.getAddFlightInfo().getBasicWeight();
+            float basicWeight = 0;
             try {
                 if (!TextUtils.isEmpty(realOil))
                     realOilFloat = Float.parseFloat(realOil);
@@ -224,16 +229,16 @@ public class RestrictionMapActivity extends BaseActivity{
                     slideOilFloat = Float.parseFloat(slideOil);
                 if (!TextUtils.isEmpty(flyOil))
                     flyOilFloat = Float.parseFloat(flyOil);
-                if (!TextUtils.isEmpty(noFuleWeight))
-                    noFuleweight = Float.parseFloat(noFuleWeight);
+                if (!TextUtils.isEmpty(basicWt))
+                    basicWeight = Float.parseFloat(basicWt);
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
             upWeight =
-                    noFuleweight + realOilFloat + gooodsWeights - slideOilFloat;//TODO 加设备重量 ＋ 额外重量  // 基本空重 ＋ 设备
-            LogUtil.LOGD(TAG, "noFuleweight : "
-                    + noFuleweight
+                    basicWeight + realOilFloat + gooodsWeights - slideOilFloat;//TODO 加设备重量 ＋ 额外重量  // 基本空重 ＋ 设备
+            LogUtil.LOGD(TAG, "basicWeight : "
+                    + basicWeight
                     + " realOilFloat : "
                     + realOilFloat
                     + " gooodsWeights : "
@@ -243,19 +248,19 @@ public class RestrictionMapActivity extends BaseActivity{
             mBeforeWeight.setText(FormatUtil.formatTo2Decimal(upWeight));
 
             float downWeight =
-                    noFuleweight + realOilFloat + gooodsWeights
+                    basicWeight + realOilFloat + gooodsWeights
                             - slideOilFloat  - flyOilFloat;
 
             mDownWight.setText(FormatUtil.formatTo2Decimal(downWeight));
-            allWeight = noFuleweight + realOilFloat + gooodsWeights;
+            allWeight = basicWeight + realOilFloat + gooodsWeights;
 
-            UserManager.getInstance().getAddFlightInfo().setBeforeFlyFule(FormatUtil.formatTo2Decimal(realOilFloat - slideOilFloat));
+            FlightApplication.getAddFlightInfo().setBeforeFlyFule(FormatUtil.formatTo2Decimal(realOilFloat - slideOilFloat));
 
             //起飞重心： 力矩／重量 （基本空重力矩 ＋ 乘客 + 货物 ＋ 额外重量 ＋ 设备 ＋ 起飞油量）/（实际油量 － 滑行油量 + 基本空中 ＋ 设备重 ＋ 乘客重 ＋ 货物重）// 油量力矩
 
             //所有设备的lj
             float totalSbLj = 0;
-            List<Integer> sbList = UserManager.getInstance().getAddFlightInfo().getSbList();
+            List<Integer> sbList = FlightApplication.getAddFlightInfo().getSbList();
             if (sbList != null && sbList.size() > 0) {
                 for (Integer sbInfo : sbList) {
                     AllAcSbDao allAcSbDao = FlightApplication.getDaoSession().getAllAcSbDao();
@@ -288,23 +293,35 @@ public class RestrictionMapActivity extends BaseActivity{
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            try {
+                useWeightCg = (airLj + useWeightLj + FlightApplication.getAddFlightInfo().getAllSbLj()) / ( basicWeight + useWeight);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            FlightApplication.getAddFlightInfo().setNoFuleWeight(FormatUtil.formatTo2Decimal(allWeight - realOilFloat));
+            FlightApplication.getAddFlightInfo().setUseWeight(basicWeight + useWeight);
+            FlightApplication.getAddFlightInfo().setUseWeightCg(useWeightCg);
+
+
+
 
             //起飞重心前后限
             Pair<Float, Float> beforeFuleLimit = getFuleLimit(-slideOilFloat + allWeight);
             if (beforeFuleLimit != null) {
-                UserManager.getInstance().getAddFlightInfo().setBeforeWCgmin(FormatUtil.formatTo2Decimal(beforeFuleLimit.first));
-                UserManager.getInstance().getAddFlightInfo().setBeforeWCgmax(FormatUtil.formatTo2Decimal(beforeFuleLimit.second));
+                FlightApplication.getAddFlightInfo().setBeforeWCgmin(FormatUtil.formatTo2Decimal(beforeFuleLimit.first));
+                FlightApplication.getAddFlightInfo().setBeforeWCgmax(FormatUtil.formatTo2Decimal(beforeFuleLimit.second));
             }
 
             //着陆重心前后限
             Pair<Float, Float> landFuleLimit = getFuleLimit(allWeight - slideOilFloat - flyOilFloat);
             if (landFuleLimit != null) {
-                UserManager.getInstance().getAddFlightInfo().setLandWCgmin(FormatUtil.formatTo2Decimal(landFuleLimit.first));
-                UserManager.getInstance().getAddFlightInfo().setLandWCgmax(FormatUtil.formatTo2Decimal(landFuleLimit.second));
+                FlightApplication.getAddFlightInfo().setLandWCgmin(FormatUtil.formatTo2Decimal(landFuleLimit.first));
+                FlightApplication.getAddFlightInfo().setLandWCgmax(FormatUtil.formatTo2Decimal(landFuleLimit.second));
             }
 
             //着陆重心
-            UserManager.getInstance().getAddFlightInfo().setLandWeightCg(FormatUtil.formatTo2Decimal(landCg));
+            FlightApplication.getAddFlightInfo().setLandWeightCg(FormatUtil.formatTo2Decimal(landCg));
 
             mFlightCg.setText(FormatUtil.formatTo2Decimal(flightCg));
             getMAC(flightCg);
@@ -535,7 +552,7 @@ public class RestrictionMapActivity extends BaseActivity{
                     return;
                 }
 
-                AddFlightInfo addFlightInfo = UserManager.getInstance().getAddFlightInfo();
+                AddFlightInfo addFlightInfo = FlightApplication.getAddFlightInfo();
                 addFlightInfo.setMaxFule(maxOil);
                 addFlightInfo.setRealFule(realityOil);
                 addFlightInfo.setSlieFule(slideOil);
@@ -588,7 +605,7 @@ public class RestrictionMapActivity extends BaseActivity{
             }
         }
 
-        AddFlightInfo addFlightInfo = UserManager.getInstance().getAddFlightInfo();
+        AddFlightInfo addFlightInfo = FlightApplication.getAddFlightInfo();
         String noFuleWeight = addFlightInfo.getNoFuleWeight();
         String weightCg = addFlightInfo.getWeightCg();
         float nofuWeightFloat = 0;//实际最大无油重量

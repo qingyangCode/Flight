@@ -119,11 +119,11 @@ public class BasicInfoActivity extends BaseActivity {
         //ApiServiceManager.getInstance().getSeatInfo(aircraftReg, null);
         ApiServiceManager.getInstance().getFilghtId(new ResponseListner<String>() {
             @Override public void onResponse(String response) {
-                UserManager.getInstance().getAddFlightInfo().setFlightId(response);
+                FlightApplication.getAddFlightInfo().setFlightId(response);
             }
 
             @Override public void onEmptyOrError(String message) {
-                UserManager.getInstance()
+                FlightApplication
                         .getAddFlightInfo()
                         .setFlightId(DateFormatUtil.formatTDate());
             }
@@ -153,10 +153,10 @@ public class BasicInfoActivity extends BaseActivity {
                 String airName = s.toString();
                 if (checkChinese(airName)) {
                     getAir4Code(airName, AIR_DEP);
-                    UserManager.getInstance().getAddFlightInfo().setDepAirportName(airName);
+                    FlightApplication.getAddFlightInfo().setDepAirportName(airName);
                 } else {
                     getAirName(airName, AIR_DEP);
-                    UserManager.getInstance().getAddFlightInfo().setDep4Code(airName);
+                    FlightApplication.getAddFlightInfo().setDep4Code(airName);
                 }
             }
         });
@@ -174,10 +174,10 @@ public class BasicInfoActivity extends BaseActivity {
                 String airName = s.toString();
                 if (checkChinese(airName)) {
                     getAir4Code(airName, AIR_ARR);
-                    UserManager.getInstance().getAddFlightInfo().setArrAirportName(airName);
+                    FlightApplication.getAddFlightInfo().setArrAirportName(airName);
                 } else {
                     getAirName(airName, AIR_ARR);
-                    UserManager.getInstance().getAddFlightInfo().setArr4Code(airName);
+                    FlightApplication.getAddFlightInfo().setArr4Code(airName);
                 }
             }
         });
@@ -195,10 +195,10 @@ public class BasicInfoActivity extends BaseActivity {
                 String strAirportName = list.get(0).getStrAirportName();
                 if (type == AIR_DEP) {
                     mOrigination.setText(strAirportName);
-                    UserManager.getInstance().getAddFlightInfo().setDepAirportName(strAirportName);
+                    FlightApplication.getAddFlightInfo().setDepAirportName(strAirportName);
                 } else {
                     mDestination.setText(strAirportName);
-                    UserManager.getInstance().getAddFlightInfo().setArrAirportName(strAirportName);
+                    FlightApplication.getAddFlightInfo().setArrAirportName(strAirportName);
                 }
             }
         }
@@ -213,10 +213,10 @@ public class BasicInfoActivity extends BaseActivity {
                     .list();
             if (list != null && list.size() != 0) {
                 if (type == AIR_DEP) {
-                    UserManager.getInstance().getAddFlightInfo().setDep4Code(list.get(0)
+                    FlightApplication.getAddFlightInfo().setDep4Code(list.get(0)
                             .getStr4code());
                 } else {
-                    UserManager.getInstance().getAddFlightInfo().setArr4Code(list.get(0)
+                    FlightApplication.getAddFlightInfo().setArr4Code(list.get(0)
                             .getStr4code());
                 }
             }
@@ -267,13 +267,13 @@ public class BasicInfoActivity extends BaseActivity {
                         }
                         ArrayList<Integer> sbList = new ArrayList<>();
                         sbList.add(allAcSb.getSbId());
-                        UserManager.getInstance().getAddFlightInfo().setSbList(sbList);
+                        FlightApplication.getAddFlightInfo().setSbList(sbList);
                     } else {
                         if (aFloat != null) {
                             weightList.remove(allAcSb.getSbId());
                         }
                         List<Integer> sbList =
-                                UserManager.getInstance().getAddFlightInfo().getSbList();
+                                FlightApplication.getAddFlightInfo().getSbList();
                         if (sbList != null && sbList.size() > 0 && sbList.contains(allAcSb.getSbId())) {
                             sbList.remove(allAcSb.getSbId());
                         }
@@ -286,6 +286,7 @@ public class BasicInfoActivity extends BaseActivity {
                             allSbLj += allAcSb.getSbLb() * weightList.get(sbID);
                         }
                     }
+                    FlightApplication.getAddFlightInfo().setAllSbLj(allSbLj);
                     mWeight.setText((bw + weightCount) + "");
 
                     mFocus.setText(FormatUtil.formatTo2Decimal((allSbLj + lj) / (bw + weightCount)));
@@ -320,7 +321,7 @@ public class BasicInfoActivity extends BaseActivity {
                     return;
                 }
 
-                AddFlightInfo addFlightInfo = UserManager.getInstance().getAddFlightInfo();
+                AddFlightInfo addFlightInfo = FlightApplication.getAddFlightInfo();
                 addFlightInfo.setAircraftReg(aircraftReg);
                 addFlightInfo.setAircraftType(aircraftType);
                 addFlightInfo.setFlightNo(playNO);
@@ -328,7 +329,7 @@ public class BasicInfoActivity extends BaseActivity {
                 //addFlightInfo.setDepAirportName(from);
                 //addFlightInfo.setArr4Code(toAirport);
                 addFlightInfo.setArrAirportName(toAirport);
-                addFlightInfo.setNoFuleWeight(mWeight.getText().toString().trim());
+                addFlightInfo.setBasicWeight(mWeight.getText().toString().trim());
                 addFlightInfo.setWeightCg(mFocus.getText().toString().trim());
 
                 UserManager.getInstance().clearUserNameMaps();

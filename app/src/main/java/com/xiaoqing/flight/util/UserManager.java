@@ -65,13 +65,13 @@ public class UserManager {
         ApiServiceManager.getInstance().getAllAcSb(null);
     }
 
-    private AddFlightInfo mAddFilghtInfo;
-    public AddFlightInfo getAddFlightInfo() {
-        if (mAddFilghtInfo == null) {
-            mAddFilghtInfo = new AddFlightInfo();
-        }
-        return mAddFilghtInfo;
-    }
+    //private AddFlightInfo mAddFilghtInfo;
+    //public AddFlightInfo getAddFlightInfo() {
+    //    if (mAddFilghtInfo == null) {
+    //        mAddFilghtInfo = new AddFlightInfo();
+    //    }
+    //    return mAddFilghtInfo;
+    //}
 
 
     public void setAddFlightSuccess(boolean isAddFilghtSuccess) {

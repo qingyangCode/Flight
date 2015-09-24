@@ -56,6 +56,10 @@ public class AddFlightInfoDao extends AbstractDao<AddFlightInfo, String> {
         public final static Property BeforeWCgmax = new Property(30, String.class, "beforeWCgmax", false, "BEFORE_WCGMAX");
         public final static Property LandWCgmin = new Property(31, String.class, "landWCgmin", false, "LAND_WCGMIN");
         public final static Property LandWCgmax = new Property(32, String.class, "landWCgmax", false, "LAND_WCGMAX");
+        public final static Property UseWeight = new Property(33, Float.class, "UseWeight", false, "USE_WEIGHT");
+        public final static Property UseWeightCg = new Property(34, Float.class, "UseWeightCg", false, "USE_WEIGHT_CG");
+        public final static Property BasicWeight = new Property(35, String.class, "BasicWeight", false, "BASIC_WEIGHT");
+        public final static Property AllSbLj = new Property(36, Float.class, "allSbLj", false, "ALL_SB_LJ");
     };
 
 
@@ -103,7 +107,11 @@ public class AddFlightInfoDao extends AbstractDao<AddFlightInfo, String> {
                 "'BEFORE_WCGMIN' TEXT," + // 29: beforeWCgmin
                 "'BEFORE_WCGMAX' TEXT," + // 30: beforeWCgmax
                 "'LAND_WCGMIN' TEXT," + // 31: landWCgmin
-                "'LAND_WCGMAX' TEXT);"); // 32: landWCgmax
+                "'LAND_WCGMAX' TEXT," + // 32: landWCgmax
+                "'USE_WEIGHT' REAL," + // 33: UseWeight
+                "'USE_WEIGHT_CG' REAL," + // 34: UseWeightCg
+                "'BASIC_WEIGHT' TEXT," + // 35: BasicWeight
+                "'ALL_SB_LJ' REAL);"); // 36: allSbLj
     }
 
     /** Drops the underlying database table. */
@@ -277,6 +285,26 @@ public class AddFlightInfoDao extends AbstractDao<AddFlightInfo, String> {
         if (landWCgmax != null) {
             stmt.bindString(33, landWCgmax);
         }
+ 
+        Float UseWeight = entity.getUseWeight();
+        if (UseWeight != null) {
+            stmt.bindDouble(34, UseWeight);
+        }
+ 
+        Float UseWeightCg = entity.getUseWeightCg();
+        if (UseWeightCg != null) {
+            stmt.bindDouble(35, UseWeightCg);
+        }
+ 
+        String BasicWeight = entity.getBasicWeight();
+        if (BasicWeight != null) {
+            stmt.bindString(36, BasicWeight);
+        }
+ 
+        Float allSbLj = entity.getAllSbLj();
+        if (allSbLj != null) {
+            stmt.bindDouble(37, allSbLj);
+        }
     }
 
     /** @inheritdoc */
@@ -321,7 +349,11 @@ public class AddFlightInfoDao extends AbstractDao<AddFlightInfo, String> {
             cursor.isNull(offset + 29) ? null : cursor.getString(offset + 29), // beforeWCgmin
             cursor.isNull(offset + 30) ? null : cursor.getString(offset + 30), // beforeWCgmax
             cursor.isNull(offset + 31) ? null : cursor.getString(offset + 31), // landWCgmin
-            cursor.isNull(offset + 32) ? null : cursor.getString(offset + 32) // landWCgmax
+            cursor.isNull(offset + 32) ? null : cursor.getString(offset + 32), // landWCgmax
+            cursor.isNull(offset + 33) ? null : cursor.getFloat(offset + 33), // UseWeight
+            cursor.isNull(offset + 34) ? null : cursor.getFloat(offset + 34), // UseWeightCg
+            cursor.isNull(offset + 35) ? null : cursor.getString(offset + 35), // BasicWeight
+            cursor.isNull(offset + 36) ? null : cursor.getFloat(offset + 36) // allSbLj
         );
         return entity;
     }
@@ -362,6 +394,10 @@ public class AddFlightInfoDao extends AbstractDao<AddFlightInfo, String> {
         entity.setBeforeWCgmax(cursor.isNull(offset + 30) ? null : cursor.getString(offset + 30));
         entity.setLandWCgmin(cursor.isNull(offset + 31) ? null : cursor.getString(offset + 31));
         entity.setLandWCgmax(cursor.isNull(offset + 32) ? null : cursor.getString(offset + 32));
+        entity.setUseWeight(cursor.isNull(offset + 33) ? null : cursor.getFloat(offset + 33));
+        entity.setUseWeightCg(cursor.isNull(offset + 34) ? null : cursor.getFloat(offset + 34));
+        entity.setBasicWeight(cursor.isNull(offset + 35) ? null : cursor.getString(offset + 35));
+        entity.setAllSbLj(cursor.isNull(offset + 36) ? null : cursor.getFloat(offset + 36));
      }
     
     /** @inheritdoc */

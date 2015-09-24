@@ -3,6 +3,7 @@ package com.xiaoqing.flight;
 import android.app.Application;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import com.xiaoqing.flight.data.dao.AddFlightInfo;
 import com.xiaoqing.flight.data.dao.DaoMaster;
 import com.xiaoqing.flight.data.dao.DaoSession;
 import com.xiaoqing.flight.network.MoccApi;
@@ -13,6 +14,8 @@ import com.xiaoqing.flight.network.MoccApiImpl;
  */
 public class FlightApplication extends Application {
     private static Context sContext;
+
+    private static AddFlightInfo sAddFlightInfo;
 
     @Override public void onCreate() {
         super.onCreate();
@@ -29,6 +32,12 @@ public class FlightApplication extends Application {
     }
 
     private static DaoSession sDaoSession;
+
+    public static AddFlightInfo getAddFlightInfo() {
+        if (sAddFlightInfo == null)
+            sAddFlightInfo = new AddFlightInfo();
+        return sAddFlightInfo;
+    }
 
 
     private void initDatabase() {
