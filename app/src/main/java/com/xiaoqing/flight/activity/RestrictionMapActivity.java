@@ -276,10 +276,12 @@ public class RestrictionMapActivity extends BaseActivity{
 
             //起飞油量力矩
             float beforeLj = 0;
+            //起飞油量
             float beforeFlightOil = realOilFloat - slideOilFloat;
             //起飞油量力矩
             beforeLj = getOilWeightLj(beforeFlightOil);
 
+            //着陆油量力矩
             float landOilLj = getOilWeightLj(realOilFloat - slideOilFloat - flyOilFloat);
 
             try {
@@ -303,9 +305,6 @@ public class RestrictionMapActivity extends BaseActivity{
             FlightApplication.getAddFlightInfo().setUseWeight(basicWeight + useWeight);
             FlightApplication.getAddFlightInfo().setUseWeightCg(useWeightCg);
 
-
-
-
             //起飞重心前后限
             Pair<Float, Float> beforeFuleLimit = getFuleLimit(-slideOilFloat + allWeight);
             if (beforeFuleLimit != null) {
@@ -319,31 +318,37 @@ public class RestrictionMapActivity extends BaseActivity{
                 FlightApplication.getAddFlightInfo().setLandWCgmin(FormatUtil.formatTo2Decimal(landFuleLimit.first));
                 FlightApplication.getAddFlightInfo().setLandWCgmax(FormatUtil.formatTo2Decimal(landFuleLimit.second));
             }
-
             //着陆重心
             FlightApplication.getAddFlightInfo().setLandWeightCg(FormatUtil.formatTo2Decimal(landCg));
 
             mFlightCg.setText(FormatUtil.formatTo2Decimal(flightCg));
             getMAC(flightCg);
-
-
         }
     }
 
     //油量力矩
     private float getOilWeightLj(float OilWeight) {
+        ArrayList<FuleLimit> fuleLimits = new ArrayList<>();
         float oilLj = 0;
         FuleLimitDao fuleLimitDao = FlightApplication.getDaoSession().getFuleLimitDao();
-        List<FuleLimit> fuleLimits = fuleLimitDao.queryBuilder().where(FuleLimitDao.Properties.AcType.eq(aircraftType)).list();
-        int temp = 0;
+        List<FuleLimit> list = fuleLimitDao.queryBuilder().where(FuleLimitDao.Properties.AcType.eq(aircraftType)).list();
+        fuleLimits.addAll(list);
 
-        for (int i = 0; i < fuleLimits.size(); i++) {// 二分法计算输入油量最近的取值
+        Collections.sort(fuleLimits, new Comparator<FuleLimit>() {
+            @Override public int compare(FuleLimit lhs, FuleLimit rhs) {
+                return lhs.getFuleWeight() > rhs.getFuleWeight() ? 1 : -1;
+            }
+        });
+
+        int temp = 0;
+        //遍历数据，如数据库中存在当前重量力矩，则直接返回力矩
+        for (int i = 0; i < fuleLimits.size(); i++) {
             if (OilWeight == fuleLimits.get(i).getFuleWeight()) {
                 oilLj = fuleLimits.get(i).getFuleLj();
                 break;
             }
         }
-
+        // 二分法计算输入油量最近的取值
         if (oilLj == 0) {
             int left = 0;
             int right = fuleLimits.size() - 1;
@@ -356,14 +361,16 @@ public class RestrictionMapActivity extends BaseActivity{
                 }
                 temp = middle;
             }
+            //待计算重量 一定小于 数据库中和他相邻的两个数据中大的那个重量
             if (OilWeight < fuleLimits.get(temp+1).getFuleWeight()) {
+                //算法得到力矩
                 oilLj = fuleLimits.get(temp + 1).getFuleLj()
-                        - (fuleLimits.get(temp + 1).getFuleLj() - fuleLimits.get(temp).getFuleLj()) * (fuleLimits.get(temp + 1).getFuleWeight() - OilWeight)
+                        - (fuleLimits.get(temp + 1).getFuleLj() - fuleLimits.get(temp).getFuleLj())
+                        * (fuleLimits.get(temp + 1).getFuleWeight() - OilWeight)
                         / (fuleLimits.get(temp + 1).getFuleWeight() - fuleLimits.get(temp)
                         .getFuleWeight());
             }
         }
-
         LogUtil.LOGD(TAG, "before fly oil Lj == " + oilLj);
         return oilLj;
     }

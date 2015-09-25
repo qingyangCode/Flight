@@ -392,14 +392,17 @@ public class DBManager {
     }
 
     public void updateUserPassword(String userName, String confirmPwd) {
-        UserDao userDao = FlightApplication.getDaoSession().getUserDao();
-        List<User> list = userDao.queryBuilder()
-                .where(UserDao.Properties.UserCode.eq(userName))
-                .list();
-        if (list != null && list.size() > 0) {
-            User user = list.get(0);
-            user.setUserPassWord(confirmPwd);
-            userDao.update(user);
+        try {
+            UserDao userDao = FlightApplication.getDaoSession().getUserDao();
+            List<User> list =
+                    userDao.queryBuilder().where(UserDao.Properties.UserCode.eq(userName)).list();
+            if (list != null && list.size() > 0) {
+                User user = list.get(0);
+                user.setUserPassWord(confirmPwd);
+                userDao.update(user);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

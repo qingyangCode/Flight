@@ -808,7 +808,7 @@ public class MoccApiImpl implements MoccApi {
                 "<MessageObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">")
                 .append("<CMD>UpdateUserPass</CMD>\n")
                 .append("<UserCode>"+ userName + "</UserCode>\n")
-                .append("<CheckCode>"+ UserManager.getInstance().getUser().getCodeCheck()+ "</CheckCode>\n")
+                .append("<CheckCode>"+ "checkcode"+ "</CheckCode>\n")
                 .append("<RequestData>\n")
                 .append("<IAppObject xsi:type = \"AppChangePass\">\n")
                 .append("<UserCode>" + userName + "</UserCode>\n")

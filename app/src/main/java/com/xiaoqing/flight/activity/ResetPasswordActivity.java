@@ -1,9 +1,14 @@
 package com.xiaoqing.flight.activity;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Bundle;
 import android.text.TextUtils;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
+import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import com.xiaoqing.flight.FlightApplication;
@@ -22,7 +27,7 @@ import java.util.List;
 /**
  * Created by QingYang on 15/9/20.
  */
-public class ResetPasswordActivity extends BaseActivity{
+public class ResetPasswordActivity extends Activity{
 
     @InjectView(R.id.tv_old_pwd)
     EditText mEtOld;
@@ -34,19 +39,32 @@ public class ResetPasswordActivity extends BaseActivity{
     EditText mUserName;
     @InjectView(R.id.tv_top_bar_title)
     TextView mTitle;
+    @InjectView(R.id.iv_top_bar_left)
+    ImageView mTopBack;
+
+    private Context mContext;
 
     private boolean isCancel = false;
 
-
-    @Override public int getContentView() {
-        return R.layout.activity_resetpassword;
+    @Override protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mContext = this;
+        setContentView(R.layout.activity_resetpassword);
+        ButterKnife.inject(this);
+        onloadData();
     }
 
-    @Override protected void onloadData() {
+     private void onloadData() {
+         mTopBack.setImageResource(R.drawable.common_topnav_back);
         setTitle("修改密码");
         mTitle.setText("修改密码");
 
 
+    }
+
+    @OnClick(R.id.iv_top_bar_left)
+    public void onTopBackClick() {
+        finish();
     }
 
     @OnClick(R.id.btn_resetPassword)
@@ -86,32 +104,35 @@ public class ResetPasswordActivity extends BaseActivity{
             }
         });
         progressDialog.show();
-        getMoccApi().changePassword(userName,oldPwd, confirmPwd, new ResponseListner<ResetPasswordResponse>() {
-            @Override public void onResponse(ResetPasswordResponse response) {
-                progressDialog.dismiss();
-                if (isCancel) return;
-                if (response != null && response.ResponseObject != null && response.ResponseObject.ResponseCode == Constants.RESULT_OK) {
-                    DBManager.getInstance().updateUserPassword(userName, confirmPwd);
-                    setResult(RESULT_OK);
-                    finish();
-                } else {
-                    ToastUtil.showToast(mContext, R.drawable.toast_warning,
-                            response.ResponseObject.ResponseErr);
-                }
-            }
+        FlightApplication.getMoccApi().changePassword(userName, oldPwd, confirmPwd,
+                new ResponseListner<ResetPasswordResponse>() {
+                    @Override public void onResponse(ResetPasswordResponse response) {
+                        progressDialog.dismiss();
+                        if (isCancel) return;
+                        if (response != null
+                                && response.ResponseObject != null
+                                && response.ResponseObject.ResponseCode == Constants.RESULT_OK) {
+                            DBManager.getInstance().updateUserPassword(userName, confirmPwd);
+                            setResult(RESULT_OK);
+                            finish();
+                        } else {
+                            ToastUtil.showToast(mContext, R.drawable.toast_warning,
+                                    response.ResponseObject.ResponseErr);
+                        }
+                    }
 
-            @Override public void onEmptyOrError(String message) {
-                progressDialog.dismiss();
-                if (isCancel) return;
-                String toastMessage = "";
-                if (!TextUtils.isEmpty(message)) {
-                    toastMessage = message;
-                } else {
-                    toastMessage = getString(R.string.get_data_error);
-                }
-                ToastUtil.showToast(mContext, R.drawable.toast_warning, toastMessage);
-            }
-        });
+                    @Override public void onEmptyOrError(String message) {
+                        progressDialog.dismiss();
+                        if (isCancel) return;
+                        String toastMessage = "";
+                        if (!TextUtils.isEmpty(message)) {
+                            toastMessage = message;
+                        } else {
+                            toastMessage = getString(R.string.get_data_error);
+                        }
+                        ToastUtil.showToast(mContext, R.drawable.toast_warning, toastMessage);
+                    }
+                });
     }
 
 
