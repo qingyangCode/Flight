@@ -40,6 +40,7 @@ import com.xiaoqing.flight.util.ToastUtil;
 import com.xiaoqing.flight.util.UserManager;
 import com.xiaoqing.flight.util.WindowUtil;
 import java.util.List;
+import org.w3c.dom.Text;
 
 /**
  * Created by QingYang on 15/9/20.
@@ -95,6 +96,32 @@ public class ManifestActivity extends BaseActivity {
     LinearLayout mLayoutPassenter;
     @InjectView(R.id.layout_goods)
     LinearLayout mLayoutGoods;
+
+    @InjectView(R.id.layout_limitview)
+    View layout_limitview;
+    @InjectView(R.id.layout_g450)
+    View layout_g450;
+    @InjectView(R.id.layout_beforefly)
+    View beforeFly;
+
+    @InjectView(R.id.tv_bfWeight1)
+    TextView tv_bfWeight1;
+    @InjectView(R.id.tv_landWeight1)
+    TextView tv_landWeight1;
+    @InjectView(R.id.tv_nofuleWeight)
+    TextView tv_nofuleWeight;
+    @InjectView(R.id.tv_nofuleWeightCg)
+    TextView tv_nofuleWeightCg;
+    @InjectView(R.id.tv_nofuleWeightCgtmin)
+    TextView tv_nofuleWeightCgtmin;
+    @InjectView(R.id.tv_nofuleWeightCgmax)
+    TextView tv_nofuleWeightCgmax;
+
+    @InjectView(R.id.layout_person_title)
+    View layout_person_title;
+    @InjectView(R.id.layout_goods_title)
+    View layout_goods_title;
+
     private String aircraftReg;
     private String aircraftType;
 
@@ -125,6 +152,14 @@ public class ManifestActivity extends BaseActivity {
         aircraftType = getIntent().getStringExtra(Constants.ACTION_AIRCRAFTTYPE);
         aircraftReg = getIntent().getStringExtra(Constants.ACTION_AIRCRAFTREG);
 
+
+        if ("G450".equalsIgnoreCase(aircraftType)) {
+            layout_limitview.setVisibility(View.GONE);
+            layout_g450.setVisibility(View.VISIBLE);
+            beforeFly.setVisibility(View.GONE);
+
+        }
+
         AddFlightInfo addFlightInfo = FlightApplication.getAddFlightInfo();
         if (addFlightInfo != null) {
             if (!TextUtils.isEmpty(addFlightInfo.getOpDate())) {
@@ -146,16 +181,26 @@ public class ManifestActivity extends BaseActivity {
             tv_realOil.setText(addFlightInfo.getRealFule());
             tv_bfOil.setText(addFlightInfo.getBeforeFlyFule());
             tv_bfWeight.setText(addFlightInfo.getTofWeight());
+
+            tv_bfWeight1.setText(addFlightInfo.getTofWeight());
+            tv_landWeight1.setText(addFlightInfo.getLandWeight());
+            tv_nofuleWeight.setText(addFlightInfo.getNoFuleWeight());
+
             try {
                 tv_bfWeightCg.setText(FormatUtil.formatTo2Decimal(Float.parseFloat(addFlightInfo.getTkoZx())));
                 tv_mac.setText(FormatUtil.formatTo2Decimal(Float.parseFloat(addFlightInfo.getTkoMac())));
+                tv_nofuleWeightCg.setText(FormatUtil.formatTo2Decimal(Float.parseFloat(addFlightInfo.getTkoZx())));
             } catch (Exception e) {
                 e.printStackTrace();
             }
             tv_bfw_min.setText(addFlightInfo.getBeforeWCgmin());
             tv_bfw_max.setText(addFlightInfo.getBeforeWCgmax());
 
+            tv_nofuleWeightCgtmin.setText(addFlightInfo.getBeforeWCgmin());
+            tv_nofuleWeightCgmax.setText(addFlightInfo.getBeforeWCgmax());
+
             tv_arrWeight.setText(addFlightInfo.getLandWeight());
+
             tv_arrWeightCg.setText(addFlightInfo.getLandWeightCg());
 
             tv_arr_min.setText(addFlightInfo.getLandWCgmin());
@@ -192,16 +237,20 @@ public class ManifestActivity extends BaseActivity {
                tv_weight.setText(FormatUtil.formatTo2Decimal(person.getRealWeight()));
                tv_lj.setText(FormatUtil.formatTo2Decimal(person.getAcRegCagLj()));
 
-               if ("S".equals(person.getSeatType())) {
-                   mLayoutPassenter.addView(view);
-                   passengerWeight += person.getRealWeight();
-               } else if ("C".equalsIgnoreCase(person.getSeatType())) {
-                   mLayoutGoods.addView(view);
-                   goodsWeight += person.getRealWeight();
-                   //exitgoodsWeight += person.getAcRegCargWeight();
-
+               if (person.getRealWeight() != 0) {
+                   if ("S".equals(person.getSeatType())) {
+                       mLayoutPassenter.addView(view);
+                       passengerWeight += person.getRealWeight();
+                   } else if ("C".equalsIgnoreCase(person.getSeatType())) {
+                       mLayoutGoods.addView(view);
+                       goodsWeight += person.getRealWeight();
+                       //exitgoodsWeight += person.getAcRegCargWeight();
+                   }
                }
            }
+        } else {
+            layout_person_title.setVisibility(View.GONE);
+            layout_goods_title.setVisibility(View.GONE);
         }
 
         tv_passengerWeight.setText(FormatUtil.formatTo2Decimal(passengerWeight));

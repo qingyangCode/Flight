@@ -287,7 +287,7 @@ public class BasicInfoActivity extends BaseActivity {
                         }
                     }
                     FlightApplication.getAddFlightInfo().setAllSbLj(allSbLj);
-                    mWeight.setText((bw + weightCount) + "");
+                    mWeight.setText(FormatUtil.formatTo2Decimal(bw + weightCount));
 
                     mFocus.setText(FormatUtil.formatTo2Decimal((allSbLj + lj) / (bw + weightCount)));
                 }

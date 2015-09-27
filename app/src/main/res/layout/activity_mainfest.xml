@@ -354,6 +354,7 @@
 
             </LinearLayout>
             <LinearLayout
+                android:id="@+id/layout_beforefly"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:orientation="horizontal"
@@ -409,6 +410,178 @@
 
             </LinearLayout>
             <LinearLayout
+                android:id="@+id/layout_g450"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:orientation="horizontal"
+                android:background="@drawable/engineeroom_name_bg"
+                >
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2"
+                    android:text="起飞\n重量"
+                    android:background="@color/gray_a9"
+                    android:textSize="16dp"
+                    android:gravity="center"
+                    android:textColor="@color/gray_666"
+                    />
+                <View
+                    style="@style/line_vertical_view"/>
+                <TextView
+                    android:id="@+id/tv_bfWeight1"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="4"
+                    android:textSize="14dp"
+                    android:textColor="@color/gray_333"
+                    android:text=""
+                    android:gravity="center"
+                    />
+                <View
+                    style="@style/line_vertical_view"/>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2"
+                    android:text="着陆\n重量"
+                    android:background="@color/gray_a9"
+                    android:textSize="16dp"
+                    android:gravity="center"
+                    android:textColor="@color/gray_666"
+                    />
+                <View
+                    style="@style/line_vertical_view"/>
+                <TextView
+                    android:id="@+id/tv_landWeight1"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="4"
+                    android:textSize="14dp"
+                    android:textColor="@color/gray_333"
+                    android:text=""
+                    android:gravity="center"
+                    />
+
+            </LinearLayout>
+            <LinearLayout
+                android:visibility="visible"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:orientation="horizontal"
+                android:background="@drawable/engineeroom_name_bg"
+                >
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2"
+                    android:text="无燃油\n重量"
+                    android:background="@color/gray_a9"
+                    android:textSize="16dp"
+                    android:gravity="center"
+                    android:textColor="@color/gray_666"
+                    />
+                <View
+                    style="@style/line_vertical_view"/>
+                <TextView
+                    android:id="@+id/tv_nofuleWeight"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="4"
+                    android:textSize="14dp"
+                    android:textColor="@color/gray_333"
+                    android:text=""
+                    android:gravity="center"
+                    />
+                <View
+                    style="@style/line_vertical_view"/>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2"
+                    android:text="无燃油\n重心"
+                    android:background="@color/gray_a9"
+                    android:textSize="16dp"
+                    android:gravity="center"
+                    android:textColor="@color/gray_666"
+                    />
+                <View
+                    style="@style/line_vertical_view"/>
+                <TextView
+                    android:id="@+id/tv_nofuleWeightCg"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="4"
+                    android:textSize="14dp"
+                    android:textColor="@color/gray_333"
+                    android:text=""
+                    android:gravity="center"
+                    />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:visibility="visible"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:orientation="horizontal"
+                android:background="@drawable/engineeroom_name_bg"
+                >
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2"
+                    android:text="无燃油\n重心前限"
+                    android:background="@color/gray_a9"
+                    android:textSize="16dp"
+                    android:gravity="center"
+                    android:textColor="@color/gray_666"
+                    />
+                <View
+                    style="@style/line_vertical_view"/>
+                <TextView
+                    android:id="@+id/tv_nofuleWeightCgtmin"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="4"
+                    android:textSize="14dp"
+                    android:textColor="@color/gray_333"
+                    android:text=""
+                    android:gravity="center"
+                    />
+                <View
+                    style="@style/line_vertical_view"/>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2"
+                    android:text="无燃油\n重心后限"
+                    android:background="@color/gray_a9"
+                    android:textSize="16dp"
+                    android:gravity="center"
+                    android:textColor="@color/gray_666"
+                    />
+                <View
+                    style="@style/line_vertical_view"/>
+                <TextView
+                    android:id="@+id/tv_nofuleWeightCgmax"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="4"
+                    android:textSize="14dp"
+                    android:textColor="@color/gray_333"
+                    android:text=""
+                    android:gravity="center"
+                    />
+
+            </LinearLayout>
+            </LinearLayout>
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:orientation="horizontal"
@@ -462,6 +635,11 @@
                     />
 
             </LinearLayout>
+            <LinearLayout
+                android:id="@+id/layout_limitview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
@@ -624,8 +802,9 @@
                     />
 
             </LinearLayout>
-
+            </LinearLayout>
             <LinearLayout
+                android:id="@+id/layout_person_title"
                 android:layout_width="match_parent"
                 android:layout_height="70dp"
                 android:orientation="horizontal"
@@ -682,6 +861,7 @@
 
             <View style="@style/common_line_1_style"/>
             <LinearLayout
+                android:id="@+id/layout_goods_title"
                 android:layout_width="match_parent"
                 android:layout_height="70dp"
                 android:orientation="horizontal"

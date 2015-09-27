@@ -87,10 +87,15 @@ public class RestrictionMapActivity extends BaseActivity{
     private Context mContext;
     private CommonProgressDialog progressDialog;
     private float flightCg = 0;//起飞重心
+    private float landCg = 0;//着陆中心
     private float useWeightCg = 0;//使用空重重心
     private float mac = 0;//起飞MAC
     private String captainName = "";
     private float upWeight = 0;
+    //着陆重心前后限
+    private Pair<Float, Float> landFuleLimit;
+    //起飞中心前后限
+    private Pair<Float, Float> beforeFuleLimit;
 
 
 
@@ -274,24 +279,46 @@ public class RestrictionMapActivity extends BaseActivity{
                 }
             }
 
+            //起飞重心前后限
+            float beforeWeight = 0;
+            if ("G450".equalsIgnoreCase(aircraftType)) {
+                beforeWeight = allWeight - realOilFloat;
+            } else {
+                beforeWeight = allWeight - slideOilFloat;
+            }
+
+            float landWeight = 0;
+            if ("G450".equalsIgnoreCase(aircraftType)) {
+                landWeight = allWeight - realOilFloat;
+            } else {
+                landWeight = allWeight - slideOilFloat - flyOilFloat;
+            }
+
             //起飞油量力矩
             float beforeLj = 0;
             //起飞油量
-            float beforeFlightOil = realOilFloat - slideOilFloat;
+            float beforeFlightOil = 0;
+            if (!"G450".equalsIgnoreCase(aircraftType)) {
+                beforeFlightOil = realOilFloat - slideOilFloat;
+            }
             //起飞油量力矩
-            beforeLj = getOilWeightLj(beforeFlightOil);
+            if (!"G450".equalsIgnoreCase(aircraftType))
+                beforeLj = getOilWeightLj(beforeFlightOil);
 
             //着陆油量力矩
-            float landOilLj = getOilWeightLj(realOilFloat - slideOilFloat - flyOilFloat);
+            float landOilLj = 0;
+            if (!"G450".equalsIgnoreCase(aircraftType)) {
+                landOilLj = getOilWeightLj(realOilFloat - slideOilFloat - flyOilFloat);
+            }
 
             try {
-                flightCg = (airLj + totalPassengerLj + totalSbLj + beforeLj) / ( - slideOilFloat + allWeight);
+                flightCg = (airLj + totalPassengerLj + totalSbLj + beforeLj) / (beforeWeight);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            float landCg = 0;
+
             try {
-                landCg = (airLj + totalPassengerLj + totalSbLj + landOilLj) / (allWeight - slideOilFloat - flyOilFloat);
+                landCg = (airLj + totalPassengerLj + totalSbLj + landOilLj) / (landWeight);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -305,15 +332,18 @@ public class RestrictionMapActivity extends BaseActivity{
             FlightApplication.getAddFlightInfo().setUseWeight(basicWeight + useWeight);
             FlightApplication.getAddFlightInfo().setUseWeightCg(useWeightCg);
 
-            //起飞重心前后限
-            Pair<Float, Float> beforeFuleLimit = getFuleLimit(-slideOilFloat + allWeight);
+
+
+            beforeFuleLimit = getFuleLimit(beforeWeight);
             if (beforeFuleLimit != null) {
                 FlightApplication.getAddFlightInfo().setBeforeWCgmin(FormatUtil.formatTo2Decimal(beforeFuleLimit.first));
                 FlightApplication.getAddFlightInfo().setBeforeWCgmax(FormatUtil.formatTo2Decimal(beforeFuleLimit.second));
             }
 
+
+
             //着陆重心前后限
-            Pair<Float, Float> landFuleLimit = getFuleLimit(allWeight - slideOilFloat - flyOilFloat);
+            landFuleLimit = getFuleLimit(landWeight);
             if (landFuleLimit != null) {
                 FlightApplication.getAddFlightInfo().setLandWCgmin(FormatUtil.formatTo2Decimal(landFuleLimit.first));
                 FlightApplication.getAddFlightInfo().setLandWCgmax(FormatUtil.formatTo2Decimal(landFuleLimit.second));
@@ -354,21 +384,36 @@ public class RestrictionMapActivity extends BaseActivity{
             int right = fuleLimits.size() - 1;
             while (left < right) {
                 int middle = (left + right) / 2;
+                if(temp == middle) break;
                 if (OilWeight < fuleLimits.get(middle).getFuleWeight()) {
-                    right = middle - 1;
+                    right = middle;
                 } else {
-                    left = middle + 1;
+                    left = middle;
                 }
                 temp = middle;
             }
             //待计算重量 一定小于 数据库中和他相邻的两个数据中大的那个重量
-            if (OilWeight < fuleLimits.get(temp+1).getFuleWeight()) {
-                //算法得到力矩
-                oilLj = fuleLimits.get(temp + 1).getFuleLj()
-                        - (fuleLimits.get(temp + 1).getFuleLj() - fuleLimits.get(temp).getFuleLj())
-                        * (fuleLimits.get(temp + 1).getFuleWeight() - OilWeight)
-                        / (fuleLimits.get(temp + 1).getFuleWeight() - fuleLimits.get(temp)
-                        .getFuleWeight());
+            //if (OilWeight < fuleLimits.get(temp+1).getFuleWeight()) {
+            //
+            //} else if () {
+            //
+            //}
+
+            int index = 0;
+            if (OilWeight < fuleLimits.get(temp).getFuleWeight()) {
+                index = temp;
+            } else {
+                index = temp + 1;
+            }
+
+            //算法得到力矩
+            try {
+                oilLj = fuleLimits.get(index).getFuleLj()
+                        - (fuleLimits.get(index).getFuleLj() - fuleLimits.get(index - 1).getFuleLj())
+                        * (fuleLimits.get(index).getFuleWeight() - OilWeight) / (fuleLimits.get(
+                        index).getFuleWeight() - fuleLimits.get(index - 1).getFuleWeight());
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
         LogUtil.LOGD(TAG, "before fly oil Lj == " + oilLj);
@@ -425,10 +470,11 @@ public class RestrictionMapActivity extends BaseActivity{
 
             while (left < right) {
                 int middle = (left + right) / 2;
-                if (weight < acWeightLimits.get(temp).getWeight()) {
-                    right = middle - 1;
+                if (temp == middle) break;
+                if (weight < acWeightLimits.get(middle).getWeight()) {
+                    right = middle;
                 } else {
-                    left = middle + 1;
+                    left = middle;
                 }
                 temp = middle;
             }
@@ -436,22 +482,37 @@ public class RestrictionMapActivity extends BaseActivity{
             float weightLimitMin = 0;
             float weightLimitMax = 0;
 
-            if (weight < acWeightLimits.get(temp+1).getWeight()) {
-                AcWeightLimit acWLimitMax = acWeightLimits.get(temp + 1);
-                AcWeightLimit acWLimitMin = acWeightLimits.get(temp);
+            //if (weight < acWeightLimits.get(temp+1).getWeight()) {
 
-                weightLimitMin = acWLimitMax.getWeightCg1() - (acWLimitMax.getWeight() - weight) * (acWLimitMax.getWeightCg1() - acWLimitMin.getWeightCg1()) / (acWLimitMax.getWeight() - acWLimitMin.getWeight());
+            int index = 0;
+            if (weight < acWeightLimits.get(temp).getWeight()) {
+                index = temp;
+            } else {
+                index = temp + 1;
+            }
 
-                weightLimitMax = acWLimitMax.getWeightCg2() - (acWLimitMax.getWeight() - weight) * (acWLimitMax.getWeightCg2() - acWLimitMin.getWeightCg2()) / (acWLimitMax.getWeight() - acWLimitMin.getWeight());
+            try {
+                AcWeightLimit acWLimitMax = acWeightLimits.get(index);
+                AcWeightLimit acWLimitMin = acWeightLimits.get(index - 1);
 
-                LogUtil.LOGD(TAG, "weightLimitMin == " + weightLimitMin+ "  weightLimitMax == " + weightLimitMax);
+                weightLimitMin = acWLimitMax.getWeightCg1()
+                        - (acWLimitMax.getWeight() - weight) * (acWLimitMax.getWeightCg1() - acWLimitMin.getWeightCg1()) / (acWLimitMax.getWeight()
+                        - acWLimitMin.getWeight());
+
+                weightLimitMax = acWLimitMax.getWeightCg2()
+                        - (acWLimitMax.getWeight() - weight) * (acWLimitMax.getWeightCg2() - acWLimitMin.getWeightCg2()) / (acWLimitMax.getWeight()
+                        - acWLimitMin.getWeight());
+
+                LogUtil.LOGD(TAG, "weightLimitMin == " + weightLimitMin + "  weightLimitMax == " + weightLimitMax);
                 return new Pair<Float, Float>(weightLimitMin, weightLimitMax);
-
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
                 //oilLj = fuleLimits.get(temp + 1).getFuleLj()
                 //        - (fuleLimits.get(temp + 1).getFuleLj() - fuleLimits.get(temp).getFuleLj()) * (fuleLimits.get(temp + 1).getFuleWeight() - OilWeight)
                 //        / (fuleLimits.get(temp + 1).getFuleWeight() - fuleLimits.get(temp)
                 //        .getFuleWeight());
-            }
+            //}
 
 
         }
@@ -613,17 +674,17 @@ public class RestrictionMapActivity extends BaseActivity{
         }
 
         AddFlightInfo addFlightInfo = FlightApplication.getAddFlightInfo();
-        String noFuleWeight = addFlightInfo.getNoFuleWeight();
+        String basicWeight = addFlightInfo.getBasicWeight();
         String weightCg = addFlightInfo.getWeightCg();
-        float nofuWeightFloat = 0;//实际最大无油重量
+        float basicWeightFloat = 0;//基本空重 : 飞机空重 ＋ 设备重
         float realOilFloat = 0;
         float slideOilFloat = 0;
         float flyOilFloat = 0;
         float beforeWeightFloat = 0;
         float downWeightFloat = 0;
         try {
-            if (!TextUtils.isEmpty(noFuleWeight))
-                nofuWeightFloat = Float.parseFloat(noFuleWeight);
+            if (!TextUtils.isEmpty(basicWeight))
+                basicWeightFloat = Float.parseFloat(basicWeight);
             if (!TextUtils.isEmpty(realityOil))
                 realOilFloat = Float.parseFloat(realityOil);
             if (!TextUtils.isEmpty(slideOil))
@@ -647,12 +708,14 @@ public class RestrictionMapActivity extends BaseActivity{
             AllAcType allAcType = list.get(0);
             float zhouluweight = upWeight - flyOilFloat;
             //最大起飞重量
-            if (allAcType.getMzfw() -  (nofuWeightFloat + totalSeatWeight) < 0) {
+            if (allAcType.getMzfw() -  (basicWeightFloat + totalSeatWeight) < 0) {
                 ToastUtil.showToast(mContext, R.drawable.toast_warning, "无燃油重量超过了最大无燃油重量限制, 超重 : " + Math.abs(
-                        (nofuWeightFloat + totalSeatWeight) - allAcType.getMzfw()) +" lb");
+                        (basicWeightFloat + totalSeatWeight) - allAcType.getMzfw()) +" lb");
                 return false;
-            } else if (allAcType.getPortLimit() - (nofuWeightFloat + realOilFloat + totalSeatWeight) < 0) {
-                ToastUtil.showToast(mContext, R.drawable.toast_warning, "滑行重量超过了机坪重量限制, 超重 : " + Math.abs((nofuWeightFloat + realOilFloat + totalSeatWeight) - allAcType.getPortLimit())+"lb");
+            } else if (allAcType.getPortLimit() - (basicWeightFloat + realOilFloat + totalSeatWeight) < 0) {
+                ToastUtil.showToast(mContext, R.drawable.toast_warning, "滑行重量超过了机坪重量限制, 超重 : " + Math.abs((
+                        basicWeightFloat
+                                + realOilFloat + totalSeatWeight) - allAcType.getPortLimit())+"lb");
                 return false;
             } else if(allAcType.getTofWeightLimit() < upWeight) {
                 ToastUtil.showToast(mContext, R.drawable.toast_warning, "起飞重量超过了最大起飞重量限制, 超重 : "
@@ -663,8 +726,30 @@ public class RestrictionMapActivity extends BaseActivity{
                         + Math.abs(zhouluweight- allAcType.getLandWeightLimit()) + " lb");
                 return false;
             } else {
-               //TODO 重心前限和后限
+               // 重心前限和后限
+                if (beforeFuleLimit != null && "N".equalsIgnoreCase(allAcType.getLimitType())) {
+                    if (flightCg < beforeFuleLimit.first) {
+                        ToastUtil.showToast(mContext, R.drawable.toast_warning, "起飞重心小于起飞前限限制 : " + FormatUtil.formatTo2Decimal(
+                                Math.abs(beforeFuleLimit.first - flightCg)));
+                        return false;
+                    } else if (flightCg > beforeFuleLimit.second ) {
+                        ToastUtil.showToast(mContext, R.drawable.toast_warning, "起飞重心大于起飞后限限制 : " + FormatUtil.formatTo2Decimal(
+                                Math.abs(beforeFuleLimit.second - flightCg)));
+                        return false;
+                    }
+                }
 
+                if (landFuleLimit != null && "N".equalsIgnoreCase(allAcType.getLimitType())) {
+                    if (landCg < landFuleLimit.first) {
+                        ToastUtil.showToast(mContext, R.drawable.toast_warning, "着陆重心小于着陆前限限制 : " + FormatUtil.formatTo2Decimal(
+                                Math.abs(landFuleLimit.first - landCg)));
+                        return false;
+                    } else if (landCg > landFuleLimit.second) {
+                        ToastUtil.showToast(mContext, R.drawable.toast_warning, "着陆重心大于着陆后限限制 : " + FormatUtil.formatTo2Decimal(
+                                Math.abs(landFuleLimit.second - landCg)));
+                        return false;
+                    }
+                }
             }
         }
 
