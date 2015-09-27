@@ -282,10 +282,15 @@ public class BasicInfoActivity extends BaseActivity {
                     float allSbLj = 0;
                     for (Integer sbID : weightList.keySet()) {
                         weightCount += weightList.get(sbID);
-                        if (sbID == allAcSb.getSbId()) {
-                            allSbLj += allAcSb.getSbLb() * weightList.get(sbID);
+                        //if (sbID == allAcSb.getSbId()) {
+                        for (AllAcSb allAcSb1 : allSbList) {
+                            if (allAcSb1.getAcReg().equals(aircraftReg) && allAcSb1.getSbId() == sbID) {
+                                allSbLj += allAcSb1.getSbLb() * weightList.get(sbID);
+                            }
                         }
+                        //}
                     }
+
                     FlightApplication.getAddFlightInfo().setAllSbLj(allSbLj);
                     mWeight.setText(FormatUtil.formatTo2Decimal(bw + weightCount));
 

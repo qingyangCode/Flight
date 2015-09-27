@@ -330,6 +330,8 @@ public class DBManager {
             actionFeed.setUserCode(UserManager.getInstance().getUser().getUserCode());
         actionFeed.setFeed_type(FeedType.toInt(feedType));
         actionFeed.setFeed_id(dataId);
+        if (FlightApplication.getAddFlightInfo() != null)
+            actionFeed.setFlightId(FlightApplication.getAddFlightInfo().getFlightId());
         actionFeedDao.insert(actionFeed);
     }
 
@@ -404,5 +406,19 @@ public class DBManager {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void clearPassenger() {
+        UploadAirPersonDao uploadAirPersonDao =
+                FlightApplication.getDaoSession().getUploadAirPersonDao();
+        List<UploadAirPerson> list = uploadAirPersonDao.queryBuilder().list();
+        if (list != null && list.size() > 0) {
+            uploadAirPersonDao.deleteAll();
+        }
+    }
+
+    public void clearFeed() {
+        ActionFeedDao actionFeedDao = FlightApplication.getDaoSession().getActionFeedDao();
+        actionFeedDao.deleteAll();
     }
 }

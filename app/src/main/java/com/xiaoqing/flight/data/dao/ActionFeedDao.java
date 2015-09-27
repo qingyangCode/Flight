@@ -27,7 +27,8 @@ public class ActionFeedDao extends AbstractDao<ActionFeed, Long> {
         public final static Property Feed_type = new Property(1, Integer.class, "feed_type", false, "FEED_TYPE");
         public final static Property Feed_id = new Property(2, String.class, "feed_id", false, "FEED_ID");
         public final static Property UserCode = new Property(3, String.class, "UserCode", false, "USER_CODE");
-        public final static Property Feed_status = new Property(4, Integer.class, "feed_status", false, "FEED_STATUS");
+        public final static Property FlightId = new Property(4, String.class, "FlightId", false, "FLIGHT_ID");
+        public final static Property Feed_status = new Property(5, Integer.class, "feed_status", false, "FEED_STATUS");
     };
 
 
@@ -47,7 +48,8 @@ public class ActionFeedDao extends AbstractDao<ActionFeed, Long> {
                 "'FEED_TYPE' INTEGER," + // 1: feed_type
                 "'FEED_ID' TEXT," + // 2: feed_id
                 "'USER_CODE' TEXT," + // 3: UserCode
-                "'FEED_STATUS' INTEGER);"); // 4: feed_status
+                "'FLIGHT_ID' TEXT," + // 4: FlightId
+                "'FEED_STATUS' INTEGER);"); // 5: feed_status
     }
 
     /** Drops the underlying database table. */
@@ -81,9 +83,14 @@ public class ActionFeedDao extends AbstractDao<ActionFeed, Long> {
             stmt.bindString(4, UserCode);
         }
  
+        String FlightId = entity.getFlightId();
+        if (FlightId != null) {
+            stmt.bindString(5, FlightId);
+        }
+ 
         Integer feed_status = entity.getFeed_status();
         if (feed_status != null) {
-            stmt.bindLong(5, feed_status);
+            stmt.bindLong(6, feed_status);
         }
     }
 
@@ -101,7 +108,8 @@ public class ActionFeedDao extends AbstractDao<ActionFeed, Long> {
             cursor.isNull(offset + 1) ? null : cursor.getInt(offset + 1), // feed_type
             cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // feed_id
             cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // UserCode
-            cursor.isNull(offset + 4) ? null : cursor.getInt(offset + 4) // feed_status
+            cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // FlightId
+            cursor.isNull(offset + 5) ? null : cursor.getInt(offset + 5) // feed_status
         );
         return entity;
     }
@@ -113,7 +121,8 @@ public class ActionFeedDao extends AbstractDao<ActionFeed, Long> {
         entity.setFeed_type(cursor.isNull(offset + 1) ? null : cursor.getInt(offset + 1));
         entity.setFeed_id(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
         entity.setUserCode(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
-        entity.setFeed_status(cursor.isNull(offset + 4) ? null : cursor.getInt(offset + 4));
+        entity.setFlightId(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
+        entity.setFeed_status(cursor.isNull(offset + 5) ? null : cursor.getInt(offset + 5));
      }
     
     /** @inheritdoc */

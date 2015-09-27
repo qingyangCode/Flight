@@ -85,6 +85,7 @@ public class TablesMain {
         actionFeed.addIntProperty("feed_type");
         actionFeed.addStringProperty("feed_id");
         actionFeed.addStringProperty("UserCode");
+        actionFeed.addStringProperty("FlightId");
         actionFeed.addIntProperty("feed_status");//aircraftReg,aircraftType
     }
 

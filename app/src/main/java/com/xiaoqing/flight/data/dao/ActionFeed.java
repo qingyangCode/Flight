@@ -13,6 +13,7 @@ public class ActionFeed {
     private Integer feed_type;
     private String feed_id;
     private String UserCode;
+    private String FlightId;
     private Integer feed_status;
 
     // KEEP FIELDS - put your custom fields here
@@ -25,11 +26,12 @@ public class ActionFeed {
         this.id = id;
     }
 
-    public ActionFeed(Long id, Integer feed_type, String feed_id, String UserCode, Integer feed_status) {
+    public ActionFeed(Long id, Integer feed_type, String feed_id, String UserCode, String FlightId, Integer feed_status) {
         this.id = id;
         this.feed_type = feed_type;
         this.feed_id = feed_id;
         this.UserCode = UserCode;
+        this.FlightId = FlightId;
         this.feed_status = feed_status;
     }
 
@@ -63,6 +65,14 @@ public class ActionFeed {
 
     public void setUserCode(String UserCode) {
         this.UserCode = UserCode;
+    }
+
+    public String getFlightId() {
+        return FlightId;
+    }
+
+    public void setFlightId(String FlightId) {
+        this.FlightId = FlightId;
     }
 
     public Integer getFeed_status() {

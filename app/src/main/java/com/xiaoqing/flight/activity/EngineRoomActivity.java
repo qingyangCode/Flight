@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Pair;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -21,6 +22,7 @@ import butterknife.OnClick;
 import com.xiaoqing.flight.FlightApplication;
 import com.xiaoqing.flight.R;
 import com.xiaoqing.flight.data.dao.ActionFeed;
+import com.xiaoqing.flight.data.dao.ActionFeedDao;
 import com.xiaoqing.flight.data.dao.Passenger;
 import com.xiaoqing.flight.data.dao.PassengerDao;
 import com.xiaoqing.flight.data.dao.SeatByAcReg;
@@ -142,6 +144,16 @@ public class EngineRoomActivity extends BaseActivity{
         mWeight.setText("重量 (lb.)");
         //mListView.addHeaderView(inflate);
         getSeatByDB();
+    }
+
+    @Override protected void initEvents() {
+        super.initEvents();
+
+        mTopBarLeft.setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                onBack();
+            }
+        });
     }
 
     @OnClick(R.id.add_person)
@@ -614,5 +626,28 @@ public class EngineRoomActivity extends BaseActivity{
                 startActivity(intent);
             }
         };
+    }
+
+    @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+            onBack();
+            return true;
+        }
+
+        return super.onKeyDown(keyCode, event);
+
+    }
+
+    public void onBack() {
+        ActionFeedDao actionFeedDao = FlightApplication.getDaoSession().getActionFeedDao();
+        List<ActionFeed> list = actionFeedDao.queryBuilder()
+                .where(ActionFeedDao.Properties.Feed_type.eq(
+                        FeedType.toInt(FeedType.ADD_PLAYINFO)))
+                .list();
+        if (list == null || list.size() == 0) {
+            DBManager.getInstance().clearPassenger();
+            DBManager.getInstance().clearFeed();
+        }
+        finish();
     }
 }
