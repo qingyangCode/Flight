@@ -27,6 +27,8 @@ import com.xiaoqing.flight.data.dao.Passenger;
 import com.xiaoqing.flight.data.dao.PassengerDao;
 import com.xiaoqing.flight.data.dao.SeatByAcReg;
 import com.xiaoqing.flight.data.dao.SeatByAcRegDao;
+import com.xiaoqing.flight.data.dao.UploadAirPerson;
+import com.xiaoqing.flight.data.dao.UploadAirPersonDao;
 import com.xiaoqing.flight.data.dao.User;
 import com.xiaoqing.flight.data.dao.UserDao;
 import com.xiaoqing.flight.entity.EngineRoom;
@@ -602,7 +604,11 @@ public class EngineRoomActivity extends BaseActivity{
                  * @param responseListner
                  */
 
+                String date = DateFormatUtil.formatTDate();
                 for (final SeatByAcReg seatByAcReg : showList) {
+                    seatByAcReg.setOpDate(date);
+                    if (UserManager.getInstance().getUser() != null)
+                        seatByAcReg.setOpUser(UserManager.getInstance().getUser().getUserCode());
                     //if (seatByAcReg.getXPos() != 0) {
                         //货物 或 有人
                     if (("C".equalsIgnoreCase(seatByAcReg.getSeatType()) && seatByAcReg.getSeatWeight() != 0) || ("S".equalsIgnoreCase(seatByAcReg.getSeatType()) && !TextUtils.isEmpty(
@@ -647,6 +653,22 @@ public class EngineRoomActivity extends BaseActivity{
         if (list == null || list.size() == 0) {
             DBManager.getInstance().clearPassenger();
             DBManager.getInstance().clearFeed();
+        } else {
+            ArrayList<String> flightIds = new ArrayList<>();
+            for (ActionFeed actionFeed : list) {
+                flightIds.add(actionFeed.getFlightId());
+            }
+            List<ActionFeed> actionFeedList = actionFeedDao.queryBuilder()
+                    .where(ActionFeedDao.Properties.FlightId.notIn(flightIds))
+                    .list();
+            actionFeedDao.deleteInTx(actionFeedList);
+
+            UploadAirPersonDao uploadAirPersonDao =
+                    FlightApplication.getDaoSession().getUploadAirPersonDao();
+            List<UploadAirPerson> uploadAirPersonList = uploadAirPersonDao.queryBuilder()
+                    .where(UploadAirPersonDao.Properties.FlightId.notIn(flightIds))
+                    .list();
+            uploadAirPersonDao.deleteInTx(uploadAirPersonList);
         }
         finish();
     }

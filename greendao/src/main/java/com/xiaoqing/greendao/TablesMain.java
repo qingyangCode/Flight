@@ -123,9 +123,9 @@ public class TablesMain {
 
     private void adllFilghtInfo() {
         Entity flightInfo = mSchema.addEntity("AddFlightInfo");
-        flightInfo.implementsSerializable();
-        flightInfo.addStringProperty("FlightId").primaryKey().notNull();
+        flightInfo.addIdProperty().autoincrement();
         flightInfo.addStringProperty("FlightDate");
+        flightInfo.addStringProperty("FlightId").notNull();
         flightInfo.addStringProperty("AircraftReg");
         flightInfo.addStringProperty("AircraftType");
         flightInfo.addStringProperty("FlightNo");

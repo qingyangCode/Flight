@@ -39,6 +39,10 @@ public class FlightApplication extends Application {
         return sAddFlightInfo;
     }
 
+    public static void createAddFlightInfo() {
+        sAddFlightInfo = new AddFlightInfo();
+    }
+
 
     private void initDatabase() {
         DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(this, "flight." + BuildConfig.APP_SPORT_TYPE, null);

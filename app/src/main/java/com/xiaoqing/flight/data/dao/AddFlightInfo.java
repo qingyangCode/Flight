@@ -8,11 +8,12 @@ import java.util.ArrayList;
 /**
  * Entity mapped to table ADD_FLIGHT_INFO.
  */
-public class AddFlightInfo implements java.io.Serializable {
+public class AddFlightInfo {
 
+    private Long id;
+    private String FlightDate;
     /** Not-null value. */
     private String FlightId;
-    private String FlightDate;
     private String AircraftReg;
     private String AircraftType;
     private String FlightNo;
@@ -56,13 +57,14 @@ public class AddFlightInfo implements java.io.Serializable {
     public AddFlightInfo() {
     }
 
-    public AddFlightInfo(String FlightId) {
-        this.FlightId = FlightId;
+    public AddFlightInfo(Long id) {
+        this.id = id;
     }
 
-    public AddFlightInfo(String FlightId, String FlightDate, String AircraftReg, String AircraftType, String FlightNo, String Dep4Code, String DepAirportName, String Arr4Code, String ArrAirportName, String MaxFule, String RealFule, String SlieFule, String RouteFule, String TofWeight, String LandWeight, String NoFuleWeight, String AirportLimitWeight, String BalancePic, String BalancePicName, String OpUser, String OpDate, String weightCg, String Caption, String TkoZx, String TkoMac, String passengerWeight, String articleWeight, String beforeFlyFule, String landWeightCg, String beforeWCgmin, String beforeWCgmax, String landWCgmin, String landWCgmax, Float UseWeight, Float UseWeightCg, String BasicWeight, Float allSbLj) {
-        this.FlightId = FlightId;
+    public AddFlightInfo(Long id, String FlightDate, String FlightId, String AircraftReg, String AircraftType, String FlightNo, String Dep4Code, String DepAirportName, String Arr4Code, String ArrAirportName, String MaxFule, String RealFule, String SlieFule, String RouteFule, String TofWeight, String LandWeight, String NoFuleWeight, String AirportLimitWeight, String BalancePic, String BalancePicName, String OpUser, String OpDate, String weightCg, String Caption, String TkoZx, String TkoMac, String passengerWeight, String articleWeight, String beforeFlyFule, String landWeightCg, String beforeWCgmin, String beforeWCgmax, String landWCgmin, String landWCgmax, Float UseWeight, Float UseWeightCg, String BasicWeight, Float allSbLj) {
+        this.id = id;
         this.FlightDate = FlightDate;
+        this.FlightId = FlightId;
         this.AircraftReg = AircraftReg;
         this.AircraftType = AircraftType;
         this.FlightNo = FlightNo;
@@ -100,14 +102,12 @@ public class AddFlightInfo implements java.io.Serializable {
         this.allSbLj = allSbLj;
     }
 
-    /** Not-null value. */
-    public String getFlightId() {
-        return FlightId;
+    public Long getId() {
+        return id;
     }
 
-    /** Not-null value; ensure this value is available before it is saved to the database. */
-    public void setFlightId(String FlightId) {
-        this.FlightId = FlightId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getFlightDate() {
@@ -116,6 +116,16 @@ public class AddFlightInfo implements java.io.Serializable {
 
     public void setFlightDate(String FlightDate) {
         this.FlightDate = FlightDate;
+    }
+
+    /** Not-null value. */
+    public String getFlightId() {
+        return FlightId;
+    }
+
+    /** Not-null value; ensure this value is available before it is saved to the database. */
+    public void setFlightId(String FlightId) {
+        this.FlightId = FlightId;
     }
 
     public String getAircraftReg() {

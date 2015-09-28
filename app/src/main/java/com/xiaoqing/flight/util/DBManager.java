@@ -1,5 +1,6 @@
 package com.xiaoqing.flight.util;
 
+import android.os.SystemClock;
 import android.text.TextUtils;
 import com.xiaoqing.flight.FlightApplication;
 import com.xiaoqing.flight.data.dao.AcGrants;
@@ -35,7 +36,6 @@ import com.xiaoqing.flight.data.dao.User;
 import com.xiaoqing.flight.data.dao.UserDao;
 import com.xiaoqing.flight.network.synchronous.FeedType;
 import de.greenrobot.dao.query.QueryBuilder;
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -343,15 +343,26 @@ public class DBManager {
                 ActionFeedDao.Properties.Feed_id.eq(actionFeed.getFeed_id())).buildDelete().executeDeleteWithoutDetachingEntities();
     }
 
+    public void deleteActionFeed(long id, String flightId) {
+        final ActionFeedDao actionFeedDao = FlightApplication.getDaoSession().getActionFeedDao();
+        List<ActionFeed> actionFeedList = actionFeedDao.queryBuilder()
+                .where(ActionFeedDao.Properties.FlightId.eq(flightId), ActionFeedDao.Properties.Feed_id.eq(id))
+                .list();
+        if (actionFeedList != null && actionFeedList.size() > 0) {
+            actionFeedDao.deleteInTx(actionFeedList);
+        }
+    }
+
     //航班信息
     public void insertFlightInfo() {
         AddFlightInfoDao addFlightInfoDao = FlightApplication.getDaoSession().getAddFlightInfoDao();
         List<AddFlightInfo> list = addFlightInfoDao.queryBuilder().where(
                 AddFlightInfoDao.Properties.FlightId.eq(FlightApplication.getAddFlightInfo().getFlightId())).list();
+        LogUtil.LOGD("DBManager", "insertFlightInfo === " + (list == null ? "null" : list.size()));
         if (list != null && list.size() > 0) {
             addFlightInfoDao.delete(list.get(0));
         }
-        addFlightInfoDao.insert(FlightApplication.getAddFlightInfo());
+        addFlightInfoDao.insertOrReplace(FlightApplication.getAddFlightInfo());
     }
 
     //删除航班信息
@@ -420,5 +431,43 @@ public class DBManager {
     public void clearFeed() {
         ActionFeedDao actionFeedDao = FlightApplication.getDaoSession().getActionFeedDao();
         actionFeedDao.deleteAll();
+    }
+
+    //更新航班flightId
+    public void upadateFlightInfo(String flightId, String response) {
+        AddFlightInfoDao addFlightInfoDao = FlightApplication.getDaoSession().getAddFlightInfoDao();
+        List<AddFlightInfo> flightInfos = addFlightInfoDao.queryBuilder().where(AddFlightInfoDao.Properties.FlightId.eq(flightId)).list();
+        //LogUtil.LOGD("DBManager", "flightId : " + flightId +" response : " + response + "  flightInfos === " + (flightInfos == null ? "null" : flightInfos.size()));
+
+        if (flightInfos != null && flightInfos.size() > 0) {
+            AddFlightInfo addFlightInfo = flightInfos.get(0);
+            addFlightInfo.setFlightId(response);
+            addFlightInfoDao.update(addFlightInfo);
+        }
+
+        UploadAirPersonDao uploadAirPersonDao =
+                FlightApplication.getDaoSession().getUploadAirPersonDao();
+        List<UploadAirPerson> passengerLists = uploadAirPersonDao.queryBuilder()
+                .where(UploadAirPersonDao.Properties.FlightId.eq(flightId))
+                .list();
+        if (passengerLists != null && passengerLists.size() > 0) {
+            for (UploadAirPerson uploadAirPerson : passengerLists) {
+                uploadAirPerson.setFlightId(response);
+                uploadAirPersonDao.update(uploadAirPerson);
+            }
+        }
+
+        ActionFeedDao actionFeedDao = FlightApplication.getDaoSession().getActionFeedDao();
+        List<ActionFeed> actionFeedList = actionFeedDao.queryBuilder()
+                .where(ActionFeedDao.Properties.FlightId.eq(flightId))
+                .list();
+
+        for (ActionFeed actionFeed : actionFeedList) {
+            if (actionFeed.getFeed_type() == FeedType.toInt(FeedType.ADD_PLAYINFO)) {
+                actionFeed.setFeed_id(response);
+            }
+            actionFeed.setFlightId(response);
+            actionFeedDao.update(actionFeed);
+        }
     }
 }

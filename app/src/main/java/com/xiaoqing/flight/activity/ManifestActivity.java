@@ -414,7 +414,6 @@ public class ManifestActivity extends BaseActivity {
      */
     private void addFlightInfo() {
         showProgressDialog();
-        //TODO 查询  飞行ID
         ApiServiceManager.getInstance().addFlightInfo(FlightApplication.getAddFlightInfo(), new ResponseListner<AddFlightInfoResponse>() {
             @Override public void onResponse(AddFlightInfoResponse response) {
                 hiddenDialog();
@@ -430,7 +429,7 @@ public class ManifestActivity extends BaseActivity {
                     showCaptionName();
 
                     //上传机上成员信息
-                    ApiServiceManager.getInstance().uploadAirPersonInfo();
+                    ApiServiceManager.getInstance().uploadAirPersonInfo(FlightApplication.getAddFlightInfo().getFlightId());
                     //DBManager.getInstance().deleteFlightInfo(FlightApplication.getAddFlightInfo().getFlightId());
                 } else {
                     addFlightInfoToDB();

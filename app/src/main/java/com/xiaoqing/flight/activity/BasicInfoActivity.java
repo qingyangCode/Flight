@@ -34,6 +34,7 @@ import com.xiaoqing.flight.util.UserManager;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -74,6 +75,7 @@ public class BasicInfoActivity extends BaseActivity {
         mTopBarTitle.setText("飞机基本信息");
         mTopBarRight.setText("下一步");
 
+        FlightApplication.createAddFlightInfo();
         Intent data = getIntent();
         if (data != null) {
             aircraftReg = data.getStringExtra("AircraftReg");
@@ -125,7 +127,7 @@ public class BasicInfoActivity extends BaseActivity {
             @Override public void onEmptyOrError(String message) {
                 FlightApplication
                         .getAddFlightInfo()
-                        .setFlightId(DateFormatUtil.formatTDate());
+                        .setFlightId(UUID.randomUUID().toString());
             }
         });
     }
@@ -327,6 +329,7 @@ public class BasicInfoActivity extends BaseActivity {
                 }
 
                 AddFlightInfo addFlightInfo = FlightApplication.getAddFlightInfo();
+                addFlightInfo.setFlightDate(DateFormatUtil.formatTDate());
                 addFlightInfo.setAircraftReg(aircraftReg);
                 addFlightInfo.setAircraftType(aircraftType);
                 addFlightInfo.setFlightNo(playNO);
