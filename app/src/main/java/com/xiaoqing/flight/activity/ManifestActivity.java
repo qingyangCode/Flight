@@ -122,6 +122,9 @@ public class ManifestActivity extends BaseActivity {
     @InjectView(R.id.layout_goods_title)
     View layout_goods_title;
 
+    @InjectView(R.id.tv_operator)
+    TextView mOperator;
+
     private String aircraftReg;
     private String aircraftType;
 
@@ -168,6 +171,9 @@ public class ManifestActivity extends BaseActivity {
                 if (!TextUtils.isEmpty(substring))
                     tv_date.setText(substring.replace("T","\n"));
             }
+
+            mOperator.setText("操作人："+addFlightInfo.getOpUserName());
+
             tv_acreg.setText(addFlightInfo.getAircraftReg());
             tv_flightNo.setText(addFlightInfo.getFlightNo());
             tv_flyAirport.setText(addFlightInfo.getDepAirportName());

@@ -32,6 +32,7 @@ public class AddFlightInfo {
     private String BalancePic;
     private String BalancePicName;
     private String OpUser;
+    private String OpUserName;
     private String OpDate;
     private String weightCg;
     private String Caption;
@@ -61,7 +62,7 @@ public class AddFlightInfo {
         this.id = id;
     }
 
-    public AddFlightInfo(Long id, String FlightDate, String FlightId, String AircraftReg, String AircraftType, String FlightNo, String Dep4Code, String DepAirportName, String Arr4Code, String ArrAirportName, String MaxFule, String RealFule, String SlieFule, String RouteFule, String TofWeight, String LandWeight, String NoFuleWeight, String AirportLimitWeight, String BalancePic, String BalancePicName, String OpUser, String OpDate, String weightCg, String Caption, String TkoZx, String TkoMac, String passengerWeight, String articleWeight, String beforeFlyFule, String landWeightCg, String beforeWCgmin, String beforeWCgmax, String landWCgmin, String landWCgmax, Float UseWeight, Float UseWeightCg, String BasicWeight, Float allSbLj) {
+    public AddFlightInfo(Long id, String FlightDate, String FlightId, String AircraftReg, String AircraftType, String FlightNo, String Dep4Code, String DepAirportName, String Arr4Code, String ArrAirportName, String MaxFule, String RealFule, String SlieFule, String RouteFule, String TofWeight, String LandWeight, String NoFuleWeight, String AirportLimitWeight, String BalancePic, String BalancePicName, String OpUser, String OpUserName, String OpDate, String weightCg, String Caption, String TkoZx, String TkoMac, String passengerWeight, String articleWeight, String beforeFlyFule, String landWeightCg, String beforeWCgmin, String beforeWCgmax, String landWCgmin, String landWCgmax, Float UseWeight, Float UseWeightCg, String BasicWeight, Float allSbLj) {
         this.id = id;
         this.FlightDate = FlightDate;
         this.FlightId = FlightId;
@@ -83,6 +84,7 @@ public class AddFlightInfo {
         this.BalancePic = BalancePic;
         this.BalancePicName = BalancePicName;
         this.OpUser = OpUser;
+        this.OpUserName = OpUserName;
         this.OpDate = OpDate;
         this.weightCg = weightCg;
         this.Caption = Caption;
@@ -270,6 +272,14 @@ public class AddFlightInfo {
 
     public void setOpUser(String OpUser) {
         this.OpUser = OpUser;
+    }
+
+    public String getOpUserName() {
+        return OpUserName;
+    }
+
+    public void setOpUserName(String OpUserName) {
+        this.OpUserName = OpUserName;
     }
 
     public String getOpDate() {

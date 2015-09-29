@@ -144,6 +144,7 @@ public class TablesMain {
         flightInfo.addStringProperty("BalancePic");
         flightInfo.addStringProperty("BalancePicName");
         flightInfo.addStringProperty("OpUser");
+        flightInfo.addStringProperty("OpUserName");
         flightInfo.addStringProperty("OpDate");
         flightInfo.addStringProperty("weightCg");
         flightInfo.addStringProperty("Caption");//机长

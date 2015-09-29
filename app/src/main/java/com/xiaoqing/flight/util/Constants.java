@@ -1,6 +1,9 @@
 package com.xiaoqing.flight.util;
 
 import android.content.Intent;
+import android.os.Environment;
+import com.xiaoqing.flight.BuildConfig;
+import java.io.File;
 
 /**
  * Created by QingYang on 15/7/25.
@@ -36,5 +39,10 @@ public interface Constants {
     String ACTION_ADDUSERNAME = "addusername";
     String DB_ALLACWEIGHT =  "allAcWeight";
     String DB_ALLACSB = "allAcSb";
+
+    String SDCARD_STORAGE_PATH = Environment
+            .getExternalStorageDirectory().getAbsolutePath()
+            + File.separator
+            + "FlightApp" + File.separator + BuildConfig.APP_SPORT_TYPE + File.separator;
 }
 

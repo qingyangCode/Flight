@@ -3,11 +3,13 @@ package com.xiaoqing.flight;
 import android.app.Application;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import com.xiaoqing.flight.crashlog.CrashHandler;
 import com.xiaoqing.flight.data.dao.AddFlightInfo;
 import com.xiaoqing.flight.data.dao.DaoMaster;
 import com.xiaoqing.flight.data.dao.DaoSession;
 import com.xiaoqing.flight.network.MoccApi;
 import com.xiaoqing.flight.network.MoccApiImpl;
+import com.xiaoqing.flight.util.FileUtil;
 
 /**
  * Created by QingYang on 15/7/19.
@@ -20,6 +22,9 @@ public class FlightApplication extends Application {
     @Override public void onCreate() {
         super.onCreate();
         sContext = getApplicationContext();
+        FileUtil.makeRootDirs();
+        CrashHandler crashHandler = CrashHandler.getInstance();
+        crashHandler.init(this);
         initDatabase();
     }
 

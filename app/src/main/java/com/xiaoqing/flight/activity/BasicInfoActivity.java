@@ -339,6 +339,14 @@ public class BasicInfoActivity extends BaseActivity {
                 addFlightInfo.setArrAirportName(toAirport);
                 addFlightInfo.setBasicWeight(mWeight.getText().toString().trim());
                 addFlightInfo.setWeightCg(mFocus.getText().toString().trim());
+                try {
+                    if (UserManager.getInstance() != null) {
+                        addFlightInfo.setOpUser(UserManager.getInstance().getUser().getUserCode());
+                        addFlightInfo.setOpUserName(UserManager.getInstance().getUser().getUserName());
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
                 UserManager.getInstance().clearUserNameMaps();
 

@@ -317,7 +317,7 @@ public class ApiServiceManager {
         }catch (Exception e) {
             e.printStackTrace();
         }
-        getMoccApi().addFlightInfo(addFlightInfo.getFlightId(), DateFormatUtil.formatZDate(),
+        getMoccApi().addFlightInfo(addFlightInfo.getFlightId(), addFlightInfo.getFlightDate(),
                 addFlightInfo.getAircraftReg(), addFlightInfo.getAircraftType(),
                 addFlightInfo.getFlightNo(), addFlightInfo.getDep4Code(),
                 addFlightInfo.getDepAirportName(), addFlightInfo.getArr4Code(),
@@ -327,7 +327,7 @@ public class ApiServiceManager {
                 addFlightInfo.getLandWeight(), FormatUtil.formatTo2Decimal(nofuleWeight),
                 addFlightInfo.getAirportLimitWeight(), addFlightInfo.getBalancePic(),
                 addFlightInfo.getBalancePicName(),
-                UserManager.getInstance().getUser().getUserCode(), addFlightInfo.getOpDate(),
+                addFlightInfo.getOpUser(), addFlightInfo.getOpDate(),
                 addFlightInfo.getCaption(), addFlightInfo.getTkoZx(), addFlightInfo.getTkoMac(),
                 addFlightInfo.getPassengerWeight(), addFlightInfo.getArticleWeight(),
                 addFlightInfo.getBeforeWCgmin(), addFlightInfo.getBeforeWCgmax(),

@@ -322,11 +322,13 @@ public class RestrictionMapActivity extends BaseActivity{
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            float allsbLj = 0;
             try {
-                useWeightCg = (airLj + useWeightLj + FlightApplication.getAddFlightInfo().getAllSbLj()) / ( basicWeight + useWeight);
+                allsbLj = FlightApplication.getAddFlightInfo().getAllSbLj();
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            useWeightCg = (airLj + useWeightLj + allsbLj) / ( basicWeight + useWeight);
 
             FlightApplication.getAddFlightInfo().setNoFuleWeight(FormatUtil.formatTo2Decimal(allWeight - realOilFloat));
             FlightApplication.getAddFlightInfo().setUseWeight(basicWeight + useWeight);

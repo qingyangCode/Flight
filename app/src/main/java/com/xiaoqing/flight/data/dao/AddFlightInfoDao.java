@@ -44,23 +44,24 @@ public class AddFlightInfoDao extends AbstractDao<AddFlightInfo, Long> {
         public final static Property BalancePic = new Property(18, String.class, "BalancePic", false, "BALANCE_PIC");
         public final static Property BalancePicName = new Property(19, String.class, "BalancePicName", false, "BALANCE_PIC_NAME");
         public final static Property OpUser = new Property(20, String.class, "OpUser", false, "OP_USER");
-        public final static Property OpDate = new Property(21, String.class, "OpDate", false, "OP_DATE");
-        public final static Property WeightCg = new Property(22, String.class, "weightCg", false, "WEIGHT_CG");
-        public final static Property Caption = new Property(23, String.class, "Caption", false, "CAPTION");
-        public final static Property TkoZx = new Property(24, String.class, "TkoZx", false, "TKO_ZX");
-        public final static Property TkoMac = new Property(25, String.class, "TkoMac", false, "TKO_MAC");
-        public final static Property PassengerWeight = new Property(26, String.class, "passengerWeight", false, "PASSENGER_WEIGHT");
-        public final static Property ArticleWeight = new Property(27, String.class, "articleWeight", false, "ARTICLE_WEIGHT");
-        public final static Property BeforeFlyFule = new Property(28, String.class, "beforeFlyFule", false, "BEFORE_FLY_FULE");
-        public final static Property LandWeightCg = new Property(29, String.class, "landWeightCg", false, "LAND_WEIGHT_CG");
-        public final static Property BeforeWCgmin = new Property(30, String.class, "beforeWCgmin", false, "BEFORE_WCGMIN");
-        public final static Property BeforeWCgmax = new Property(31, String.class, "beforeWCgmax", false, "BEFORE_WCGMAX");
-        public final static Property LandWCgmin = new Property(32, String.class, "landWCgmin", false, "LAND_WCGMIN");
-        public final static Property LandWCgmax = new Property(33, String.class, "landWCgmax", false, "LAND_WCGMAX");
-        public final static Property UseWeight = new Property(34, Float.class, "UseWeight", false, "USE_WEIGHT");
-        public final static Property UseWeightCg = new Property(35, Float.class, "UseWeightCg", false, "USE_WEIGHT_CG");
-        public final static Property BasicWeight = new Property(36, String.class, "BasicWeight", false, "BASIC_WEIGHT");
-        public final static Property AllSbLj = new Property(37, Float.class, "allSbLj", false, "ALL_SB_LJ");
+        public final static Property OpUserName = new Property(21, String.class, "OpUserName", false, "OP_USER_NAME");
+        public final static Property OpDate = new Property(22, String.class, "OpDate", false, "OP_DATE");
+        public final static Property WeightCg = new Property(23, String.class, "weightCg", false, "WEIGHT_CG");
+        public final static Property Caption = new Property(24, String.class, "Caption", false, "CAPTION");
+        public final static Property TkoZx = new Property(25, String.class, "TkoZx", false, "TKO_ZX");
+        public final static Property TkoMac = new Property(26, String.class, "TkoMac", false, "TKO_MAC");
+        public final static Property PassengerWeight = new Property(27, String.class, "passengerWeight", false, "PASSENGER_WEIGHT");
+        public final static Property ArticleWeight = new Property(28, String.class, "articleWeight", false, "ARTICLE_WEIGHT");
+        public final static Property BeforeFlyFule = new Property(29, String.class, "beforeFlyFule", false, "BEFORE_FLY_FULE");
+        public final static Property LandWeightCg = new Property(30, String.class, "landWeightCg", false, "LAND_WEIGHT_CG");
+        public final static Property BeforeWCgmin = new Property(31, String.class, "beforeWCgmin", false, "BEFORE_WCGMIN");
+        public final static Property BeforeWCgmax = new Property(32, String.class, "beforeWCgmax", false, "BEFORE_WCGMAX");
+        public final static Property LandWCgmin = new Property(33, String.class, "landWCgmin", false, "LAND_WCGMIN");
+        public final static Property LandWCgmax = new Property(34, String.class, "landWCgmax", false, "LAND_WCGMAX");
+        public final static Property UseWeight = new Property(35, Float.class, "UseWeight", false, "USE_WEIGHT");
+        public final static Property UseWeightCg = new Property(36, Float.class, "UseWeightCg", false, "USE_WEIGHT_CG");
+        public final static Property BasicWeight = new Property(37, String.class, "BasicWeight", false, "BASIC_WEIGHT");
+        public final static Property AllSbLj = new Property(38, Float.class, "allSbLj", false, "ALL_SB_LJ");
     };
 
 
@@ -97,23 +98,24 @@ public class AddFlightInfoDao extends AbstractDao<AddFlightInfo, Long> {
                 "'BALANCE_PIC' TEXT," + // 18: BalancePic
                 "'BALANCE_PIC_NAME' TEXT," + // 19: BalancePicName
                 "'OP_USER' TEXT," + // 20: OpUser
-                "'OP_DATE' TEXT," + // 21: OpDate
-                "'WEIGHT_CG' TEXT," + // 22: weightCg
-                "'CAPTION' TEXT," + // 23: Caption
-                "'TKO_ZX' TEXT," + // 24: TkoZx
-                "'TKO_MAC' TEXT," + // 25: TkoMac
-                "'PASSENGER_WEIGHT' TEXT," + // 26: passengerWeight
-                "'ARTICLE_WEIGHT' TEXT," + // 27: articleWeight
-                "'BEFORE_FLY_FULE' TEXT," + // 28: beforeFlyFule
-                "'LAND_WEIGHT_CG' TEXT," + // 29: landWeightCg
-                "'BEFORE_WCGMIN' TEXT," + // 30: beforeWCgmin
-                "'BEFORE_WCGMAX' TEXT," + // 31: beforeWCgmax
-                "'LAND_WCGMIN' TEXT," + // 32: landWCgmin
-                "'LAND_WCGMAX' TEXT," + // 33: landWCgmax
-                "'USE_WEIGHT' REAL," + // 34: UseWeight
-                "'USE_WEIGHT_CG' REAL," + // 35: UseWeightCg
-                "'BASIC_WEIGHT' TEXT," + // 36: BasicWeight
-                "'ALL_SB_LJ' REAL);"); // 37: allSbLj
+                "'OP_USER_NAME' TEXT," + // 21: OpUserName
+                "'OP_DATE' TEXT," + // 22: OpDate
+                "'WEIGHT_CG' TEXT," + // 23: weightCg
+                "'CAPTION' TEXT," + // 24: Caption
+                "'TKO_ZX' TEXT," + // 25: TkoZx
+                "'TKO_MAC' TEXT," + // 26: TkoMac
+                "'PASSENGER_WEIGHT' TEXT," + // 27: passengerWeight
+                "'ARTICLE_WEIGHT' TEXT," + // 28: articleWeight
+                "'BEFORE_FLY_FULE' TEXT," + // 29: beforeFlyFule
+                "'LAND_WEIGHT_CG' TEXT," + // 30: landWeightCg
+                "'BEFORE_WCGMIN' TEXT," + // 31: beforeWCgmin
+                "'BEFORE_WCGMAX' TEXT," + // 32: beforeWCgmax
+                "'LAND_WCGMIN' TEXT," + // 33: landWCgmin
+                "'LAND_WCGMAX' TEXT," + // 34: landWCgmax
+                "'USE_WEIGHT' REAL," + // 35: UseWeight
+                "'USE_WEIGHT_CG' REAL," + // 36: UseWeightCg
+                "'BASIC_WEIGHT' TEXT," + // 37: BasicWeight
+                "'ALL_SB_LJ' REAL);"); // 38: allSbLj
     }
 
     /** Drops the underlying database table. */
@@ -228,89 +230,94 @@ public class AddFlightInfoDao extends AbstractDao<AddFlightInfo, Long> {
             stmt.bindString(21, OpUser);
         }
  
+        String OpUserName = entity.getOpUserName();
+        if (OpUserName != null) {
+            stmt.bindString(22, OpUserName);
+        }
+ 
         String OpDate = entity.getOpDate();
         if (OpDate != null) {
-            stmt.bindString(22, OpDate);
+            stmt.bindString(23, OpDate);
         }
  
         String weightCg = entity.getWeightCg();
         if (weightCg != null) {
-            stmt.bindString(23, weightCg);
+            stmt.bindString(24, weightCg);
         }
  
         String Caption = entity.getCaption();
         if (Caption != null) {
-            stmt.bindString(24, Caption);
+            stmt.bindString(25, Caption);
         }
  
         String TkoZx = entity.getTkoZx();
         if (TkoZx != null) {
-            stmt.bindString(25, TkoZx);
+            stmt.bindString(26, TkoZx);
         }
  
         String TkoMac = entity.getTkoMac();
         if (TkoMac != null) {
-            stmt.bindString(26, TkoMac);
+            stmt.bindString(27, TkoMac);
         }
  
         String passengerWeight = entity.getPassengerWeight();
         if (passengerWeight != null) {
-            stmt.bindString(27, passengerWeight);
+            stmt.bindString(28, passengerWeight);
         }
  
         String articleWeight = entity.getArticleWeight();
         if (articleWeight != null) {
-            stmt.bindString(28, articleWeight);
+            stmt.bindString(29, articleWeight);
         }
  
         String beforeFlyFule = entity.getBeforeFlyFule();
         if (beforeFlyFule != null) {
-            stmt.bindString(29, beforeFlyFule);
+            stmt.bindString(30, beforeFlyFule);
         }
  
         String landWeightCg = entity.getLandWeightCg();
         if (landWeightCg != null) {
-            stmt.bindString(30, landWeightCg);
+            stmt.bindString(31, landWeightCg);
         }
  
         String beforeWCgmin = entity.getBeforeWCgmin();
         if (beforeWCgmin != null) {
-            stmt.bindString(31, beforeWCgmin);
+            stmt.bindString(32, beforeWCgmin);
         }
  
         String beforeWCgmax = entity.getBeforeWCgmax();
         if (beforeWCgmax != null) {
-            stmt.bindString(32, beforeWCgmax);
+            stmt.bindString(33, beforeWCgmax);
         }
  
         String landWCgmin = entity.getLandWCgmin();
         if (landWCgmin != null) {
-            stmt.bindString(33, landWCgmin);
+            stmt.bindString(34, landWCgmin);
         }
  
         String landWCgmax = entity.getLandWCgmax();
         if (landWCgmax != null) {
-            stmt.bindString(34, landWCgmax);
+            stmt.bindString(35, landWCgmax);
         }
  
         Float UseWeight = entity.getUseWeight();
         if (UseWeight != null) {
-            stmt.bindDouble(35, UseWeight);
+            stmt.bindDouble(36, UseWeight);
         }
  
         Float UseWeightCg = entity.getUseWeightCg();
         if (UseWeightCg != null) {
-            stmt.bindDouble(36, UseWeightCg);
+            stmt.bindDouble(37, UseWeightCg);
         }
  
         String BasicWeight = entity.getBasicWeight();
         if (BasicWeight != null) {
-            stmt.bindString(37, BasicWeight);
+            stmt.bindString(38, BasicWeight);
         }
  
         Float allSbLj = entity.getAllSbLj();
         if (allSbLj != null) {
-            stmt.bindDouble(38, allSbLj);
+            stmt.bindDouble(39, allSbLj);
         }
     }
 
@@ -345,23 +352,24 @@ public class AddFlightInfoDao extends AbstractDao<AddFlightInfo, Long> {
             cursor.isNull(offset + 18) ? null : cursor.getString(offset + 18), // BalancePic
             cursor.isNull(offset + 19) ? null : cursor.getString(offset + 19), // BalancePicName
             cursor.isNull(offset + 20) ? null : cursor.getString(offset + 20), // OpUser
-            cursor.isNull(offset + 21) ? null : cursor.getString(offset + 21), // OpDate
-            cursor.isNull(offset + 22) ? null : cursor.getString(offset + 22), // weightCg
-            cursor.isNull(offset + 23) ? null : cursor.getString(offset + 23), // Caption
-            cursor.isNull(offset + 24) ? null : cursor.getString(offset + 24), // TkoZx
-            cursor.isNull(offset + 25) ? null : cursor.getString(offset + 25), // TkoMac
-            cursor.isNull(offset + 26) ? null : cursor.getString(offset + 26), // passengerWeight
-            cursor.isNull(offset + 27) ? null : cursor.getString(offset + 27), // articleWeight
-            cursor.isNull(offset + 28) ? null : cursor.getString(offset + 28), // beforeFlyFule
-            cursor.isNull(offset + 29) ? null : cursor.getString(offset + 29), // landWeightCg
-            cursor.isNull(offset + 30) ? null : cursor.getString(offset + 30), // beforeWCgmin
-            cursor.isNull(offset + 31) ? null : cursor.getString(offset + 31), // beforeWCgmax
-            cursor.isNull(offset + 32) ? null : cursor.getString(offset + 32), // landWCgmin
-            cursor.isNull(offset + 33) ? null : cursor.getString(offset + 33), // landWCgmax
-            cursor.isNull(offset + 34) ? null : cursor.getFloat(offset + 34), // UseWeight
-            cursor.isNull(offset + 35) ? null : cursor.getFloat(offset + 35), // UseWeightCg
-            cursor.isNull(offset + 36) ? null : cursor.getString(offset + 36), // BasicWeight
-            cursor.isNull(offset + 37) ? null : cursor.getFloat(offset + 37) // allSbLj
+            cursor.isNull(offset + 21) ? null : cursor.getString(offset + 21), // OpUserName
+            cursor.isNull(offset + 22) ? null : cursor.getString(offset + 22), // OpDate
+            cursor.isNull(offset + 23) ? null : cursor.getString(offset + 23), // weightCg
+            cursor.isNull(offset + 24) ? null : cursor.getString(offset + 24), // Caption
+            cursor.isNull(offset + 25) ? null : cursor.getString(offset + 25), // TkoZx
+            cursor.isNull(offset + 26) ? null : cursor.getString(offset + 26), // TkoMac
+            cursor.isNull(offset + 27) ? null : cursor.getString(offset + 27), // passengerWeight
+            cursor.isNull(offset + 28) ? null : cursor.getString(offset + 28), // articleWeight
+            cursor.isNull(offset + 29) ? null : cursor.getString(offset + 29), // beforeFlyFule
+            cursor.isNull(offset + 30) ? null : cursor.getString(offset + 30), // landWeightCg
+            cursor.isNull(offset + 31) ? null : cursor.getString(offset + 31), // beforeWCgmin
+            cursor.isNull(offset + 32) ? null : cursor.getString(offset + 32), // beforeWCgmax
+            cursor.isNull(offset + 33) ? null : cursor.getString(offset + 33), // landWCgmin
+            cursor.isNull(offset + 34) ? null : cursor.getString(offset + 34), // landWCgmax
+            cursor.isNull(offset + 35) ? null : cursor.getFloat(offset + 35), // UseWeight
+            cursor.isNull(offset + 36) ? null : cursor.getFloat(offset + 36), // UseWeightCg
+            cursor.isNull(offset + 37) ? null : cursor.getString(offset + 37), // BasicWeight
+            cursor.isNull(offset + 38) ? null : cursor.getFloat(offset + 38) // allSbLj
         );
         return entity;
     }
@@ -390,23 +398,24 @@ public class AddFlightInfoDao extends AbstractDao<AddFlightInfo, Long> {
         entity.setBalancePic(cursor.isNull(offset + 18) ? null : cursor.getString(offset + 18));
         entity.setBalancePicName(cursor.isNull(offset + 19) ? null : cursor.getString(offset + 19));
         entity.setOpUser(cursor.isNull(offset + 20) ? null : cursor.getString(offset + 20));
-        entity.setOpDate(cursor.isNull(offset + 21) ? null : cursor.getString(offset + 21));
-        entity.setWeightCg(cursor.isNull(offset + 22) ? null : cursor.getString(offset + 22));
-        entity.setCaption(cursor.isNull(offset + 23) ? null : cursor.getString(offset + 23));
-        entity.setTkoZx(cursor.isNull(offset + 24) ? null : cursor.getString(offset + 24));
-        entity.setTkoMac(cursor.isNull(offset + 25) ? null : cursor.getString(offset + 25));
-        entity.setPassengerWeight(cursor.isNull(offset + 26) ? null : cursor.getString(offset + 26));
-        entity.setArticleWeight(cursor.isNull(offset + 27) ? null : cursor.getString(offset + 27));
-        entity.setBeforeFlyFule(cursor.isNull(offset + 28) ? null : cursor.getString(offset + 28));
-        entity.setLandWeightCg(cursor.isNull(offset + 29) ? null : cursor.getString(offset + 29));
-        entity.setBeforeWCgmin(cursor.isNull(offset + 30) ? null : cursor.getString(offset + 30));
-        entity.setBeforeWCgmax(cursor.isNull(offset + 31) ? null : cursor.getString(offset + 31));
-        entity.setLandWCgmin(cursor.isNull(offset + 32) ? null : cursor.getString(offset + 32));
-        entity.setLandWCgmax(cursor.isNull(offset + 33) ? null : cursor.getString(offset + 33));
-        entity.setUseWeight(cursor.isNull(offset + 34) ? null : cursor.getFloat(offset + 34));
-        entity.setUseWeightCg(cursor.isNull(offset + 35) ? null : cursor.getFloat(offset + 35));
-        entity.setBasicWeight(cursor.isNull(offset + 36) ? null : cursor.getString(offset + 36));
-        entity.setAllSbLj(cursor.isNull(offset + 37) ? null : cursor.getFloat(offset + 37));
+        entity.setOpUserName(cursor.isNull(offset + 21) ? null : cursor.getString(offset + 21));
+        entity.setOpDate(cursor.isNull(offset + 22) ? null : cursor.getString(offset + 22));
+        entity.setWeightCg(cursor.isNull(offset + 23) ? null : cursor.getString(offset + 23));
+        entity.setCaption(cursor.isNull(offset + 24) ? null : cursor.getString(offset + 24));
+        entity.setTkoZx(cursor.isNull(offset + 25) ? null : cursor.getString(offset + 25));
+        entity.setTkoMac(cursor.isNull(offset + 26) ? null : cursor.getString(offset + 26));
+        entity.setPassengerWeight(cursor.isNull(offset + 27) ? null : cursor.getString(offset + 27));
+        entity.setArticleWeight(cursor.isNull(offset + 28) ? null : cursor.getString(offset + 28));
+        entity.setBeforeFlyFule(cursor.isNull(offset + 29) ? null : cursor.getString(offset + 29));
+        entity.setLandWeightCg(cursor.isNull(offset + 30) ? null : cursor.getString(offset + 30));
+        entity.setBeforeWCgmin(cursor.isNull(offset + 31) ? null : cursor.getString(offset + 31));
+        entity.setBeforeWCgmax(cursor.isNull(offset + 32) ? null : cursor.getString(offset + 32));
+        entity.setLandWCgmin(cursor.isNull(offset + 33) ? null : cursor.getString(offset + 33));
+        entity.setLandWCgmax(cursor.isNull(offset + 34) ? null : cursor.getString(offset + 34));
+        entity.setUseWeight(cursor.isNull(offset + 35) ? null : cursor.getFloat(offset + 35));
+        entity.setUseWeightCg(cursor.isNull(offset + 36) ? null : cursor.getFloat(offset + 36));
+        entity.setBasicWeight(cursor.isNull(offset + 37) ? null : cursor.getString(offset + 37));
+        entity.setAllSbLj(cursor.isNull(offset + 38) ? null : cursor.getFloat(offset + 38));
      }
     
     /** @inheritdoc */
