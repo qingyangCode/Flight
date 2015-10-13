@@ -22,25 +22,31 @@ import com.xiaoqing.flight.FlightApplication;
 import com.xiaoqing.flight.R;
 import com.xiaoqing.flight.data.dao.AcGrants;
 import com.xiaoqing.flight.data.dao.AcGrantsDao;
+import com.xiaoqing.flight.data.dao.AcWeightLimit;
+import com.xiaoqing.flight.data.dao.AcWeightLimitDao;
 import com.xiaoqing.flight.data.dao.AddFlightInfo;
 import com.xiaoqing.flight.data.dao.UploadAirPerson;
 import com.xiaoqing.flight.data.dao.UploadAirPersonDao;
 import com.xiaoqing.flight.data.dao.User;
 import com.xiaoqing.flight.data.dao.UserDao;
 import com.xiaoqing.flight.entity.AddFlightInfoResponse;
+import com.xiaoqing.flight.entity.LineCharData;
 import com.xiaoqing.flight.entity.ValidCaptionResponse;
 import com.xiaoqing.flight.network.ResponseListner;
 import com.xiaoqing.flight.network.synchronous.FeedType;
 import com.xiaoqing.flight.util.ApiServiceManager;
 import com.xiaoqing.flight.util.CommonProgressDialog;
+import com.xiaoqing.flight.util.CommonUtils;
 import com.xiaoqing.flight.util.Constants;
 import com.xiaoqing.flight.util.DBManager;
 import com.xiaoqing.flight.util.FormatUtil;
 import com.xiaoqing.flight.util.ToastUtil;
 import com.xiaoqing.flight.util.UserManager;
 import com.xiaoqing.flight.util.WindowUtil;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
-import org.w3c.dom.Text;
 
 /**
  * Created by QingYang on 15/9/20.
@@ -130,6 +136,10 @@ public class ManifestActivity extends BaseActivity {
 
     private CommonProgressDialog progressDialog;
 
+    private LineCharData mLineCharData;
+
+    private AddFlightInfo addFlightInfo;
+
 
     private Handler handler = new Handler() {
         @Override public void handleMessage(Message msg) {
@@ -152,18 +162,20 @@ public class ManifestActivity extends BaseActivity {
         getTopBarTitle("电子舱单");
         getTopBarRight("机长确认");
 
+        mLineCharData = new LineCharData();
+
         aircraftType = getIntent().getStringExtra(Constants.ACTION_AIRCRAFTTYPE);
         aircraftReg = getIntent().getStringExtra(Constants.ACTION_AIRCRAFTREG);
 
+        addFlightInfo = FlightApplication.getAddFlightInfo();
+        showCharView();
 
         if ("G450".equalsIgnoreCase(aircraftType)) {
             layout_limitview.setVisibility(View.GONE);
             layout_g450.setVisibility(View.VISIBLE);
             beforeFly.setVisibility(View.GONE);
-
         }
 
-        AddFlightInfo addFlightInfo = FlightApplication.getAddFlightInfo();
         if (addFlightInfo != null) {
             if (!TextUtils.isEmpty(addFlightInfo.getOpDate())) {
                 String substring = addFlightInfo.getOpDate()
@@ -190,7 +202,7 @@ public class ManifestActivity extends BaseActivity {
 
             tv_bfWeight1.setText(addFlightInfo.getTofWeight());
             tv_landWeight1.setText(addFlightInfo.getLandWeight());
-            tv_nofuleWeight.setText(addFlightInfo.getNoFuleWeight());
+            tv_nofuleWeight.setText(FormatUtil.formatTo2Decimal(addFlightInfo.getNoFuleWeight()));
 
             try {
                 tv_bfWeightCg.setText(FormatUtil.formatTo2Decimal(Float.parseFloat(addFlightInfo.getTkoZx())));
@@ -265,11 +277,84 @@ public class ManifestActivity extends BaseActivity {
                 FormatUtil.formatTo2Decimal(passengerWeight));
         FlightApplication.getAddFlightInfo().setArticleWeight(
                 FormatUtil.formatTo2Decimal(goodsWeight));
-        //float useWeight = Float.parseFloat(FlightApplication.getAddFlightInfo().getNoFuleWeight())
-        //        + exitgoodsWeight;
-
-        //FlightApplication.getAddFlightInfo().setUseWeight(useWeight);
     }
+
+    private void showCharView() {
+        AcWeightLimitDao acWeightLimitDao = FlightApplication.getDaoSession().getAcWeightLimitDao();
+        List<AcWeightLimit> list = acWeightLimitDao.queryBuilder()
+                .where(AcWeightLimitDao.Properties.AcType.eq(aircraftType))
+                .list();
+        ArrayList<LineCharData.WeightLimitData> weightLimitDatas = new ArrayList<>();
+        //重心前后限数据
+        if (list != null && list.size() != 0) {
+            for (AcWeightLimit acWeightLimit : list) {
+                LineCharData.WeightLimitData weightLimitData = new LineCharData.WeightLimitData();
+                weightLimitData.setWeight(acWeightLimit.getWeight());
+                weightLimitData.setWeightCg1(acWeightLimit.getWeightCg1());
+                weightLimitData.setWeightCg2(acWeightLimit.getWeightCg2());
+                weightLimitDatas.add(weightLimitData);
+            }
+            Collections.sort(weightLimitDatas, new Comparator<LineCharData.WeightLimitData>() {
+                @Override public int compare(LineCharData.WeightLimitData lhs,
+                        LineCharData.WeightLimitData rhs) {
+                    return lhs.getWeight() > rhs.getWeight() ? 1 : -1;
+                }
+            });
+            mLineCharData.setWeightLimitDatas(weightLimitDatas);
+        }
+
+        //重心数据
+        if (addFlightInfo != null) {
+            ArrayList<LineCharData.WeightData> weightDatas = new ArrayList<>();
+            LineCharData.WeightData weightData = new LineCharData.WeightData();
+            weightData.setWeight(addFlightInfo.getUseWeight());
+            weightData.setWeightCg(addFlightInfo.getUseWeightCg());
+            weightDatas.add(weightData);
+            weightData = new LineCharData.WeightData();
+            float beforeWeight = 0;
+            float beforeWeightCg = 0;
+            try {
+                beforeWeight =  Float.parseFloat(addFlightInfo.getTofWeight());
+                beforeWeightCg = Float.parseFloat(addFlightInfo.getTkoZx());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            weightData.setWeight(beforeWeight);
+            weightData.setWeightCg(beforeWeightCg);
+            weightDatas.add(weightData);
+
+            weightData = new LineCharData.WeightData();
+            float landWeight = 0;
+            float landWeightCg = 0;
+            try {
+                landWeight = Float.parseFloat(addFlightInfo.getLandWeight());
+                landWeightCg = Float.parseFloat(addFlightInfo.getLandWeightCg());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            weightData.setWeight(landWeight);
+            weightData.setWeightCg(landWeightCg);
+            weightDatas.add(weightData);
+
+            mLineCharData.setWeightDatas(weightDatas);
+            mLineCharData.setWeightLimitDatas(weightLimitDatas);
+        }
+    }
+
+    //根据重量获取重心
+    private float getWeightCg (float weight) {
+        float weightCg = 0;
+        float oilWeight = 0;
+        if (addFlightInfo != null) {
+            oilWeight = weight - addFlightInfo.getNoFuleWeight();
+            float oilWeightLj = CommonUtils.getOilWeightLj(oilWeight, aircraftType);
+            weightCg = weight / (addFlightInfo.getNoFuleLj() + oilWeightLj);
+        }
+        return weightCg;
+    }
+
+
 
     @Override public View.OnClickListener getRightOnClickListener() {
         return new View.OnClickListener() {
@@ -426,8 +511,6 @@ public class ManifestActivity extends BaseActivity {
                 if (response != null
                         && response.ResponseObject != null
                         && response.ResponseObject.ResponseCode == Constants.RESULT_OK) {
-                    //ToastUtil.showToast(mContext,
-                    //        R.drawable.toast_warning, "航班信息添加成功");
                     Toast.makeText(mContext, "航班信息添加成功", Toast.LENGTH_LONG).show();
                     UserManager.getInstance().setAddFlightSuccess(true);
                     mTopBarRight.setVisibility(View.GONE);
@@ -436,7 +519,6 @@ public class ManifestActivity extends BaseActivity {
 
                     //上传机上成员信息
                     ApiServiceManager.getInstance().uploadAirPersonInfo(FlightApplication.getAddFlightInfo().getFlightId());
-                    //DBManager.getInstance().deleteFlightInfo(FlightApplication.getAddFlightInfo().getFlightId());
                 } else {
                     addFlightInfoToDB();
                     ToastUtil.showToast(mContext,
@@ -449,8 +531,6 @@ public class ManifestActivity extends BaseActivity {
             @Override public void onEmptyOrError(String message) {
                 hiddenDialog();
                 addFlightInfoToDB();
-                //ToastUtil.showToast(mContext,
-                //        R.drawable.toast_warning, message);
 
             }
         });

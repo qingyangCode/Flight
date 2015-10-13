@@ -25,6 +25,7 @@ import com.xiaoqing.flight.data.dao.FuleLimit;
 import com.xiaoqing.flight.data.dao.FuleLimitDao;
 import com.xiaoqing.flight.data.dao.SeatByAcReg;
 import com.xiaoqing.flight.util.CommonProgressDialog;
+import com.xiaoqing.flight.util.CommonUtils;
 import com.xiaoqing.flight.util.Constants;
 import com.xiaoqing.flight.util.DateFormatUtil;
 import com.xiaoqing.flight.util.FormatUtil;
@@ -45,8 +46,6 @@ import java.util.List;
 public class RestrictionMapActivity extends BaseActivity{
     private String TAG = RestrictionMapActivity.class.getSimpleName();
 
-
-
     @InjectView(R.id.tv_maxoil)
     TextView mMaxOil;
     @InjectView(R.id.tv_realityoil)
@@ -61,22 +60,8 @@ public class RestrictionMapActivity extends BaseActivity{
     TextView mDownWight;
     @InjectView(R.id.tv_mac)
     TextView mMac;
-    @InjectView(R.id.line_charview)
-    MyView  mLineCharView;
     @InjectView(R.id.tv_flightCg)
     TextView mFlightCg;
-    //@InjectView(R.id.tv_reality_focus)
-    //TextView mRealityFocus;
-    //@InjectView(R.id.tv_slide_focus)
-    //TextView mSlideFocus;
-    //@InjectView(R.id.tv_fly_focus)
-    //TextView mFlyFocus;
-    //@InjectView(R.id.tv_be_fore_focus)
-    //TextView mBroreFocus;
-    //@InjectView(R.id.tv_down_focus)
-    //TextView mDownFocus;
-    private ArrayList<Float> lineX;
-    private ArrayList<Float> lineY;
 
     private ArrayList<SeatByAcReg> seatList;
     private String aircraftType;
@@ -90,7 +75,6 @@ public class RestrictionMapActivity extends BaseActivity{
     private float landCg = 0;//着陆中心
     private float useWeightCg = 0;//使用空重重心
     private float mac = 0;//起飞MAC
-    private String captainName = "";
     private float upWeight = 0;
     //着陆重心前后限
     private Pair<Float, Float> landFuleLimit;
@@ -111,7 +95,6 @@ public class RestrictionMapActivity extends BaseActivity{
     @Override protected void onResume() {
         super.onResume();
         if (UserManager.getInstance().isAddFilghtSuccess()) {
-            //hiddenRightBar();
             finish();
         }
     }
@@ -119,8 +102,6 @@ public class RestrictionMapActivity extends BaseActivity{
     @Override protected void onloadData() {
         mTopBarTitle.setText("油量信息");
         getTopBarRight("下一步");
-        lineX = new ArrayList<>();
-        lineY = new ArrayList<>();
         aircraftType = getIntent().getStringExtra(Constants.ACTION_AIRCRAFTTYPE);
         aircraftReg = getIntent().getStringExtra(Constants.ACTION_AIRCRAFTREG);
         seatList = (ArrayList<SeatByAcReg>) getIntent().getSerializableExtra(Constants.ACTION_SEATLIST);
@@ -133,7 +114,6 @@ public class RestrictionMapActivity extends BaseActivity{
         airLj = allAircraftList.get(0).getLj();
 
         updateWeightInfos();
-
 
         //机型信息 最大起飞重量 最大无油重量 最大机坪重量
         AllAcTypeDao allAcTypeDao = FlightApplication.getDaoSession().getAllAcTypeDao();
@@ -190,7 +170,6 @@ public class RestrictionMapActivity extends BaseActivity{
                 .where(AllAircraftDao.Properties.AircraftType.eq(aircraftType))
                 .list();
         if (allAcTypeList != null && allAcTypeList.size() > 0) {
-            AllAcType allAcType = allAcTypeList.get(0);
             float gooodsWeights = 0;
             float totalPassengerLj = 0;
             float passengerWeight = 0;
@@ -223,8 +202,6 @@ public class RestrictionMapActivity extends BaseActivity{
             float realOilFloat = 0;
             float slideOilFloat = 0;
             float flyOilFloat = 0;
-            float beforeWeightFloat = 0;
-            float downWeightFloat = 0;
             String basicWt = FlightApplication.getAddFlightInfo().getBasicWeight();
             float basicWeight = 0;
             try {
@@ -303,12 +280,12 @@ public class RestrictionMapActivity extends BaseActivity{
             }
             //起飞油量力矩
             if (!"G450".equalsIgnoreCase(aircraftType))
-                beforeLj = getOilWeightLj(beforeFlightOil);
+                beforeLj = CommonUtils.getOilWeightLj(beforeFlightOil, aircraftType);
 
             //着陆油量力矩
             float landOilLj = 0;
             if (!"G450".equalsIgnoreCase(aircraftType)) {
-                landOilLj = getOilWeightLj(realOilFloat - slideOilFloat - flyOilFloat);
+                landOilLj = CommonUtils.getOilWeightLj(realOilFloat - slideOilFloat - flyOilFloat, aircraftType);
             }
 
             try {
@@ -330,20 +307,16 @@ public class RestrictionMapActivity extends BaseActivity{
             }
             useWeightCg = (airLj + useWeightLj + allsbLj) / ( basicWeight + useWeight);
 
-            FlightApplication.getAddFlightInfo().setNoFuleWeight(FormatUtil.formatTo2Decimal(allWeight - realOilFloat));
+            FlightApplication.getAddFlightInfo().setNoFuleWeight(allWeight - realOilFloat);
+            FlightApplication.getAddFlightInfo().setNoFuleLj(airLj + totalPassengerLj + totalSbLj);
             FlightApplication.getAddFlightInfo().setUseWeight(basicWeight + useWeight);
             FlightApplication.getAddFlightInfo().setUseWeightCg(useWeightCg);
-
-
 
             beforeFuleLimit = getFuleLimit(beforeWeight);
             if (beforeFuleLimit != null) {
                 FlightApplication.getAddFlightInfo().setBeforeWCgmin(FormatUtil.formatTo2Decimal(beforeFuleLimit.first));
                 FlightApplication.getAddFlightInfo().setBeforeWCgmax(FormatUtil.formatTo2Decimal(beforeFuleLimit.second));
             }
-
-
-
             //着陆重心前后限
             landFuleLimit = getFuleLimit(landWeight);
             if (landFuleLimit != null) {
@@ -352,77 +325,13 @@ public class RestrictionMapActivity extends BaseActivity{
             }
             //着陆重心
             FlightApplication.getAddFlightInfo().setLandWeightCg(FormatUtil.formatTo2Decimal(landCg));
-
             mFlightCg.setText(FormatUtil.formatTo2Decimal(flightCg));
             getMAC(flightCg);
         }
     }
 
-    //油量力矩
-    private float getOilWeightLj(float OilWeight) {
-        ArrayList<FuleLimit> fuleLimits = new ArrayList<>();
-        float oilLj = 0;
-        FuleLimitDao fuleLimitDao = FlightApplication.getDaoSession().getFuleLimitDao();
-        List<FuleLimit> list = fuleLimitDao.queryBuilder().where(FuleLimitDao.Properties.AcType.eq(aircraftType)).list();
-        fuleLimits.addAll(list);
 
-        Collections.sort(fuleLimits, new Comparator<FuleLimit>() {
-            @Override public int compare(FuleLimit lhs, FuleLimit rhs) {
-                return lhs.getFuleWeight() > rhs.getFuleWeight() ? 1 : -1;
-            }
-        });
 
-        int temp = 0;
-        //遍历数据，如数据库中存在当前重量力矩，则直接返回力矩
-        for (int i = 0; i < fuleLimits.size(); i++) {
-            if (OilWeight == fuleLimits.get(i).getFuleWeight()) {
-                oilLj = fuleLimits.get(i).getFuleLj();
-                break;
-            }
-        }
-        // 二分法计算输入油量最近的取值
-        if (oilLj == 0) {
-            int left = 0;
-            int right = fuleLimits.size() - 1;
-            while (left < right) {
-                int middle = (left + right) / 2;
-                if(temp == middle) break;
-                if (OilWeight < fuleLimits.get(middle).getFuleWeight()) {
-                    right = middle;
-                } else {
-                    left = middle;
-                }
-                temp = middle;
-            }
-            //待计算重量 一定小于 数据库中和他相邻的两个数据中大的那个重量
-            //if (OilWeight < fuleLimits.get(temp+1).getFuleWeight()) {
-            //
-            //} else if () {
-            //
-            //}
-
-            int index = 0;
-            if (OilWeight < fuleLimits.get(temp).getFuleWeight()) {
-                index = temp;
-            } else {
-                index = temp + 1;
-            }
-
-            //算法得到力矩
-            try {
-                oilLj = fuleLimits.get(index).getFuleLj()
-                        - (fuleLimits.get(index).getFuleLj() - fuleLimits.get(index - 1).getFuleLj())
-                        * (fuleLimits.get(index).getFuleWeight() - OilWeight) / (fuleLimits.get(
-                        index).getFuleWeight() - fuleLimits.get(index - 1).getFuleWeight());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        LogUtil.LOGD(TAG, "before fly oil Lj == " + oilLj);
-        return oilLj;
-    }
-
-    private int reqeustCount = 0;
 
     private void getMAC(final float flightCg) {
         if (MACUtil.TYPE_CE560.equals(aircraftType)) {
@@ -484,7 +393,6 @@ public class RestrictionMapActivity extends BaseActivity{
             float weightLimitMin = 0;
             float weightLimitMax = 0;
 
-            //if (weight < acWeightLimits.get(temp+1).getWeight()) {
 
             int index = 0;
             if (weight < acWeightLimits.get(temp).getWeight()) {
@@ -510,91 +418,10 @@ public class RestrictionMapActivity extends BaseActivity{
             } catch (Exception e) {
                 e.printStackTrace();
             }
-                //oilLj = fuleLimits.get(temp + 1).getFuleLj()
-                //        - (fuleLimits.get(temp + 1).getFuleLj() - fuleLimits.get(temp).getFuleLj()) * (fuleLimits.get(temp + 1).getFuleWeight() - OilWeight)
-                //        / (fuleLimits.get(temp + 1).getFuleWeight() - fuleLimits.get(temp)
-                //        .getFuleWeight());
-            //}
-
-
         }
-
-        //FuleLimitDao fuleLimitDao = FlightApplication.getDaoSession().getFuleLimitDao();
-        //List<FuleLimit> fullLimitList = fuleLimitDao.queryBuilder()
-        //        .where(FuleLimitDao.Properties.AcType.eq(aircraftType))
-        //        .list();
-        //
-        //if (fullLimitList != null && fullLimitList.size() != 0) {
-        //
-        //    for (FuleLimit fuleLimit : fullLimitList) {
-        //        if (weight == fuleLimit.getFuleWeight()) {
-        //            return new Pair<Float, Float>(fuleLimit.get);
-        //        }
-        //    }
-        //}
-        //
-        //if ((fullLimitList == null || fullLimitList.size() == 0) && reqeustCount < 1) {
-        //    reqeustCount ++;
-        //    if (allAcTypeList != null && allAcTypeList.size() > 0) {
-        //        AllAcType allAcType = allAcTypeList.get(0);
-        //        ApiServiceManager.getInstance().getFuleLimitByAcType(allAcType.getAircraftType(),
-        //                allAcType.getPortLimit()+"", mBeforeWeight.getText().toString(),
-        //                mDownWight.getText().toString(), allAcType.getMzfw()+"", DateFormatUtil.formatTDate(),
-        //                UserManager.getInstance().getUser().getSysVersion()+"", new ResponseListner<FuleLimitResponse>() {
-        //
-        //                    @Override public void onResponse(FuleLimitResponse response) {
-        //                        if (response != null && response.ResponseObject != null && response.ResponseObject.ResponseCode == Constants.RESULT_OK) {
-        //                            getMAC(weight);
-        //                        }
-        //                    }
-        //
-        //                    @Override public void onEmptyOrError(String message) {
-        //                        if (!TextUtils.isEmpty(message))
-        //                            ToastUtil.showToast(RestrictionMapActivity.this,
-        //                                    R.drawable.toast_warning, message);
-        //                    }
-        //                });
-        //
-        //    }
-        //}
         return null;
     }
 
-    private void showCharView(ArrayList<AcWeightLimit> acWeightLimits) {
-        String [] xData = new String[acWeightLimits.size()];
-        String [] yData = new String[acWeightLimits.size()];
-        String [] datas = new String[acWeightLimits.size() * 2];
-        for (int i = 0 ; i < acWeightLimits.size(); i++ ) {
-            //String weight = acWeightLimits.get(i).getWeight();
-            //float wei = 0;
-            //if (!TextUtils.isEmpty(weight))
-            //    wei = Float.parseFloat(weight);
-            //xData[i] = weight;
-            //String Cg1 = acWeightLimits.get(i).getWeightCg1();
-            //float weiCg1 = 0;
-            //if (!TextUtils.isEmpty(Cg1))
-            //    weiCg1 = Float.parseFloat(Cg1);
-            yData[i] = (380 + (i * 5))+"";
-            //datas[i] = Cg1;
-        }
-
-        for (int y = acWeightLimits.size() - 1; y > 0; y--) {
-            //String weight = acWeightLimits.get(y).getWeight();
-            //float wei = 0;
-            //if (!TextUtils.isEmpty(weight))
-            //    wei =Float.parseFloat(weight);
-            //lineX.add(wei);
-            //String weightCg2 = acWeightLimits.get(y).getWeightCg2();
-            //datas[y * 2] = weightCg2;
-            //float weiCg2 = 0;
-            //if (!TextUtils.isEmpty(weightCg2)) {
-            //    lineY.add(weiCg2);
-            //}
-        }
-        //mLineCharView.addData(lineData);
-        mLineCharView.SetInfo(xData, yData, datas, "限制图");
-
-    }
 
     @Override public View.OnClickListener getRightOnClickListener() {
         return new View.OnClickListener() {
@@ -677,26 +504,16 @@ public class RestrictionMapActivity extends BaseActivity{
 
         AddFlightInfo addFlightInfo = FlightApplication.getAddFlightInfo();
         String basicWeight = addFlightInfo.getBasicWeight();
-        String weightCg = addFlightInfo.getWeightCg();
         float basicWeightFloat = 0;//基本空重 : 飞机空重 ＋ 设备重
         float realOilFloat = 0;
-        float slideOilFloat = 0;
         float flyOilFloat = 0;
-        float beforeWeightFloat = 0;
-        float downWeightFloat = 0;
         try {
             if (!TextUtils.isEmpty(basicWeight))
                 basicWeightFloat = Float.parseFloat(basicWeight);
             if (!TextUtils.isEmpty(realityOil))
                 realOilFloat = Float.parseFloat(realityOil);
-            if (!TextUtils.isEmpty(slideOil))
-                slideOilFloat = Float.parseFloat(slideOil);
             if (!TextUtils.isEmpty(flyOil))
                 flyOilFloat = Float.parseFloat(flyOil);
-            if (!TextUtils.isEmpty(beforeWeight))
-                beforeWeightFloat = Float.parseFloat(beforeWeight);
-            if (!TextUtils.isEmpty(downWeight) && !"--".equals(downWeight))
-                downWeightFloat = Float.parseFloat(downWeight);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -762,6 +579,5 @@ public class RestrictionMapActivity extends BaseActivity{
 
     @Override protected void onStop() {
         super.onStop();
-        reqeustCount = 0;
     }
 }

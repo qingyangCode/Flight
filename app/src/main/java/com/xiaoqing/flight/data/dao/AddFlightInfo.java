@@ -27,7 +27,8 @@ public class AddFlightInfo {
     private String RouteFule;
     private String TofWeight;
     private String LandWeight;
-    private String NoFuleWeight;
+    private float NoFuleWeight;
+    private float NoFuleLj;
     private String AirportLimitWeight;
     private String BalancePic;
     private String BalancePicName;
@@ -62,7 +63,7 @@ public class AddFlightInfo {
         this.id = id;
     }
 
-    public AddFlightInfo(Long id, String FlightDate, String FlightId, String AircraftReg, String AircraftType, String FlightNo, String Dep4Code, String DepAirportName, String Arr4Code, String ArrAirportName, String MaxFule, String RealFule, String SlieFule, String RouteFule, String TofWeight, String LandWeight, String NoFuleWeight, String AirportLimitWeight, String BalancePic, String BalancePicName, String OpUser, String OpUserName, String OpDate, String weightCg, String Caption, String TkoZx, String TkoMac, String passengerWeight, String articleWeight, String beforeFlyFule, String landWeightCg, String beforeWCgmin, String beforeWCgmax, String landWCgmin, String landWCgmax, Float UseWeight, Float UseWeightCg, String BasicWeight, Float allSbLj) {
+    public AddFlightInfo(Long id, String FlightDate, String FlightId, String AircraftReg, String AircraftType, String FlightNo, String Dep4Code, String DepAirportName, String Arr4Code, String ArrAirportName, String MaxFule, String RealFule, String SlieFule, String RouteFule, String TofWeight, String LandWeight, float NoFuleWeight, float NoFuleLj, String AirportLimitWeight, String BalancePic, String BalancePicName, String OpUser, String OpUserName, String OpDate, String weightCg, String Caption, String TkoZx, String TkoMac, String passengerWeight, String articleWeight, String beforeFlyFule, String landWeightCg, String beforeWCgmin, String beforeWCgmax, String landWCgmin, String landWCgmax, Float UseWeight, Float UseWeightCg, String BasicWeight, Float allSbLj) {
         this.id = id;
         this.FlightDate = FlightDate;
         this.FlightId = FlightId;
@@ -80,6 +81,7 @@ public class AddFlightInfo {
         this.TofWeight = TofWeight;
         this.LandWeight = LandWeight;
         this.NoFuleWeight = NoFuleWeight;
+        this.NoFuleLj = NoFuleLj;
         this.AirportLimitWeight = AirportLimitWeight;
         this.BalancePic = BalancePic;
         this.BalancePicName = BalancePicName;
@@ -234,12 +236,20 @@ public class AddFlightInfo {
         this.LandWeight = LandWeight;
     }
 
-    public String getNoFuleWeight() {
+    public float getNoFuleWeight() {
         return NoFuleWeight;
     }
 
-    public void setNoFuleWeight(String NoFuleWeight) {
+    public void setNoFuleWeight(float NoFuleWeight) {
         this.NoFuleWeight = NoFuleWeight;
+    }
+
+    public float getNoFuleLj() {
+        return NoFuleLj;
+    }
+
+    public void setNoFuleLj(float NoFuleLj) {
+        this.NoFuleLj = NoFuleLj;
     }
 
     public String getAirportLimitWeight() {

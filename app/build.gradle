@@ -60,7 +60,6 @@ android {
             buildConfigField "int", "LOG_LEVEL", "android.util.Log.VERBOSE"
             buildConfigField "String", "SERVER_URL", "\"http://124.127.106.196:80\""
         }
-
     }
 }
 

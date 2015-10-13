@@ -187,7 +187,7 @@ public class DBManager {
             AcGrantsDao acGrantsDao = daoSession.getAcGrantsDao();
             List<AcGrants> list = acGrantsDao.queryBuilder().list();
             if (list != null && list.size() > 0) {
-                acGrantsDao.deleteInTx(iAppObject);
+                acGrantsDao.deleteInTx(list);
             }
             acGrantsDao.insertInTx(iAppObject);
             insertSystemVersion(Constants.DB_ACGRANTS, dbVersion);

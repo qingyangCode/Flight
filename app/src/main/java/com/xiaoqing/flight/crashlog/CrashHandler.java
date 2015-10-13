@@ -9,7 +9,6 @@ import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 import com.xiaoqing.flight.util.Constants;
-import com.xiaoqing.flight.util.UserManager;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;

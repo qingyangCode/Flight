@@ -139,7 +139,8 @@ public class TablesMain {
         flightInfo.addStringProperty("RouteFule");
         flightInfo.addStringProperty("TofWeight");
         flightInfo.addStringProperty("LandWeight");
-        flightInfo.addStringProperty("NoFuleWeight");
+        flightInfo.addFloatProperty("NoFuleWeight").notNull();
+        flightInfo.addFloatProperty("NoFuleLj").notNull();
         flightInfo.addStringProperty("AirportLimitWeight");
         flightInfo.addStringProperty("BalancePic");
         flightInfo.addStringProperty("BalancePicName");
