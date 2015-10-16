@@ -25,6 +25,8 @@ import com.xiaoqing.flight.data.dao.AcGrantsDao;
 import com.xiaoqing.flight.data.dao.AcWeightLimit;
 import com.xiaoqing.flight.data.dao.AcWeightLimitDao;
 import com.xiaoqing.flight.data.dao.AddFlightInfo;
+import com.xiaoqing.flight.data.dao.AllAcType;
+import com.xiaoqing.flight.data.dao.AllAcTypeDao;
 import com.xiaoqing.flight.data.dao.UploadAirPerson;
 import com.xiaoqing.flight.data.dao.UploadAirPersonDao;
 import com.xiaoqing.flight.data.dao.User;
@@ -336,6 +338,17 @@ public class ManifestActivity extends BaseActivity {
             weightData.setWeight(landWeight);
             weightData.setWeightCg(landWeightCg);
             weightDatas.add(weightData);
+
+            AllAcTypeDao allAcTypeDao = FlightApplication.getDaoSession().getAllAcTypeDao();
+            List<AllAcType> acTypeList = allAcTypeDao.queryBuilder()
+                    .where(AllAcTypeDao.Properties.AircraftType.eq(aircraftType))
+                    .list();
+
+            if (acTypeList != null && acTypeList.size() != 0) {
+                mLineCharData.setMaxFlyweight(acTypeList.get(0).getTofWeightLimit());
+                mLineCharData.setMaxLandWeight(acTypeList.get(0).getLandWeightLimit());
+                mLineCharData.setMaxNofuleWeight(acTypeList.get(0).getMzfw());
+            }
 
             mLineCharData.setWeightDatas(weightDatas);
             mLineCharData.setWeightLimitDatas(weightLimitDatas);

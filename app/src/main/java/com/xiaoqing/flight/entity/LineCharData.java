@@ -11,6 +11,10 @@ public class LineCharData implements Serializable{
     private ArrayList<WeightLimitData> weightLimitDatas;
     private ArrayList<WeightData> weightDatas;
 
+    private float maxFlyweight;//最大起飞重量
+    private float maxLandWeight;//最大着陆重量
+    private float maxNofuleWeight;//最大无油重量
+
 
     public static class WeightLimitData implements Serializable {
         private float weight;
@@ -77,5 +81,29 @@ public class LineCharData implements Serializable{
 
     public void setWeightDatas(ArrayList<WeightData> weightDatas) {
         this.weightDatas = weightDatas;
+    }
+
+    public float getMaxFlyweight() {
+        return maxFlyweight;
+    }
+
+    public void setMaxFlyweight(float maxFlyweight) {
+        this.maxFlyweight = maxFlyweight;
+    }
+
+    public float getMaxLandWeight() {
+        return maxLandWeight;
+    }
+
+    public void setMaxLandWeight(float maxLandWeight) {
+        this.maxLandWeight = maxLandWeight;
+    }
+
+    public float getMaxNofuleWeight() {
+        return maxNofuleWeight;
+    }
+
+    public void setMaxNofuleWeight(float maxNofuleWeight) {
+        this.maxNofuleWeight = maxNofuleWeight;
     }
 }
