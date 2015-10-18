@@ -45,6 +45,8 @@ import com.xiaoqing.flight.util.FormatUtil;
 import com.xiaoqing.flight.util.ToastUtil;
 import com.xiaoqing.flight.util.UserManager;
 import com.xiaoqing.flight.util.WindowUtil;
+import com.xiaoqing.flight.widget.GravityView;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -53,7 +55,7 @@ import java.util.List;
 /**
  * Created by QingYang on 15/9/20.
  */
-public class ManifestActivity extends BaseActivity {
+public class ManifestActivity extends BaseActivity implements GravityView.GetGravity {
 
     private final int ACTION_ADDFILGHT = 1;
 
@@ -133,6 +135,8 @@ public class ManifestActivity extends BaseActivity {
     @InjectView(R.id.tv_operator)
     TextView mOperator;
 
+    @InjectView(R.id.gravity_view)
+    GravityView gravityView;
     private String aircraftReg;
     private String aircraftType;
 
@@ -163,7 +167,7 @@ public class ManifestActivity extends BaseActivity {
     @Override protected void onloadData() {
         getTopBarTitle("电子舱单");
         getTopBarRight("机长确认");
-
+        gravityView.setGravityListener(this);
         mLineCharData = new LineCharData();
 
         aircraftType = getIntent().getStringExtra(Constants.ACTION_AIRCRAFTTYPE);
@@ -279,6 +283,7 @@ public class ManifestActivity extends BaseActivity {
                 FormatUtil.formatTo2Decimal(passengerWeight));
         FlightApplication.getAddFlightInfo().setArticleWeight(
                 FormatUtil.formatTo2Decimal(goodsWeight));
+
     }
 
     private void showCharView() {
@@ -353,10 +358,18 @@ public class ManifestActivity extends BaseActivity {
             mLineCharData.setWeightDatas(weightDatas);
             mLineCharData.setWeightLimitDatas(weightLimitDatas);
         }
+
+        gravityView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                gravityView.setLcd(mLineCharData);
+            }
+        },100);
     }
 
     //根据重量获取重心
-    private float getWeightCg (float weight) {
+    @Override
+    public float getWeightCg (float weight) {
         float weightCg = 0;
         float oilWeight = 0;
         if (addFlightInfo != null) {

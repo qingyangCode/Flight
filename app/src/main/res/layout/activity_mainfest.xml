@@ -5,7 +5,11 @@
     android:layout_height="match_parent">
 
     <include layout="@layout/include_top_header"/>
-
+    <com.xiaoqing.flight.widget.GravityView
+        android:id="@+id/gravity_view"
+        android:layout_margin="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
     <ScrollView android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:scrollbars="none">
