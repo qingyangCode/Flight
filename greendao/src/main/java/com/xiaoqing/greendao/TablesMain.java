@@ -163,6 +163,8 @@ public class TablesMain {
         flightInfo.addFloatProperty("UseWeightCg");//使用空重重心
         flightInfo.addStringProperty("BasicWeight");//飞机基本重量
         flightInfo.addFloatProperty("allSbLj");//查奋战力矩
+        flightInfo.addFloatProperty("slideWeight");
+        flightInfo.addFloatProperty("slideWeightCg");
 
 
 

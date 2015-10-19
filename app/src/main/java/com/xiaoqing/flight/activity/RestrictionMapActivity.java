@@ -33,7 +33,6 @@ import com.xiaoqing.flight.util.LogUtil;
 import com.xiaoqing.flight.util.MACUtil;
 import com.xiaoqing.flight.util.ToastUtil;
 import com.xiaoqing.flight.util.UserManager;
-import com.xiaoqing.flight.widget.MyView;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -270,6 +269,27 @@ public class RestrictionMapActivity extends BaseActivity{
             } else {
                 landWeight = allWeight - slideOilFloat - flyOilFloat;
             }
+
+
+            float slideWightLj = 0;
+            try {
+                slideWightLj = CommonUtils.getOilWeightLj(realOilFloat, aircraftType);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            float slideWeightCg = 0;
+            try {
+                slideWeightCg = (airLj + totalPassengerLj + totalSbLj + slideWightLj) / allWeight;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            FlightApplication.getAddFlightInfo().setSlideWeight(allWeight);
+            FlightApplication.getAddFlightInfo().setSlideWeightCg(slideWeightCg);
+
+
+
 
             //起飞油量力矩
             float beforeLj = 0;

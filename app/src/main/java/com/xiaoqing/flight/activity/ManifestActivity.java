@@ -314,7 +314,7 @@ public class ManifestActivity extends BaseActivity implements GravityView.GetGra
         //重心数据
         if (addFlightInfo != null) {
             ArrayList<LineCharData.WeightData> weightDatas = new ArrayList<>();
-            //使用空重重心
+            //无燃油重心
             LineCharData.WeightData weightData = new LineCharData.WeightData();
             weightData.setWeight(addFlightInfo.getNoFuleWeight());
             float nofuleWeightCg = 0;
@@ -324,6 +324,12 @@ public class ManifestActivity extends BaseActivity implements GravityView.GetGra
                 e.printStackTrace();
             }
             weightData.setWeightCg(nofuleWeightCg);
+            weightDatas.add(weightData);
+
+            //滑行重心
+            weightData = new LineCharData.WeightData();
+            weightData.setWeight(addFlightInfo.getSlideWeight());
+            weightData.setWeightCg(addFlightInfo.getSlideWeightCg());
             weightDatas.add(weightData);
 
             // 起飞重心

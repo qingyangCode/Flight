@@ -63,6 +63,8 @@ public class AddFlightInfoDao extends AbstractDao<AddFlightInfo, Long> {
         public final static Property UseWeightCg = new Property(37, Float.class, "UseWeightCg", false, "USE_WEIGHT_CG");
         public final static Property BasicWeight = new Property(38, String.class, "BasicWeight", false, "BASIC_WEIGHT");
         public final static Property AllSbLj = new Property(39, Float.class, "allSbLj", false, "ALL_SB_LJ");
+        public final static Property SlideWeight = new Property(40, Float.class, "slideWeight", false, "SLIDE_WEIGHT");
+        public final static Property SlideWeightCg = new Property(41, Float.class, "slideWeightCg", false, "SLIDE_WEIGHT_CG");
     };
 
 
@@ -117,7 +119,9 @@ public class AddFlightInfoDao extends AbstractDao<AddFlightInfo, Long> {
                 "'USE_WEIGHT' REAL," + // 36: UseWeight
                 "'USE_WEIGHT_CG' REAL," + // 37: UseWeightCg
                 "'BASIC_WEIGHT' TEXT," + // 38: BasicWeight
-                "'ALL_SB_LJ' REAL);"); // 39: allSbLj
+                "'ALL_SB_LJ' REAL," + // 39: allSbLj
+                "'SLIDE_WEIGHT' REAL," + // 40: slideWeight
+                "'SLIDE_WEIGHT_CG' REAL);"); // 41: slideWeightCg
     }
 
     /** Drops the underlying database table. */
@@ -318,6 +322,16 @@ public class AddFlightInfoDao extends AbstractDao<AddFlightInfo, Long> {
         if (allSbLj != null) {
             stmt.bindDouble(40, allSbLj);
         }
+ 
+        Float slideWeight = entity.getSlideWeight();
+        if (slideWeight != null) {
+            stmt.bindDouble(41, slideWeight);
+        }
+ 
+        Float slideWeightCg = entity.getSlideWeightCg();
+        if (slideWeightCg != null) {
+            stmt.bindDouble(42, slideWeightCg);
+        }
     }
 
     /** @inheritdoc */
@@ -369,7 +383,9 @@ public class AddFlightInfoDao extends AbstractDao<AddFlightInfo, Long> {
             cursor.isNull(offset + 36) ? null : cursor.getFloat(offset + 36), // UseWeight
             cursor.isNull(offset + 37) ? null : cursor.getFloat(offset + 37), // UseWeightCg
             cursor.isNull(offset + 38) ? null : cursor.getString(offset + 38), // BasicWeight
-            cursor.isNull(offset + 39) ? null : cursor.getFloat(offset + 39) // allSbLj
+            cursor.isNull(offset + 39) ? null : cursor.getFloat(offset + 39), // allSbLj
+            cursor.isNull(offset + 40) ? null : cursor.getFloat(offset + 40), // slideWeight
+            cursor.isNull(offset + 41) ? null : cursor.getFloat(offset + 41) // slideWeightCg
         );
         return entity;
     }
@@ -417,6 +433,8 @@ public class AddFlightInfoDao extends AbstractDao<AddFlightInfo, Long> {
         entity.setUseWeightCg(cursor.isNull(offset + 37) ? null : cursor.getFloat(offset + 37));
         entity.setBasicWeight(cursor.isNull(offset + 38) ? null : cursor.getString(offset + 38));
         entity.setAllSbLj(cursor.isNull(offset + 39) ? null : cursor.getFloat(offset + 39));
+        entity.setSlideWeight(cursor.isNull(offset + 40) ? null : cursor.getFloat(offset + 40));
+        entity.setSlideWeightCg(cursor.isNull(offset + 41) ? null : cursor.getFloat(offset + 41));
      }
     
     /** @inheritdoc */

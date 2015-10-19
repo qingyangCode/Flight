@@ -121,15 +121,20 @@ public class CommonUtils {
 				index = temp + 1;
 			}
 
-			//算法得到力矩
-			try {
-				oilLj = fuleLimits.get(index).getFuleLj()
-						- (fuleLimits.get(index).getFuleLj() - fuleLimits.get(index - 1).getFuleLj())
-						* (fuleLimits.get(index).getFuleWeight() - OilWeight) / (fuleLimits.get(
-						index).getFuleWeight() - fuleLimits.get(index - 1).getFuleWeight());
-			} catch (Exception e) {
-				e.printStackTrace();
+			if (index == 0) {
+				oilLj = fuleLimits.get(index).getFuleLj() * OilWeight / fuleLimits.get(index).getFuleWeight() ;
+			} else {
+				//算法得到力矩
+				try {
+					oilLj = fuleLimits.get(index).getFuleLj()
+							- (fuleLimits.get(index).getFuleLj() - fuleLimits.get(index - 1).getFuleLj())
+							* (fuleLimits.get(index).getFuleWeight() - OilWeight) / (fuleLimits.get(
+							index).getFuleWeight() - fuleLimits.get(index - 1).getFuleWeight());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
+
 		}
 		//LogUtil.LOGD(TAG, "before fly oil Lj == " + oilLj);
 		return oilLj;

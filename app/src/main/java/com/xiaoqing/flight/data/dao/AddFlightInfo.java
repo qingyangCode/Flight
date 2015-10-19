@@ -51,6 +51,8 @@ public class AddFlightInfo {
     private Float UseWeightCg;
     private String BasicWeight;
     private Float allSbLj;
+    private Float slideWeight;
+    private Float slideWeightCg;
 
     // KEEP FIELDS - put your custom fields here
     private ArrayList<Integer> sbList;
@@ -63,7 +65,7 @@ public class AddFlightInfo {
         this.id = id;
     }
 
-    public AddFlightInfo(Long id, String FlightDate, String FlightId, String AircraftReg, String AircraftType, String FlightNo, String Dep4Code, String DepAirportName, String Arr4Code, String ArrAirportName, String MaxFule, String RealFule, String SlieFule, String RouteFule, String TofWeight, String LandWeight, float NoFuleWeight, float NoFuleLj, String AirportLimitWeight, String BalancePic, String BalancePicName, String OpUser, String OpUserName, String OpDate, String weightCg, String Caption, String TkoZx, String TkoMac, String passengerWeight, String articleWeight, String beforeFlyFule, String landWeightCg, String beforeWCgmin, String beforeWCgmax, String landWCgmin, String landWCgmax, Float UseWeight, Float UseWeightCg, String BasicWeight, Float allSbLj) {
+    public AddFlightInfo(Long id, String FlightDate, String FlightId, String AircraftReg, String AircraftType, String FlightNo, String Dep4Code, String DepAirportName, String Arr4Code, String ArrAirportName, String MaxFule, String RealFule, String SlieFule, String RouteFule, String TofWeight, String LandWeight, float NoFuleWeight, float NoFuleLj, String AirportLimitWeight, String BalancePic, String BalancePicName, String OpUser, String OpUserName, String OpDate, String weightCg, String Caption, String TkoZx, String TkoMac, String passengerWeight, String articleWeight, String beforeFlyFule, String landWeightCg, String beforeWCgmin, String beforeWCgmax, String landWCgmin, String landWCgmax, Float UseWeight, Float UseWeightCg, String BasicWeight, Float allSbLj, Float slideWeight, Float slideWeightCg) {
         this.id = id;
         this.FlightDate = FlightDate;
         this.FlightId = FlightId;
@@ -104,6 +106,8 @@ public class AddFlightInfo {
         this.UseWeightCg = UseWeightCg;
         this.BasicWeight = BasicWeight;
         this.allSbLj = allSbLj;
+        this.slideWeight = slideWeight;
+        this.slideWeightCg = slideWeightCg;
     }
 
     public Long getId() {
@@ -426,6 +430,22 @@ public class AddFlightInfo {
 
     public void setAllSbLj(Float allSbLj) {
         this.allSbLj = allSbLj;
+    }
+
+    public Float getSlideWeight() {
+        return slideWeight;
+    }
+
+    public void setSlideWeight(Float slideWeight) {
+        this.slideWeight = slideWeight;
+    }
+
+    public Float getSlideWeightCg() {
+        return slideWeightCg;
+    }
+
+    public void setSlideWeightCg(Float slideWeightCg) {
+        this.slideWeightCg = slideWeightCg;
     }
 
     // KEEP METHODS - put your custom methods here
