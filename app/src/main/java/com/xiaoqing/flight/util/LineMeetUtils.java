@@ -24,10 +24,7 @@ public class LineMeetUtils {
 		return Math.abs(Area(p1, p2, p3));
 	}
 
-	/**
-	 * 判断
-	 * 
-	 * */
+
 	public static boolean Meet(Point p1, Point p2, Point p3, Point p4) {
 		return Math.max(Math.min(p1.x, p2.x), Math.min(p3.x, p4.x)) <= Math
 				.min(Math.max(p1.x, p2.x), Math.max(p3.x, p4.x))
@@ -37,9 +34,7 @@ public class LineMeetUtils {
 				&& sgn(Cross(p1, p4, p1, p2) * Cross(p1, p2, p1, p3)) >= 0;
 	}
 
-	/**
-	 * 两条线段的焦点
-	 */
+
 	public static Point Inter(Point p1, Point p2, Point p3, Point p4) {
 		double k = fArea(p1, p2, p3) / fArea(p1, p2, p4);
 		return new Point((p3.x + k * p4.x) / (1 + k), (p3.y + k * p4.y)
