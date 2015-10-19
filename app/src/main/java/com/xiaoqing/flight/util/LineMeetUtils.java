@@ -1,3 +1,4 @@
+package  com.xiaoqing.flight.util;
 public class LineMeetUtils {
 
 	static double eps = 1e-6;

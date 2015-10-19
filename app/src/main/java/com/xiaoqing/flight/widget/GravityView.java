@@ -73,7 +73,7 @@ public class GravityView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if(lcd==null) return;
+        if (lcd == null) return;
         startX = getWidth() * 0.15f;
         startY = getHeight() * 0.2f;
         row = 30;
@@ -85,7 +85,6 @@ public class GravityView extends View {
         textW = w * 0.5f;
         endX = startX + colum * w;
         endY = startY + row * h;
-
         drawGrid(canvas);
         drawLinePath(canvas);
         drawLine(canvas);
@@ -108,29 +107,40 @@ public class GravityView extends View {
         //画曲线
         p.setColor(Color.BLACK);
         p.setStrokeWidth(1);
-
+        p.setStrokeJoin(Paint.Join.ROUND);
+        maxW = Integer.MIN_VALUE;
+        minW = Integer.MAX_VALUE;
+        for (LineCharData.WeightData weightData : lcd.getWeightDatas()) {
+            maxW = Math.max(maxW, weightData.getWeight());
+            minW = Math.min(minW, weightData.getWeight());
+        }
         if (gravityListener != null) {
             Path path = new Path();
+            float ty, tx;
             float y = (float) (startY + (startW - minW) / offsetW * h);
 
             float x1 = (float) (startX + (gravityListener.getWeightCg(minW) - startG) / offsetG * w) - p.getStrokeWidth() / 2;
-            path.moveTo(x1,y);
-            for(float i = minW+1;i<=maxW;i+=2){
-                y =  (float) (startY + (startW - i) / offsetW * h);
-                x1 = (float) (startX + (gravityListener.getWeightCg(i) - startG) / offsetG * w) - p.getStrokeWidth() / 2;
-                path.lineTo(x1,y);
+            path.moveTo(x1, y);
+            for (float i = minW + 1; i <= maxW; i += 50) {
+                ty = (float) (startY + (startW - i) / offsetW * h);
+                tx = (float) (startX + (gravityListener.getWeightCg(i) - startG) / offsetG * w) - p.getStrokeWidth() / 2;
+                canvas.drawLine(x1, y, tx, ty, p);
+                y = ty;
+                x1 = tx;
             }
-            canvas.drawPath(path,p);
+        ty =  (float) (startY + (startW - maxW) / offsetW * h);
+            tx = (float) (startX + (gravityListener.getWeightCg(maxW) - startG) / offsetG * w) - p.getStrokeWidth() / 2;
+        canvas.drawLine(x1,y,tx,ty,p);
         }
         // 画三条直线
         p.setStrokeWidth(4);
         p.setColor(Color.YELLOW);
-       float y =  (float) (startY + (startW - lcd.getMaxFlyweight()) / offsetW * h);
-        canvas.drawLine(startX,y,getWidth(),y,p);
-        y =  (float) (startY + (startW - lcd.getMaxLandWeight()) / offsetW * h);
-        canvas.drawLine(startX,y,getWidth(),y,p);
-        y =  (float) (startY + (startW - lcd.getMaxNofuleWeight()) / offsetW * h);
-        canvas.drawLine(startX,y,getWidth(),y,p);
+        float y = (float) (startY + (startW - lcd.getMaxFlyweight()) / offsetW * h);
+        canvas.drawLine(startX, y, getWidth(), y, p);
+        y = (float) (startY + (startW - lcd.getMaxLandWeight()) / offsetW * h);
+        canvas.drawLine(startX, y, getWidth(), y, p);
+        y = (float) (startY + (startW - lcd.getMaxNofuleWeight()) / offsetW * h);
+        canvas.drawLine(startX, y, getWidth(), y, p);
 
     }
 
@@ -177,13 +187,10 @@ public class GravityView extends View {
         for (LineCharData.WeightLimitData item : lcd.getWeightLimitDatas()) {
             maxG = Math.max(Math.max(maxG, item.getWeightCg1()), item.getWeightCg2());
             minG = Math.min(Math.min(minG, item.getWeightCg1()), item.getWeightCg2());
-
+            maxW = Math.max(maxW, item.getWeight());
+            minW = Math.min(minW, item.getWeight());
         }
 
-        for (LineCharData.WeightData weightData : lcd.getWeightDatas()) {
-            maxW = Math.max(maxW, weightData.getWeight());
-            minW = Math.min(minW, weightData.getWeight());
-        }
 
         //计算最大重量的起始值,偏移量,计算最小重心的起始值,偏移量
         float varG = maxG - minG;
@@ -252,7 +259,7 @@ public class GravityView extends View {
 
     public void setLcd(LineCharData lcd) {
         this.lcd = lcd;
-       invalidate();
+        invalidate();
     }
 
     class Point {
