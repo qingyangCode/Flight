@@ -177,8 +177,12 @@ public class GravityView extends View {
         for (LineCharData.WeightLimitData item : lcd.getWeightLimitDatas()) {
             maxG = Math.max(Math.max(maxG, item.getWeightCg1()), item.getWeightCg2());
             minG = Math.min(Math.min(minG, item.getWeightCg1()), item.getWeightCg2());
-            maxW = Math.max(maxW, item.getWeight());
-            minW = Math.min(minW, item.getWeight());
+
+        }
+
+        for (LineCharData.WeightData weightData : lcd.getWeightDatas()) {
+            maxW = Math.max(maxW, weightData.getWeight());
+            minW = Math.min(minW, weightData.getWeight());
         }
 
         //计算最大重量的起始值,偏移量,计算最小重心的起始值,偏移量

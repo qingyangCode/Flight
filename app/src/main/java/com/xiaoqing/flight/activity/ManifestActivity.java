@@ -42,6 +42,7 @@ import com.xiaoqing.flight.util.CommonUtils;
 import com.xiaoqing.flight.util.Constants;
 import com.xiaoqing.flight.util.DBManager;
 import com.xiaoqing.flight.util.FormatUtil;
+import com.xiaoqing.flight.util.LogUtil;
 import com.xiaoqing.flight.util.ToastUtil;
 import com.xiaoqing.flight.util.UserManager;
 import com.xiaoqing.flight.util.WindowUtil;
@@ -313,10 +314,19 @@ public class ManifestActivity extends BaseActivity implements GravityView.GetGra
         //重心数据
         if (addFlightInfo != null) {
             ArrayList<LineCharData.WeightData> weightDatas = new ArrayList<>();
+            //使用空重重心
             LineCharData.WeightData weightData = new LineCharData.WeightData();
-            weightData.setWeight(addFlightInfo.getUseWeight());
-            weightData.setWeightCg(addFlightInfo.getUseWeightCg());
+            weightData.setWeight(addFlightInfo.getNoFuleWeight());
+            float nofuleWeightCg = 0;
+            try {
+                nofuleWeightCg = addFlightInfo.getNoFuleLj() / addFlightInfo.getNoFuleWeight();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            weightData.setWeightCg(nofuleWeightCg);
             weightDatas.add(weightData);
+
+            // 起飞重心
             weightData = new LineCharData.WeightData();
             float beforeWeight = 0;
             float beforeWeightCg = 0;
@@ -330,6 +340,7 @@ public class ManifestActivity extends BaseActivity implements GravityView.GetGra
             weightData.setWeightCg(beforeWeightCg);
             weightDatas.add(weightData);
 
+            //着陆重心
             weightData = new LineCharData.WeightData();
             float landWeight = 0;
             float landWeightCg = 0;
@@ -344,6 +355,7 @@ public class ManifestActivity extends BaseActivity implements GravityView.GetGra
             weightData.setWeightCg(landWeightCg);
             weightDatas.add(weightData);
 
+            //
             AllAcTypeDao allAcTypeDao = FlightApplication.getDaoSession().getAllAcTypeDao();
             List<AllAcType> acTypeList = allAcTypeDao.queryBuilder()
                     .where(AllAcTypeDao.Properties.AircraftType.eq(aircraftType))
@@ -374,9 +386,11 @@ public class ManifestActivity extends BaseActivity implements GravityView.GetGra
         float oilWeight = 0;
         if (addFlightInfo != null) {
             oilWeight = weight - addFlightInfo.getNoFuleWeight();
+            if (oilWeight < 0) oilWeight = 0;
             float oilWeightLj = CommonUtils.getOilWeightLj(oilWeight, aircraftType);
-            weightCg = weight / (addFlightInfo.getNoFuleLj() + oilWeightLj);
+            weightCg = (addFlightInfo.getNoFuleLj() + oilWeightLj)/weight;
         }
+        LogUtil.LOGD("weightCg", "weightCg ======= "+weightCg);
         return weightCg;
     }
 
