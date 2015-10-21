@@ -5,10 +5,12 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.View;
 
 import com.xiaoqing.flight.entity.LineCharData;
+import com.xiaoqing.flight.util.LineMeetUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,13 +27,13 @@ public class GravityView extends View {
     float endX;
     float endY;
     // 多少行
-    int row = 30;
+    int row;
     // 多少列
-    int colum = 17;
+    int colum;
     // 表格单位宽度
-    float w = 45;
+    float w;
     // 表格单位高度
-    float h = 15;
+    float h;
     // 刻度标尺的长度
     float unitH = h * 0.4f;
     // 文本高度 文本长度和高度 要根据 p2来计算得出不然会不准确
@@ -75,16 +77,15 @@ public class GravityView extends View {
         super.onDraw(canvas);
         if (lcd == null) return;
         startX = getWidth() * 0.15f;
-        startY = getHeight() * 0.2f;
-        row = 30;
-        colum = 17;
-        w = 50;
-        h = 20;
+        startY = getHeight() * 0.1f;
+        row = 35;
+        colum = 22;
+        w = getWidth() * 0.8f / 23;
+        h = getHeight() * 0.8f / 35;
         unitH = h * 0.4f;
-        textH = h;
-        textW = w * 0.5f;
         endX = startX + colum * w;
         endY = startY + row * h;
+        // 这三个顺序不能变会在drawGrid 进行一下数值的初始化
         drawGrid(canvas);
         drawLinePath(canvas);
         drawLine(canvas);
@@ -95,14 +96,13 @@ public class GravityView extends View {
     private void drawLine(Canvas canvas) {
         Paint p = new Paint();
         p.setColor(Color.BLUE);
-        p.setStrokeWidth(4);
         p.setAntiAlias(true);
         // 画点
         for (LineCharData.WeightData item : lcd.getWeightDatas()) {
             float y = (float) (startY + (startW - item.getWeight()) / offsetW * h);
 
             float x = (float) (startX + (item.getWeightCg() - startG) / offsetG * w) - p.getStrokeWidth() / 2;
-            canvas.drawCircle(x, y, 10, p);
+            canvas.drawCircle(x, y, 3, p);
         }
         //画曲线
         p.setColor(Color.BLACK);
@@ -128,20 +128,75 @@ public class GravityView extends View {
                 y = ty;
                 x1 = tx;
             }
-        ty =  (float) (startY + (startW - maxW) / offsetW * h);
+            ty = (float) (startY + (startW - maxW) / offsetW * h);
             tx = (float) (startX + (gravityListener.getWeightCg(maxW) - startG) / offsetG * w) - p.getStrokeWidth() / 2;
-        canvas.drawLine(x1,y,tx,ty,p);
+            canvas.drawLine(x1, y, tx, ty, p);
         }
         // 画三条直线
         p.setStrokeWidth(4);
-        p.setColor(Color.YELLOW);
+        p.setColor(Color.RED);
         float y = (float) (startY + (startW - lcd.getMaxFlyweight()) / offsetW * h);
-        canvas.drawLine(startX, y, getWidth(), y, p);
-        y = (float) (startY + (startW - lcd.getMaxLandWeight()) / offsetW * h);
-        canvas.drawLine(startX, y, getWidth(), y, p);
-        y = (float) (startY + (startW - lcd.getMaxNofuleWeight()) / offsetW * h);
-        canvas.drawLine(startX, y, getWidth(), y, p);
+        LineMeetUtils.Point point = getPoint(lcd.getMaxFlyweight());
+        float x1 = (float) (startX + (point.x - startG) / offsetG * w) - p.getStrokeWidth() / 2;
+        float x2 = (float) (startX + (point.y - startG) / offsetG * w) - p.getStrokeWidth() / 2;
 
+        canvas.drawLine(x1, y, x2, y, p);
+        y = (float) (startY + (startW - lcd.getMaxLandWeight()) / offsetW * h);
+        point = getPoint(lcd.getMaxLandWeight());
+        x1 = (float) (startX + (point.x - startG) / offsetG * w) - p.getStrokeWidth() / 2;
+        x2 = (float) (startX + (point.y - startG) / offsetG * w) - p.getStrokeWidth() / 2;
+
+        canvas.drawLine(x1, y, x2, y, p);
+        y = (float) (startY + (startW - lcd.getMaxNofuleWeight()) / offsetW * h);
+        point = getPoint(lcd.getMaxNofuleWeight());
+        x1 = (float) (startX + (point.x - startG) / offsetG * w) - p.getStrokeWidth() / 2;
+        x2 = (float) (startX + (point.y - startG) / offsetG * w) - p.getStrokeWidth() / 2;
+
+        canvas.drawLine(x1, y, x2, y, p);
+
+
+    }
+
+    private LineMeetUtils.Point getPoint(float weight) {
+        double x = 0, x1 = 0;
+        Double f = 1d;
+        LineMeetUtils.Point p1 = new LineMeetUtils.Point(startG, weight * 1.0);
+        LineMeetUtils.Point p2 = new LineMeetUtils.Point(startG + colum * offsetG, weight * 1.0);
+        for (int i = 0; i < lcd.getWeightLimitDatas().size() - 1; i++) {
+
+            LineCharData.WeightLimitData w1 = lcd.getWeightLimitDatas().get(i);
+            LineCharData.WeightLimitData w2 = lcd.getWeightLimitDatas().get(i + 1);
+            LineMeetUtils.Point p3 = new LineMeetUtils.Point(w1.getWeightCg1(), w1.getWeight());
+            LineMeetUtils.Point p4 = new LineMeetUtils.Point(w2.getWeightCg1(), w2.getWeight());
+            boolean meet = LineMeetUtils.Meet(p1, p2, p3, p4);
+            LineMeetUtils.Point inter1 = LineMeetUtils.Inter(p1, p2, p3, p4);
+            if (meet) {
+                f = inter1.x;
+                if (f.isNaN()) {
+                    x = w2.getWeightCg1();
+                    if (weight == w1.getWeight()) x = w1.getWeightCg1();
+                } else {
+                    x = f;
+                }
+            }
+            p3 = new LineMeetUtils.Point(w1.getWeightCg2(), w1.getWeight());
+            p4 = new LineMeetUtils.Point(w2.getWeightCg2(), w2.getWeight());
+            LineMeetUtils.Point inter2 = LineMeetUtils.Inter(p1, p2, p3, p4);
+
+            meet = LineMeetUtils.Meet(p1, p2, p3, p4);
+            if (meet) {
+                f = inter2.x;
+                if (f.isNaN()) {
+                    x1 = w2.getWeightCg2();
+                    if (weight == w1.getWeight()) x = w1.getWeightCg2();
+
+                } else {
+                    x1 = f;
+                }
+            }
+        }
+
+        return new LineMeetUtils.Point(x, x1);
     }
 
     // 画最外围的多边形
@@ -162,7 +217,7 @@ public class GravityView extends View {
 
             float x2 = (float) (startX + (item.getWeightCg2() - startG) / offsetG * w) - p.getStrokeWidth() / 2;
             // 用来标识 bug使用
-            canvas.drawLine(0, y, getWidth(), y, p);
+//            canvas.drawLine(0, y, getWidth(), y, p);
             points.add(0, new Point(x1, y));
             points.add(new Point(x2, y));
         }
@@ -196,11 +251,11 @@ public class GravityView extends View {
         float varG = maxG - minG;
         float varW = maxW - minW;
         // 这个地方最好自己计算否则其中的点会在表格的边界上
-        offsetW = Math.ceil(Math.ceil(varW / row) / 100) * 100;
-        startW = Math.ceil(maxW / offsetW) * offsetW;
+        offsetW = Math.ceil(Math.ceil(varW / row) / 50) * 50;
+        startW = Math.ceil(maxW / offsetW) * offsetW + 2 * offsetW;
 
         offsetG = Math.ceil(varG / colum);
-        startG = Math.floor(minG / offsetG) * offsetG;
+        startG = Math.floor(minG / offsetG) * offsetG - 2 * offsetG;
 
 
         Paint p = new Paint();
@@ -212,6 +267,12 @@ public class GravityView extends View {
         p2.setStrokeWidth(3);
         p2.setTextSize(30);
         p2.setTextAlign(Paint.Align.RIGHT);
+        Rect rect = new Rect();
+        p2.getTextBounds(String.valueOf(maxW), 0, String.valueOf(maxW).length(), rect);
+        float textL = rect.width();
+        textW = textL / String.valueOf(maxW).length();
+        startX = textL + 4 * textW;
+        textH = rect.height();
         // 基础网格
         for (int i = 0; i <= row; i++) {
             float y = startY + i * h;
