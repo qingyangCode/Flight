@@ -9,9 +9,11 @@ import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.View;
 
+import com.xiaoqing.flight.FlightApplication;
 import com.xiaoqing.flight.entity.LineCharData;
 import com.xiaoqing.flight.util.LineMeetUtils;
 
+import com.xiaoqing.flight.util.UserManager;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -115,22 +117,25 @@ public class GravityView extends View {
             minW = Math.min(minW, weightData.getWeight());
         }
         if (gravityListener != null) {
+            if (!"G450".equals(FlightApplication.getAddFlightInfo().getAircraftType())) {
             Path path = new Path();
             float ty, tx;
             float y = (float) (startY + (startW - minW) / offsetW * h);
 
             float x1 = (float) (startX + (gravityListener.getWeightCg(minW) - startG) / offsetG * w) - p.getStrokeWidth() / 2;
             path.moveTo(x1, y);
-            for (float i = minW + 1; i <= maxW; i += 50) {
-                ty = (float) (startY + (startW - i) / offsetW * h);
-                tx = (float) (startX + (gravityListener.getWeightCg(i) - startG) / offsetG * w) - p.getStrokeWidth() / 2;
+                for (float i = minW + 1; i <= maxW; i += 50) {
+                    ty = (float) (startY + (startW - i) / offsetW * h);
+                    tx = (float) (startX + (gravityListener.getWeightCg(i) - startG) / offsetG * w)
+                            - p.getStrokeWidth() / 2;
+                    canvas.drawLine(x1, y, tx, ty, p);
+                    y = ty;
+                    x1 = tx;
+                }
+                ty = (float) (startY + (startW - maxW) / offsetW * h);
+                tx = (float) (startX + (gravityListener.getWeightCg(maxW) - startG) / offsetG * w) - p.getStrokeWidth() / 2;
                 canvas.drawLine(x1, y, tx, ty, p);
-                y = ty;
-                x1 = tx;
             }
-            ty = (float) (startY + (startW - maxW) / offsetW * h);
-            tx = (float) (startX + (gravityListener.getWeightCg(maxW) - startG) / offsetG * w) - p.getStrokeWidth() / 2;
-            canvas.drawLine(x1, y, tx, ty, p);
         }
         // 画三条直线
         p.setStrokeWidth(4);
