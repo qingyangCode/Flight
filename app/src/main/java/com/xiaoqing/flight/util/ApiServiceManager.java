@@ -326,15 +326,14 @@ public class ApiServiceManager {
                 addFlightInfo.getRouteFule(), addFlightInfo.getTofWeight(),
                 addFlightInfo.getLandWeight(), FormatUtil.formatTo2Decimal(nofuleWeight),
                 addFlightInfo.getAirportLimitWeight(), addFlightInfo.getBalancePic(),
-                addFlightInfo.getBalancePicName(),
-                addFlightInfo.getOpUser(), addFlightInfo.getOpDate(),
-                addFlightInfo.getCaption(), addFlightInfo.getTkoZx(), addFlightInfo.getTkoMac(),
-                addFlightInfo.getPassengerWeight(), addFlightInfo.getArticleWeight(),
-                addFlightInfo.getBeforeWCgmin(), addFlightInfo.getBeforeWCgmax(),
-                addFlightInfo.getLandWeightCg(), addFlightInfo.getLandWCgmin(),
-                addFlightInfo.getLandWCgmax(), addFlightInfo.getBeforeFlyFule(),
-                addFlightInfo.getUseWeight() + "", addFlightInfo.getWeightCg(),
-                new ResponseListner<AddFlightInfoResponse>() {
+                addFlightInfo.getBalancePicName(), addFlightInfo.getOpUser(),
+                addFlightInfo.getOpDate(), addFlightInfo.getCaption(), addFlightInfo.getTkoZx(),
+                addFlightInfo.getTkoMac(), addFlightInfo.getPassengerWeight(),
+                addFlightInfo.getArticleWeight(), addFlightInfo.getBeforeWCgmin(),
+                addFlightInfo.getBeforeWCgmax(), addFlightInfo.getLandWeightCg(),
+                addFlightInfo.getLandWCgmin(), addFlightInfo.getLandWCgmax(),
+                addFlightInfo.getBeforeFlyFule(), addFlightInfo.getUseWeight() + "",
+                addFlightInfo.getWeightCg(), new ResponseListner<AddFlightInfoResponse>() {
 
                     @Override public void onResponse(AddFlightInfoResponse response) {
                         if (responseListner != null) {
@@ -613,47 +612,29 @@ public class ApiServiceManager {
     }
 
     public void uploadFlightInfo() {
-        AddFlightInfoDao addFlightInfoDao = FlightApplication.getDaoSession().getAddFlightInfoDao();
+
         ActionFeedDao actionFeedDao = FlightApplication.getDaoSession().getActionFeedDao();
         List<ActionFeed> uploadFlightInfos = actionFeedDao.queryBuilder()
                 .where(ActionFeedDao.Properties.Feed_type.eq(FeedType.toInt(FeedType.ADD_PLAYINFO)))
                 .list();
 
+        if (uploadFlightInfos != null && uploadFlightInfos.size() > 0) {
+            for (final ActionFeed actionFeed : uploadFlightInfos) {
+                String flightIdStr = actionFeed.getFlightId();
+                int flightId = 0;
+                try {
+                    flightId = Integer.parseInt(flightIdStr);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
-        for (final ActionFeed actionFeed : uploadFlightInfos) {
-            String flightIdStr = actionFeed.getFlightId();
-            int flightId = 0;
-            try {
-                flightId = Integer.parseInt(flightIdStr);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+                if (flightId == 0) {//若flight id 为 time时，第一次不上传，只更新flightid
+                    getFilghtId(new ResponseListner<String>() {
+                        @Override public void onResponse(String response) {
+                            if (!TextUtils.isEmpty(response)) {
+                                DBManager.getInstance().upadateFlightInfo(actionFeed.getFlightId(),response);
 
-            if (flightId == 0) {//若flight id 为 time时，第一次不上传，只更新flightid
-                getFilghtId(new ResponseListner<String>() {
-                    @Override public void onResponse(String response) {
-                        if (!TextUtils.isEmpty(response)) {
-                            DBManager.getInstance().upadateFlightInfo(actionFeed.getFlightId(),response);
-
-                        }
-                    }
-
-                    @Override public void onEmptyOrError(String message) {
-
-                    }
-                });
-            } else {
-                //feedFlightInfo(actionFeed.getFlightId());
-                final List<AddFlightInfo> flightInfos = addFlightInfoDao.queryBuilder()
-                        .where(AddFlightInfoDao.Properties.FlightId.eq(actionFeed.getFlightId()))
-                        .list();
-                if (flightInfos != null && flightInfos.size() > 0) {
-                    ApiServiceManager.getInstance().addFlightInfo(flightInfos.get(0), new ResponseListner<AddFlightInfoResponse>() {
-                        @Override public void onResponse(AddFlightInfoResponse response) {
-                            if (response != null && response.ResponseObject != null && response.ResponseObject.ResponseCode == Constants.RESULT_OK) {
-                                DBManager.getInstance().deleteFlightInfo(actionFeed.getFlightId());
-                                DBManager.getInstance().deleteActionFeed(actionFeed);
-                                uploadAirPersonInfo(actionFeed.getFlightId());
+                                uploadFlightInfoAndAirPersonInfo(actionFeed);
                             }
                         }
 
@@ -661,8 +642,42 @@ public class ApiServiceManager {
 
                         }
                     });
+                } else {
+                    //feedFlightInfo(actionFeed.getFlightId());
+                    uploadFlightInfoAndAirPersonInfo(actionFeed);
                 }
             }
+        } else {
+            List<ActionFeed> uploadAirPersonInfos = actionFeedDao.queryBuilder()
+                    .where(ActionFeedDao.Properties.Feed_type.eq(FeedType.toInt(FeedType.ADD_FLIGHTPERSON)))
+                    .list();
+            if (uploadAirPersonInfos != null && uploadAirPersonInfos.size() > 0) {
+                for (ActionFeed actionFeed : uploadAirPersonInfos) {
+                    uploadAirPersonInfo(actionFeed.getFlightId());
+                }
+            }
+        }
+    }
+
+    private void uploadFlightInfoAndAirPersonInfo(final ActionFeed actionFeed) {
+        AddFlightInfoDao addFlightInfoDao = FlightApplication.getDaoSession().getAddFlightInfoDao();
+        final List<AddFlightInfo> flightInfos = addFlightInfoDao.queryBuilder()
+                .where(AddFlightInfoDao.Properties.FlightId.eq(actionFeed.getFlightId()))
+                .list();
+        if (flightInfos != null && flightInfos.size() > 0) {
+            ApiServiceManager.getInstance().addFlightInfo(flightInfos.get(0), new ResponseListner<AddFlightInfoResponse>() {
+                @Override public void onResponse(AddFlightInfoResponse response) {
+                    if (response != null && response.ResponseObject != null && response.ResponseObject.ResponseCode == Constants.RESULT_OK) {
+                        DBManager.getInstance().deleteFlightInfo(actionFeed.getFlightId());
+                        DBManager.getInstance().deleteActionFeed(actionFeed);
+                        uploadAirPersonInfo(actionFeed.getFlightId());
+                    }
+                }
+
+                @Override public void onEmptyOrError(String message) {
+
+                }
+            });
         }
     }
 
