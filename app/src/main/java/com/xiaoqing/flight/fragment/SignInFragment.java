@@ -107,7 +107,7 @@ public class SignInFragment extends BaseFragment {
 
                         } else {
                             String message = response.ResponseObject.ResponseErr;
-                            ToastUtil.showToast(getActivity(), R.drawable.toast_warning, TextUtils.isEmpty(message) ? "登录失败，请重试" : message);
+                            ToastUtil.showToast(getActivity(), R.drawable.toast_warning, TextUtils.isEmpty(message) ? getString(R.string.get_data_error) : message);
                         }
                     }
                     //PreferenceUtils.getInstance().saveRememberPassword(mCheckbox.isChecked());

@@ -378,11 +378,10 @@ public class ManifestActivity extends BaseActivity implements GravityView.GetGra
         }
 
         gravityView.postDelayed(new Runnable() {
-            @Override
-            public void run() {
+            @Override public void run() {
                 gravityView.setLcd(mLineCharData);
             }
-        },100);
+        }, 100);
     }
 
     //根据重量获取重心
@@ -396,7 +395,7 @@ public class ManifestActivity extends BaseActivity implements GravityView.GetGra
             float oilWeightLj = CommonUtils.getOilWeightLj(oilWeight, aircraftType);
             weightCg = (addFlightInfo.getNoFuleLj() + oilWeightLj)/weight;
         }
-        LogUtil.LOGD("weightCg", "weightCg ======= "+weightCg);
+        LogUtil.LOGD("weightCg", "weightCg ======= " + weightCg);
         return weightCg;
     }
 
@@ -428,7 +427,7 @@ public class ManifestActivity extends BaseActivity implements GravityView.GetGra
         tv_password.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 alBuilder.dismiss();
-                confirm(tv_userName.getText().toString().trim(), tv_password.getText().toString().trim());
+                confirm(alBuilder, tv_userName.getText().toString().trim(), tv_password.getText().toString().trim());
                 return false;
             }
         });
@@ -440,8 +439,17 @@ public class ManifestActivity extends BaseActivity implements GravityView.GetGra
         done.setOnClickListener(new View.OnClickListener() {
 
             @Override public void onClick(View v) {
-                confirm(tv_userName.getText().toString().trim(), tv_password.getText().toString().trim());
-                alBuilder.dismiss();
+                String name = tv_userName.getText().toString().trim();
+                String pasWord = tv_password.getText().toString().trim();
+                if (TextUtils.isEmpty(name)) {
+                    Toast.makeText(ManifestActivity.this, "请输入用户名", Toast.LENGTH_SHORT).show();
+                    return;
+                } else if (TextUtils.isEmpty(pasWord)) {
+                    Toast.makeText(ManifestActivity.this, "请输入密码", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                confirm(alBuilder, name, pasWord);
+                //alBuilder.dismiss();
             }
         });
         WindowManager.LayoutParams lp = window.getAttributes();
@@ -464,7 +472,7 @@ public class ManifestActivity extends BaseActivity implements GravityView.GetGra
     private boolean isCancelAble;
 
     //机长验证弹出框
-    private void confirm(final String userName, final String password) {
+    private void confirm(final AlertDialog alBuilder, final String userName, final String password) {
         FlightApplication.getAddFlightInfo().setCaption(userName);
         isCancelAble = false;
         showProgressDialog();
@@ -477,18 +485,17 @@ public class ManifestActivity extends BaseActivity implements GravityView.GetGra
                         //addFlightInfo();
                         checkFlightId();
                     } else if ("NO".equalsIgnoreCase(response.ResponseObject.ResponseErr)) {
-                        ToastUtil.showToast(mContext, R.drawable.toast_warning, "当前操作需机长验证，请输入机长信息");
+                        Toast.makeText(ManifestActivity.this, "该用户未授权当前机型，请确认后重新输入", Toast.LENGTH_SHORT).show();
                     } else {
                         //ToastUtil.showToast(mContext,
                         //        R.drawable.toast_warning, "未获取到机长信息");
                         boolean b = vidifyCaptainByDB(userName, password);
                         if (b) {
+                            if (alBuilder != null)
+                                alBuilder.dismiss();
                             //addFlightInfo();
                             //verifiFlightInfo();
                             checkFlightId();
-                        } else {
-                            ToastUtil.showToast(mContext,
-                                    R.drawable.toast_warning, "机长信息不正确，请重新输入");
                         }
                     }
                 }
@@ -501,9 +508,6 @@ public class ManifestActivity extends BaseActivity implements GravityView.GetGra
                     //addFlightInfo();
                     //verifiFlightInfo();
                     checkFlightId();
-                } else {
-                    ToastUtil.showToast(mContext,
-                            R.drawable.toast_warning, "机长信息不正确，请重新输入");
                 }
                 //ToastUtil.showToast(mContext, R.drawable.toast_warning,
                 //        getString(R.string.get_data_error));
@@ -520,8 +524,21 @@ public class ManifestActivity extends BaseActivity implements GravityView.GetGra
                 .list();
         if (list != null && list.size() > 0) {
             if ("Y".equalsIgnoreCase(list.get(0).getIsCaption())) {
-                return true;
+                UserDao userDao = FlightApplication.getDaoSession().getUserDao();
+                List<User> list1 = userDao.queryBuilder()
+                        .where(UserDao.Properties.UserCode.eq(userName),
+                                UserDao.Properties.UserPassWord.eq(password))
+                        .list();
+                if (list1 != null && list1.size() > 0) {
+                    return true;
+                } else {
+                    Toast.makeText(ManifestActivity.this, "用户名或密码不正确", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Toast.makeText(ManifestActivity.this, "该用户未授权当前机型，请确认后重新输入", Toast.LENGTH_SHORT).show();
             }
+        } else {
+            Toast.makeText(ManifestActivity.this, "该用户未授权当前机型，请确认后重新输入", Toast.LENGTH_SHORT).show();
         }
         return false;
     }
