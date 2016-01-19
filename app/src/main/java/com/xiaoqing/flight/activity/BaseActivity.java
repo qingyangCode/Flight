@@ -52,7 +52,11 @@ public abstract class BaseActivity extends Activity{
         }
 
         //checkFlightId();
-        ApiServiceManager.getInstance().uploadFlightInfo();
+        if (this instanceof RestrictionMapActivity || this instanceof ManifestActivity) {
+            //not upload
+        } else {
+            ApiServiceManager.getInstance().uploadFlightInfo();
+        }
 
     }
 

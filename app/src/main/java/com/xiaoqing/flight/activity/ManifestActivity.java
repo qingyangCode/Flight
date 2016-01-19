@@ -427,7 +427,7 @@ public class ManifestActivity extends BaseActivity implements GravityView.GetGra
         tv_password.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 alBuilder.dismiss();
-                confirm(alBuilder, tv_userName.getText().toString().trim(), tv_password.getText().toString().trim());
+                confirm(tv_userName.getText().toString().trim(), tv_password.getText().toString().trim());
                 return false;
             }
         });
@@ -448,8 +448,8 @@ public class ManifestActivity extends BaseActivity implements GravityView.GetGra
                     Toast.makeText(ManifestActivity.this, "请输入密码", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                confirm(alBuilder, name, pasWord);
-                //alBuilder.dismiss();
+                confirm(name, pasWord);
+                alBuilder.dismiss();
             }
         });
         WindowManager.LayoutParams lp = window.getAttributes();
@@ -472,7 +472,7 @@ public class ManifestActivity extends BaseActivity implements GravityView.GetGra
     private boolean isCancelAble;
 
     //机长验证弹出框
-    private void confirm(final AlertDialog alBuilder, final String userName, final String password) {
+    private void confirm( final String userName, final String password) {
         FlightApplication.getAddFlightInfo().setCaption(userName);
         isCancelAble = false;
         showProgressDialog();
@@ -491,8 +491,6 @@ public class ManifestActivity extends BaseActivity implements GravityView.GetGra
                         //        R.drawable.toast_warning, "未获取到机长信息");
                         boolean b = vidifyCaptainByDB(userName, password);
                         if (b) {
-                            if (alBuilder != null)
-                                alBuilder.dismiss();
                             //addFlightInfo();
                             //verifiFlightInfo();
                             checkFlightId();
