@@ -6,6 +6,7 @@ package com.xiaoqing.flight.util;
 public class MACUtil {
 
     public static final String TYPE_CE560 = "CE560";
+    public static final String TYPE_CE560_PLUS = "CE560+";
     public static final String TYPE_CE680 = "CE680";
     public static final String TYPE_CE750 = "CE750";
     public static final String TYPE_G450 = "G450";

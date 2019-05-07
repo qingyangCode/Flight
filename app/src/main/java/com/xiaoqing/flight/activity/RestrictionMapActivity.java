@@ -79,7 +79,7 @@ public class RestrictionMapActivity extends BaseActivity{
     private Pair<Float, Float> landFuleLimit;
     //起飞中心前后限
     private Pair<Float, Float> beforeFuleLimit;
-
+    private AllAcType mAllAcType;
 
 
     @Override public int getContentView() {
@@ -109,8 +109,10 @@ public class RestrictionMapActivity extends BaseActivity{
         List<AllAircraft> allAircraftList = allAircraftDao.queryBuilder()
                 .where(AllAircraftDao.Properties.AircraftReg.eq(aircraftReg))
                 .list();
-        if (allAircraftList != null && allAircraftList.size() > 0)
-        airLj = allAircraftList.get(0).getLj();
+        if (allAircraftList != null && allAircraftList.size() > 0) {
+            airLj = allAircraftList.get(0).getLj();
+
+        }
 
         updateWeightInfos();
 
@@ -120,9 +122,9 @@ public class RestrictionMapActivity extends BaseActivity{
                 .where(AllAcTypeDao.Properties.AircraftType.eq(aircraftType))
                 .list();
         if (allAcTypeList != null && allAcTypeList.size() > 0) {
-            AllAcType allAcType = allAcTypeList.get(0);
-            mMaxOil.setText(allAcType.getMaxFule() + "");
-            mSlideOil.setText(allAcType.getSlideFule() + "");
+            mAllAcType = allAcTypeList.get(0);
+            mMaxOil.setText(mAllAcType.getMaxFule() + "");
+            mSlideOil.setText(mAllAcType.getSlideFule() + "");
             getFuleLimitFromDB();
         }
 
@@ -257,14 +259,15 @@ public class RestrictionMapActivity extends BaseActivity{
 
             //起飞重心前后限
             float beforeWeight = 0;
-            if ("G450".equalsIgnoreCase(aircraftType)) {
+            //优先使用数据结构中的LimitType 字段，理论上不用机型去匹配
+            if ((mAllAcType != null && "Y".equalsIgnoreCase(mAllAcType.getLimitType())) || "G450".equalsIgnoreCase(aircraftType)) {
                 beforeWeight = allWeight - realOilFloat;
             } else {
                 beforeWeight = allWeight - slideOilFloat;
             }
 
             float landWeight = 0;
-            if ("G450".equalsIgnoreCase(aircraftType)) {
+            if ((mAllAcType != null && "Y".equalsIgnoreCase(mAllAcType.getLimitType())) || "G450".equalsIgnoreCase(aircraftType)) {
                 landWeight = allWeight - realOilFloat;
             } else {
                 landWeight = allWeight - slideOilFloat - flyOilFloat;
@@ -295,16 +298,17 @@ public class RestrictionMapActivity extends BaseActivity{
             float beforeLj = 0;
             //起飞油量
             float beforeFlightOil = 0;
-            if (!"G450".equalsIgnoreCase(aircraftType)) {
+            if ((mAllAcType != null && "N".equalsIgnoreCase(mAllAcType.getLimitType())) || !"G450".equalsIgnoreCase(aircraftType)) {
                 beforeFlightOil = realOilFloat - slideOilFloat;
             }
             //起飞油量力矩
-            if (!"G450".equalsIgnoreCase(aircraftType))
+            if ((mAllAcType != null && "N".equalsIgnoreCase(mAllAcType.getLimitType())) || !"G450".equalsIgnoreCase(aircraftType)) {
                 beforeLj = CommonUtils.getOilWeightLj(beforeFlightOil, aircraftType);
+            }
 
             //着陆油量力矩
             float landOilLj = 0;
-            if (!"G450".equalsIgnoreCase(aircraftType)) {
+            if ((mAllAcType != null && "N".equalsIgnoreCase(mAllAcType.getLimitType())) || !"G450".equalsIgnoreCase(aircraftType)) {
                 landOilLj = CommonUtils.getOilWeightLj(realOilFloat - slideOilFloat - flyOilFloat, aircraftType);
             }
 
@@ -362,6 +366,9 @@ public class RestrictionMapActivity extends BaseActivity{
             mac = MACUtil.get750Mac(flightCg);
         } else if (MACUtil.TYPE_G450.equals(aircraftType)) {
             mac = MACUtil.getG450Mac(flightCg);
+        } else if (MACUtil.TYPE_CE560_PLUS.equals(aircraftType)) {
+            mac = MACUtil.get560Mac(flightCg);
+
         }
 
         if (mac != 0)

@@ -26,6 +26,7 @@ import com.xiaoqing.flight.data.dao.AddFlightInfo;
 import com.xiaoqing.flight.data.dao.AddFlightInfoDao;
 import com.xiaoqing.flight.data.dao.AllAircraft;
 import com.xiaoqing.flight.data.dao.AllAircraftDao;
+import com.xiaoqing.flight.data.dao.DaoSession;
 import com.xiaoqing.flight.entity.AcGrantsResponse;
 import com.xiaoqing.flight.entity.AllAirCraftResponse;
 import com.xiaoqing.flight.network.ResponseListner;
@@ -73,20 +74,20 @@ public class MainActivity extends BaseActivity {
         super.onResume();
 
         UserManager.getInstance().setAddFlightSuccess(false);
-        getMoccApi().getURLResponse(new ResponseListner<String>() {
-            @Override public void onResponse(String response) {
-                if ("Y".equalsIgnoreCase(response)) {
-                    UserManager.getInstance().setProjectIsFinish(false);
-                } else if ("N".equalsIgnoreCase(response)) {
-                    UserManager.getInstance().setProjectIsFinish(true);
-                }
-                //Toast.makeText(mContext, "urlResponse = " + response, Toast.LENGTH_LONG).show();
-            }
-
-            @Override public void onEmptyOrError(String message) {
-
-            }
-        });
+//        getMoccApi().getURLResponse(new ResponseListner<String>() {
+//            @Override public void onResponse(String response) {
+//                if ("Y".equalsIgnoreCase(response)) {
+//                    UserManager.getInstance().setProjectIsFinish(false);
+//                } else if ("N".equalsIgnoreCase(response)) {
+//                    UserManager.getInstance().setProjectIsFinish(true);
+//                }
+//                //Toast.makeText(mContext, "urlResponse = " + response, Toast.LENGTH_LONG).show();
+//            }
+//
+//            @Override public void onEmptyOrError(String message) {
+//
+//            }
+//        });
     }
 
     @Override public int getContentView() {
@@ -137,11 +138,14 @@ public class MainActivity extends BaseActivity {
     }
 
     private List<AcGrants> getAcGrantsFormDB() {
+        FlightApplication.getDaoSession().clear();
         AcGrantsDao acGrantsDao = FlightApplication.getDaoSession().getAcGrantsDao();
+
         List<AcGrants> acGrantses = acGrantsDao.queryBuilder()
                 .where(AcGrantsDao.Properties.UserCode.eq(
                         UserManager.getInstance().getUser().getUserCode()))
                 .list();
+
         if (acGrantses != null && acGrantses.size() > 0) {
             AcGrantLists.clear();
             AcGrantLists.addAll(acGrantses);
@@ -179,11 +183,31 @@ public class MainActivity extends BaseActivity {
             holder.type.setText(value.getAcType());
             convertView.setOnClickListener(new View.OnClickListener() {
                 @Override public void onClick(View v) {
+
+                    //后台修改的数据，由于数据库有缓存，在点击之后数据没有变，所以在这重新查询一遍数据库
+                    AcGrantsDao acGrantsDao = FlightApplication.getDaoSession().getAcGrantsDao();
+                    List<AcGrants> acGrantses = acGrantsDao.queryBuilder()
+                            .where(AcGrantsDao.Properties.AcReg.eq(
+                                    value.getAcReg()))
+                            .list();
+
+                    String acReg = value.getAcReg();
+                    Float acLj = value.getAcLj();
+                    String acType = value.getAcType();
+                    Float acRegBw = value.getAcRegBw();
+                    if (acGrantses != null && acGrantses.get(0) != null) {
+                        AcGrants grants = acGrantses.get(0);
+                        acReg = grants.getAcReg();
+                        acLj = grants.getAcLj();
+                        acType = grants.getAcType();
+                        acRegBw = grants.getAcRegBw();
+                    }
+
                     Intent intent = new Intent(MainActivity.this, BasicInfoActivity.class);
-                    intent.putExtra("Lj", value.getAcLj());
-                    intent.putExtra("AircraftReg", value.getAcReg());
-                    intent.putExtra("AircraftType", value.getAcType());
-                    intent.putExtra("Bw", value.getAcRegBw());
+                    intent.putExtra("Lj", acLj);
+                    intent.putExtra("AircraftReg", acReg);
+                    intent.putExtra("AircraftType", acType);
+                    intent.putExtra("Bw", acRegBw);
                     startActivity(intent);
                 }
             });

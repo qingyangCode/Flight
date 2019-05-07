@@ -333,7 +333,7 @@ public class ApiServiceManager {
                 addFlightInfo.getBeforeWCgmax(), addFlightInfo.getLandWeightCg(),
                 addFlightInfo.getLandWCgmin(), addFlightInfo.getLandWCgmax(),
                 addFlightInfo.getBeforeFlyFule(), addFlightInfo.getUseWeight() + "",
-                addFlightInfo.getWeightCg(), new ResponseListner<AddFlightInfoResponse>() {
+                addFlightInfo.getUseWeightCg() + "", new ResponseListner<AddFlightInfoResponse>() {
 
                     @Override public void onResponse(AddFlightInfoResponse response) {
                         if (responseListner != null) {
@@ -373,6 +373,7 @@ public class ApiServiceManager {
                         && response.ResponseObject.ResponseData.IAppObject != null) {
                     ArrayList<AcGrants> AcGrantLists =
                             response.ResponseObject.ResponseData.IAppObject;
+                    FlightApplication.getDaoSession().clear();
                     DBManager.getInstance()
                             .insertAcGrants(AcGrantLists, response.ResponseObject.SysVersion);
                 }
